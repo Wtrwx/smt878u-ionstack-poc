@@ -2,6 +2,7 @@
 /results/
 /scratch/
 /.local-baselines/
+/.workbuddy-ai/
 .DS_Store
 *.log
 *.swp

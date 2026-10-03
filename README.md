@@ -1,11 +1,78 @@
 # smt878u-ionstack-poc
 
+> [!CAUTION]
+> **THIS PROJECT IS UNFINISHED — IT DOES NOT WORK YET.**
+> There is **no working root** on any device as of 2026-10-03. Do **not** expect
+> the quick-start below to succeed. Read [Current status](#current-status-unfinished)
+> before building or running anything.
+
+> [!WARNING]
+> **STATUS: WORK IN PROGRESS / BLOCKED**
+> - **Not achieved:** persistent or even one-shot `root` on SM-T878U.
+> - **Last verified failure:** all stack-reclaim attempts crash the device
+>   (`CONFIG_PANIC_ON_OOPS=y`) before the write primitive fires.
+> - **Blocker:** kernel crash forensics is unavailable to `uid 2000 shell`
+>   (`/proc/kmsg`, `/proc/last_kmsg`, `/sys/fs/pstore`, `dmesg` → all `EACCES`),
+>   so each iteration costs a reboot and yields no usable stack trace.
+> - See [`docs/RTMUTEX_WEAPONIZATION.md`](docs/RTMUTEX_WEAPONIZATION.md) §15.16–§15.18
+>   for the full evidence trail.
+
 Pure-C, host-assisted re-root proof of concept for **Samsung Galaxy Tab S7
 (SM-T878U / gts7l)** against **CVE-2026-43499** (IonStack / GhostLock).
 
 The runtime chain uses native C/ELF components only. It does not require
 Python, Java, DEX, `app_process`, or a JVM on the Android target. ADB is used
 for deployment and verification.
+
+---
+
+## Current status (UNFINISHED)
+
+**No root has been obtained.** This section is the authoritative, up-to-date
+account of where the chain stands. Everything below is measured on real
+hardware (SM-T878U, `T878USQS8DXE1`, kernel `4.19.113-27114284`), not theory.
+
+### What is proven to work
+
+| Stage | Status | Evidence |
+|---|---|---|
+| Target identity + KASLR leak | working | `[reroot] LEAK_OK kaslr_base=… task=…` (perf side-channel) |
+| CVE trigger: `FUTEX_CMP_REQUEUE_PI` → `-EDEADLK` | **working** | `[*] requeue ret=-1 errno=35` — `EDEADLK == 35` on Linux |
+| Buggy rollback leaves dangling `pi_blocked_on` | matches upstream fix | upstream `3bfdc63936dd` changes `current->pi_blocked_on` → `waiter->task->pi_blocked_on` |
+| `struct rt_mutex_waiter` layout (4.19) | **verified from source** | `tree_entry@0x00` `pi_tree_entry@0x18` `task@0x30` `lock@0x38` `prio@0x40` `deadline@0x48` |
+| Stack geometry `paint == rt_waiter + 0x28` | **verified 4×** incl. objdump | `rt_waiter = do_futex_sp+0xC0`; `address = ___sys_sendmsg_sp+0xB8` |
+
+### What is NOT working
+
+1. **Stack reclaim does not land.** Three instrumented runs
+   (`scratch/runs/paint*_20261001_19*.log`) all crashed the device.
+   A survivable oracle (`IONSTACK_PAINT_PRIO=139`) was added: if the forged
+   waiter lands, `rt_mutex_adjust_pi()` early-returns at `rtmutex.c:1135` and
+   the device **survives**. It crashed every time ⇒ the forged waiter never
+   reaches the residual `rt_mutex_waiter`.
+2. **The published vehicle is unavailable here.** The only public successful
+   exploit of this CVE (NebuSec, *IonStack part II*) reclaims the frame with
+   `prctl(PR_SET_MM, PR_SET_MM_MAP, …)`. This kernel ships
+   `# CONFIG_CHECKPOINT_RESTORE is not set`, so that syscall is compiled out.
+   It also never uses `sendmsg` — our vehicle — which is very likely the root
+   cause of (1).
+3. **No crash forensics.** Every crash is currently undiagnosable (see blocker
+   above). Until this is fixed, further payload shapes are blind attempts.
+
+### Immediate next steps (in priority order)
+
+1. Restore observability (ramoops / `/data/log` / alternate SELinux domain).
+2. Replace the `sendmsg` reclaim vehicle with `pselect6` (route already
+   present) or `process_vm_readv` (`CONFIG_CROSS_MEMORY_ATTACH=y`).
+3. Switch from one blocking call to repeated stamping racing the consumer,
+   plus memfd + `fallocate(FALLOC_FL_PUNCH_HOLE)` window stretching.
+4. Only then convert the write primitive into privilege escalation.
+
+### Unrelated open bug
+
+`fops.c:3157 reason=selinux_write ret=-1 errno=22 EINVAL` — still unresolved.
+
+---
 
 ## Supported profile
 
