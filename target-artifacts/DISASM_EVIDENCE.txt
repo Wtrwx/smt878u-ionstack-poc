@@ -1,0 +1,3496 @@
+Disassembly evidence bundle -- SM-T878U / gts7l / T878USQS8DXE1 / 4.19.113-27114284
+Source: firmware_extract/ap/boot_kernel.bin.elf (ELF64 AArch64, not stripped)
+Tool  : llvm-objdump (NDK 30.0.14904198)
+Link-time VAs; KIMAGE_TEXT_BASE = 0xffffff8008080000 (== _text).
+Runtime VA = link-time VA + KASLR slide.
+
+===================================================================
+### __arm64_sys_futex
+===================================================================
+ffffff80081911ec <__arm64_sys_futex>:
+ffffff80081911ec:      	sub	sp, sp, #0x70
+ffffff80081911f0:      	eor	x16, x30, x17
+ffffff80081911f4:      	stp	x29, x16, [sp, #0x20]
+ffffff80081911f8:      	add	x29, sp, #0x20
+ffffff80081911fc:      	str	x25, [sp, #0x30]
+ffffff8008191200:      	stp	x24, x23, [sp, #0x40]
+ffffff8008191204:      	stp	x22, x21, [sp, #0x50]
+ffffff8008191208:      	stp	x20, x19, [sp, #0x60]
+ffffff800819120c:      	adrp	x8, 0xffffff800b21e000 <nf_conncount_locks+0x980>
+ffffff8008191210:      	mov	x3, xzr
+ffffff8008191214:      	ldr	x8, [x8, #0x688]
+ffffff8008191218:      	stur	x8, [x29, #-0x8]
+ffffff800819121c:      	ldr	w20, [x0, #0x8]
+ffffff8008191220:      	ldr	x19, [x0]
+ffffff8008191224:      	ldr	w21, [x0, #0x10]
+ffffff8008191228:      	ldp	x24, x23, [x0, #0x18]
+ffffff800819122c:      	ldr	w22, [x0, #0x28]
+ffffff8008191230:      	and	w25, w20, #0xfffffe7f
+ffffff8008191234:      	cbz	x24, 0xffffff80081912fc <__arm64_sys_futex+0x110>
+ffffff8008191238:      	cmp	w25, #0xb
+ffffff800819123c:      	b.hi	0xffffff80081912fc <__arm64_sys_futex+0x110>
+ffffff8008191240:      	mov	w8, #0x1        // =1
+ffffff8008191244:      	mov	w9, #0xa41      // =2625
+ffffff8008191248:      	lsl	w8, w8, w25
+ffffff800819124c:      	tst	w8, w9
+ffffff8008191250:      	b.eq	0xffffff80081912fc <__arm64_sys_futex+0x110>
+ffffff8008191254:      	mrs	x8, SP_EL0
+ffffff8008191258:      	ldrb	w11, [x8, #0x6e]
+ffffff800819125c:      	ldr	x10, [x8, #0x40]
+ffffff8008191260:      	lsl	x9, x24, #8
+ffffff8008191264:      	tbnz	w11, #0x5, 0xffffff8008191274 <__arm64_sys_futex+0x88>
+ffffff8008191268:      	ldr	x12, [x8]
+ffffff800819126c:      	mov	x11, x24
+ffffff8008191270:      	tbz	w12, #0x1a, 0xffffff8008191278 <__arm64_sys_futex+0x8c>
+ffffff8008191274:      	and	x11, x24, x9, asr #8
+ffffff8008191278:      	adds	x11, x11, #0x10
+ffffff800819127c:      	csel	x10, xzr, x10, hi
+ffffff8008191280:      	csinv	x11, x11, xzr, lo
+ffffff8008191284:      	sbcs	xzr, x11, x10
+ffffff8008191288:      	cset	x11, ls
+ffffff800819128c:      	cbz	x11, 0xffffff8008191388 <__arm64_sys_futex+0x19c>
+ffffff8008191290:      	add	x0, sp, #0x8
+ffffff8008191294:      	mov	w2, #0x10       // =16
+ffffff8008191298:      	ldr	x8, [x8, #0x40]
+ffffff800819129c:      	and	x9, x24, x9, asr #8
+ffffff80081912a0:      	bics	xzr, x9, x8
+ffffff80081912a4:      	csel	x1, x24, xzr, eq
+ffffff80081912a8:      	csdb
+ffffff80081912ac:      	bl	0xffffff8009bf7c00 <__arch_copy_from_user>
+ffffff80081912b0:      	cbnz	x0, 0xffffff8008191390 <__arm64_sys_futex+0x1a4>
+ffffff80081912b4:      	ldr	x8, [sp, #0x8]
+ffffff80081912b8:      	mov	x0, #-0x16      // =-22
+ffffff80081912bc:      	tbnz	x8, #0x3f, 0xffffff8008191338 <__arm64_sys_futex+0x14c>
+ffffff80081912c0:      	ldr	x9, [sp, #0x10]
+ffffff80081912c4:      	mov	w10, #0xca00    // =51712
+ffffff80081912c8:      	movk	w10, #0x3b9a, lsl #16
+ffffff80081912cc:      	cmp	x9, x10
+ffffff80081912d0:      	b.hs	0xffffff8008191338 <__arm64_sys_futex+0x14c>
+ffffff80081912d4:      	madd	x9, x8, x10, x9
+ffffff80081912d8:      	mov	x10, #0x7d03    // =32003
+ffffff80081912dc:      	movk	x10, #0x25c1, lsl #16
+ffffff80081912e0:      	movk	x10, #0x2, lsl #32
+ffffff80081912e4:      	cmp	x8, x10
+ffffff80081912e8:      	mov	x8, #0x7fffffffffffffff // =9223372036854775807
+ffffff80081912ec:      	csel	x8, x8, x9, gt
+ffffff80081912f0:      	str	x8, [sp]
+ffffff80081912f4:      	cbz	w25, 0xffffff800819136c <__arm64_sys_futex+0x180>
+ffffff80081912f8:      	mov	x3, sp
+ffffff80081912fc:      	mov	w5, wzr
+ffffff8008191300:      	cmp	w25, #0xc
+ffffff8008191304:      	b.hi	0xffffff8008191320 <__arm64_sys_futex+0x134>
+ffffff8008191308:      	mov	w8, #0x1        // =1
+ffffff800819130c:      	mov	w9, #0x1038     // =4152
+ffffff8008191310:      	lsl	w8, w8, w25
+ffffff8008191314:      	tst	w8, w9
+ffffff8008191318:      	b.eq	0xffffff8008191320 <__arm64_sys_futex+0x134>
+ffffff800819131c:      	mov	w5, w24
+ffffff8008191320:      	mov	x0, x19
+ffffff8008191324:      	mov	w1, w20
+ffffff8008191328:      	mov	w2, w21
+ffffff800819132c:      	mov	x4, x23
+ffffff8008191330:      	mov	w6, w22
+ffffff8008191334:      	bl	0xffffff800818d4ec <do_futex>
+ffffff8008191338:      	adrp	x9, 0xffffff800b21e000 <nf_conncount_locks+0x980>
+ffffff800819133c:      	ldur	x8, [x29, #-0x8]
+ffffff8008191340:      	ldr	x9, [x9, #0x688]
+ffffff8008191344:      	cmp	x9, x8
+ffffff8008191348:      	b.ne	0xffffff80081913b0 <__arm64_sys_futex+0x1c4>
+ffffff800819134c:      	ldp	x20, x19, [sp, #0x60]
+ffffff8008191350:      	ldr	x25, [sp, #0x30]
+ffffff8008191354:      	ldp	x22, x21, [sp, #0x50]
+ffffff8008191358:      	ldp	x24, x23, [sp, #0x40]
+ffffff800819135c:      	ldp	x29, x16, [sp, #0x20]
+ffffff8008191360:      	eor	x30, x16, x17
+ffffff8008191364:      	add	sp, sp, #0x70
+ffffff8008191368:      	ret
+ffffff800819136c:      	bl	0xffffff800817ac34 <ktime_get>
+ffffff8008191370:      	ldr	x1, [sp]
+ffffff8008191374:      	bl	0xffffff8008178044 <ktime_add_safe>
+ffffff8008191378:      	mov	w5, wzr
+ffffff800819137c:      	mov	x3, sp
+ffffff8008191380:      	str	x0, [sp]
+ffffff8008191384:      	b	0xffffff8008191320 <__arm64_sys_futex+0x134>
+ffffff8008191388:      	mov	w2, #0x10       // =16
+ffffff800819138c:      	b	0xffffff8008191394 <__arm64_sys_futex+0x1a8>
+ffffff8008191390:      	mov	x2, x0
+ffffff8008191394:      	add	x8, sp, #0x8
+ffffff8008191398:      	mov	w1, wzr
+ffffff800819139c:      	sub	x8, x8, x2
+ffffff80081913a0:      	add	x0, x8, #0x10
+ffffff80081913a4:      	bl	0xffffff8009bf8bc0 <memset>
+ffffff80081913a8:      	mov	x0, #-0xe       // =-14
+ffffff80081913ac:      	b	0xffffff8008191338 <__arm64_sys_futex+0x14c>
+ffffff80081913b0:      	bl	0xffffff80080b94e4 <__stack_chk_fail>
+ffffff80081913b4:      	nop
+ffffff80081913b8:      	<unknown>
+
+===================================================================
+### do_futex
+===================================================================
+ffffff800818d4ec <do_futex>:
+ffffff800818d4ec:      	sub	sp, sp, #0x1e0
+ffffff800818d4f0:      	eor	x16, x30, x17
+ffffff800818d4f4:      	stp	x29, x16, [sp, #0x180]
+ffffff800818d4f8:      	add	x29, sp, #0x180
+ffffff800818d4fc:      	stp	x28, x27, [sp, #0x190]
+ffffff800818d500:      	stp	x26, x25, [sp, #0x1a0]
+ffffff800818d504:      	stp	x24, x23, [sp, #0x1b0]
+ffffff800818d508:      	stp	x22, x21, [sp, #0x1c0]
+ffffff800818d50c:      	stp	x20, x19, [sp, #0x1d0]
+ffffff800818d510:      	adrp	x9, 0xffffff800b21e000 <nf_conncount_locks+0x980>
+ffffff800818d514:      	mov	w10, #0x1       // =1
+ffffff800818d518:      	mov	w23, w6
+ffffff800818d51c:      	mov	w11, w5
+ffffff800818d520:      	mov	x22, x4
+ffffff800818d524:      	mov	x25, x3
+ffffff800818d528:      	ldr	x9, [x9, #0x688]
+ffffff800818d52c:      	mov	w21, w2
+ffffff800818d530:      	mov	x19, x0
+ffffff800818d534:      	and	w8, w1, #0xfffffe7f
+ffffff800818d538:      	bic	w24, w10, w1, lsr #7
+ffffff800818d53c:      	stur	x9, [x29, #-0x10]
+ffffff800818d540:      	str	w6, [sp, #0x44]
+ffffff800818d544:      	tbz	w1, #0x8, 0xffffff800818d56c <do_futex+0x80>
+ffffff800818d548:      	mov	x0, #-0x26      // =-38
+ffffff800818d54c:      	cmp	w8, #0xb
+ffffff800818d550:      	b.hi	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818d554:      	mov	w9, #0x1        // =1
+ffffff800818d558:      	mov	w10, #0xa01     // =2561
+ffffff800818d55c:      	lsl	w9, w9, w8
+ffffff800818d560:      	tst	w9, w10
+ffffff800818d564:      	b.eq	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818d568:      	orr	w24, w24, #0x2
+ffffff800818d56c:      	mov	x0, #-0x26      // =-38
+ffffff800818d570:      	cmp	w8, #0x3
+ffffff800818d574:      	b.le	0xffffff800818d5d0 <do_futex+0xe4>
+ffffff800818d578:      	add	x28, sp, #0xc0
+ffffff800818d57c:      	cmp	w8, #0xc
+ffffff800818d580:      	b.hi	0xffffff800818d614 <do_futex+0x128>
+ffffff800818d584:      	mov	w9, #0x1        // =1
+ffffff800818d588:      	mov	w10, #0x19c0    // =6592
+ffffff800818d58c:      	lsl	w9, w9, w8
+ffffff800818d590:      	tst	w9, w10
+ffffff800818d594:      	b.eq	0xffffff800818d604 <do_futex+0x118>
+ffffff800818d598:      	adrp	x9, 0xffffff800b21e000 <nf_conncount_locks+0x980>
+ffffff800818d59c:      	mov	x0, #-0x26      // =-38
+ffffff800818d5a0:      	ldrb	w9, [x9, #0x860]
+ffffff800818d5a4:      	cmp	w9, #0x1
+ffffff800818d5a8:      	b.ne	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818d5ac:      	cmp	w8, #0x8
+ffffff800818d5b0:      	b.le	0xffffff800818dfb4 <do_futex+0xac8>
+ffffff800818d5b4:      	cmp	w8, #0xa
+ffffff800818d5b8:      	b.gt	0xffffff800818e000 <do_futex+0xb14>
+ffffff800818d5bc:      	cmp	w8, #0x9
+ffffff800818d5c0:      	b.eq	0xffffff800818df78 <do_futex+0xa8c>
+ffffff800818d5c4:      	cmp	w8, #0xa
+ffffff800818d5c8:      	b.eq	0xffffff800818df9c <do_futex+0xab0>
+ffffff800818d5cc:      	b	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818d5d0:      	cbz	w8, 0xffffff800818df70 <do_futex+0xa84>
+ffffff800818d5d4:      	cmp	w8, #0x1
+ffffff800818d5d8:      	b.eq	0xffffff800818df94 <do_futex+0xaa8>
+ffffff800818d5dc:      	cmp	w8, #0x3
+ffffff800818d5e0:      	b.ne	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818d5e4:      	mov	x0, x19
+ffffff800818d5e8:      	mov	w1, w24
+ffffff800818d5ec:      	mov	x2, x22
+ffffff800818d5f0:      	mov	w3, w21
+ffffff800818d5f4:      	mov	w4, w11
+ffffff800818d5f8:      	mov	x5, xzr
+ffffff800818d5fc:      	mov	w6, wzr
+ffffff800818d600:      	b	0xffffff800818e02c <do_futex+0xb40>
+ffffff800818d604:      	cmp	w8, #0x9
+ffffff800818d608:      	b.eq	0xffffff800818df78 <do_futex+0xa8c>
+ffffff800818d60c:      	cmp	w8, #0xa
+ffffff800818d610:      	b.eq	0xffffff800818df9c <do_futex+0xab0>
+ffffff800818d614:      	cmp	w8, #0x4
+ffffff800818d618:      	b.eq	0xffffff800818dfe0 <do_futex+0xaf4>
+ffffff800818d61c:      	cmp	w8, #0x5
+ffffff800818d620:      	b.ne	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818d624:      	mov	w20, #0x1       // =1
+ffffff800818d628:      	sub	x8, x29, #0x70
+ffffff800818d62c:      	and	w1, w24, #0x1
+ffffff800818d630:      	add	x2, sp, #0x48
+ffffff800818d634:      	mov	x0, x19
+ffffff800818d638:      	mov	w3, wzr
+ffffff800818d63c:      	str	w11, [sp, #0xc]
+ffffff800818d640:      	stp	xzr, xzr, [sp, #0x50]
+ffffff800818d644:      	str	xzr, [sp, #0x48]
+ffffff800818d648:      	stp	xzr, xzr, [x28, #0x8]
+ffffff800818d64c:      	str	xzr, [sp, #0xc0]
+ffffff800818d650:      	stp	x20, x8, [x28, #0x50]
+ffffff800818d654:      	stur	wzr, [x29, #-0x60]
+ffffff800818d658:      	str	w1, [sp, #0x24]
+ffffff800818d65c:      	bl	0xffffff80081920ac <get_futex_key>
+ffffff800818d660:      	cbnz	w0, 0xffffff800818df64 <do_futex+0xa78>
+ffffff800818d664:      	ubfx	w8, w23, #28, #3
+ffffff800818d668:      	mov	w25, #0xbeff    // =48895
+ffffff800818d66c:      	movk	w25, #0xdead, lsl #16
+ffffff800818d670:      	sbfx	w27, w23, #12, #12
+ffffff800818d674:      	str	w8, [sp, #0x18]
+ffffff800818d678:      	lsl	x8, x22, #8
+ffffff800818d67c:      	and	x8, x22, x8, asr #8
+ffffff800818d680:      	and	w9, w27, #0x1f
+ffffff800818d684:      	adrp	x26, 0xffffff800b21e000 <nf_conncount_locks+0x980>
+ffffff800818d688:      	mrs	x28, SP_EL0
+ffffff800818d68c:      	str	x8, [sp, #0x28]
+ffffff800818d690:      	ubfx	w8, w23, #24, #4
+ffffff800818d694:      	stp	w9, w8, [sp, #0x4]
+ffffff800818d698:      	ldr	w1, [sp, #0x24]
+ffffff800818d69c:      	add	x2, sp, #0xc0
+ffffff800818d6a0:      	mov	x0, x22
+ffffff800818d6a4:      	mov	w3, #0x1        // =1
+ffffff800818d6a8:      	bl	0xffffff80081920ac <get_futex_key>
+ffffff800818d6ac:      	cbnz	w0, 0xffffff800818ef7c <do_futex+0x1a90>
+ffffff800818d6b0:      	ldp	w12, w11, [sp, #0x54]
+ffffff800818d6b4:      	ldr	w14, [sp, #0xd0]
+ffffff800818d6b8:      	ldp	w10, w8, [sp, #0x4c]
+ffffff800818d6bc:      	ldr	w9, [sp, #0x48]
+ffffff800818d6c0:      	stp	w14, w11, [sp, #0x1c]
+ffffff800818d6c4:      	add	w11, w11, w25
+ffffff800818d6c8:      	ldp	w13, w15, [sp, #0xc0]
+ffffff800818d6cc:      	add	w9, w9, w11
+ffffff800818d6d0:      	add	w8, w8, w11
+ffffff800818d6d4:      	sub	w9, w9, w8
+ffffff800818d6d8:      	add	w14, w14, w25
+ffffff800818d6dc:      	add	w10, w10, w11
+ffffff800818d6e0:      	eor	w9, w9, w8, ror #28
+ffffff800818d6e4:      	add	w11, w13, w14
+ffffff800818d6e8:      	sub	w13, w10, w9
+ffffff800818d6ec:      	add	w8, w8, w10
+ffffff800818d6f0:      	eor	w10, w13, w9, ror #26
+ffffff800818d6f4:      	ldp	w18, w0, [sp, #0xc8]
+ffffff800818d6f8:      	sub	w13, w8, w10
+ffffff800818d6fc:      	add	w8, w9, w8
+ffffff800818d700:      	eor	w9, w13, w10, ror #24
+ffffff800818d704:      	add	w10, w10, w8
+ffffff800818d708:      	sub	w8, w8, w9
+ffffff800818d70c:      	add	w13, w9, w10
+ffffff800818d710:      	eor	w8, w8, w9, ror #16
+ffffff800818d714:      	add	w9, w18, w14
+ffffff800818d718:      	sub	w11, w11, w9
+ffffff800818d71c:      	add	w14, w15, w14
+ffffff800818d720:      	eor	w11, w11, w9, ror #28
+ffffff800818d724:      	add	w9, w9, w14
+ffffff800818d728:      	sub	w15, w14, w11
+ffffff800818d72c:      	sub	w10, w10, w8
+ffffff800818d730:      	eor	w14, w15, w11, ror #26
+ffffff800818d734:      	eor	w10, w10, w8, ror #13
+ffffff800818d738:      	sub	w15, w9, w14
+ffffff800818d73c:      	add	w9, w11, w9
+ffffff800818d740:      	eor	w11, w15, w14, ror #24
+ffffff800818d744:      	add	w8, w8, w13
+ffffff800818d748:      	sub	w18, w9, w11
+ffffff800818d74c:      	add	w9, w14, w9
+ffffff800818d750:      	eor	w14, w18, w11, ror #16
+ffffff800818d754:      	add	w15, w10, w8
+ffffff800818d758:      	add	w11, w11, w9
+ffffff800818d75c:      	sub	w9, w9, w14
+ffffff800818d760:      	eor	w9, w9, w14, ror #13
+ffffff800818d764:      	add	w14, w14, w11
+ffffff800818d768:      	add	w18, w9, w14
+ffffff800818d76c:      	sub	w13, w13, w10
+ffffff800818d770:      	eor	w10, w13, w10, ror #28
+ffffff800818d774:      	ror	w13, w15, #0x12
+ffffff800818d778:      	sub	w11, w11, w9
+ffffff800818d77c:      	eor	w10, w10, w15
+ffffff800818d780:      	ror	w1, w18, #0x12
+ffffff800818d784:      	eor	w9, w11, w9, ror #28
+ffffff800818d788:      	sub	w10, w10, w13
+ffffff800818d78c:      	eor	w9, w9, w18
+ffffff800818d790:      	add	w8, w8, w12
+ffffff800818d794:      	add	w13, w14, w0
+ffffff800818d798:      	sub	w9, w9, w1
+ffffff800818d79c:      	eor	w8, w10, w8
+ffffff800818d7a0:      	ror	w11, w10, #0x15
+ffffff800818d7a4:      	ror	w12, w9, #0x15
+ffffff800818d7a8:      	sub	w8, w8, w11
+ffffff800818d7ac:      	eor	w11, w9, w13
+ffffff800818d7b0:      	eor	w14, w8, w15
+ffffff800818d7b4:      	sub	w11, w11, w12
+ffffff800818d7b8:      	ror	w12, w8, #0x7
+ffffff800818d7bc:      	ror	w13, w11, #0x7
+ffffff800818d7c0:      	sub	w12, w14, w12
+ffffff800818d7c4:      	eor	w14, w11, w18
+ffffff800818d7c8:      	eor	w10, w12, w10
+ffffff800818d7cc:      	sub	w13, w14, w13
+ffffff800818d7d0:      	ror	w14, w12, #0x10
+ffffff800818d7d4:      	eor	w9, w13, w9
+ffffff800818d7d8:      	ror	w15, w13, #0x10
+ffffff800818d7dc:      	sub	w10, w10, w14
+ffffff800818d7e0:      	eor	w8, w10, w8
+ffffff800818d7e4:      	sub	w9, w9, w15
+ffffff800818d7e8:      	ror	w14, w10, #0x1c
+ffffff800818d7ec:      	eor	w11, w9, w11
+ffffff800818d7f0:      	ror	w15, w9, #0x1c
+ffffff800818d7f4:      	sub	w8, w8, w14
+ffffff800818d7f8:      	sub	w11, w11, w15
+ffffff800818d7fc:      	ror	w14, w8, #0x12
+ffffff800818d800:      	eor	w8, w8, w12
+ffffff800818d804:      	adrp	x12, 0xffffff800b21e000 <nf_conncount_locks+0x980>
+ffffff800818d808:      	ror	w15, w11, #0x12
+ffffff800818d80c:      	eor	w11, w11, w13
+ffffff800818d810:      	sub	w8, w8, w14
+ffffff800818d814:      	ldr	x12, [x12, #0x880]
+ffffff800818d818:      	sub	w11, w11, w15
+ffffff800818d81c:      	ror	w13, w8, #0x8
+ffffff800818d820:      	eor	w8, w8, w10
+ffffff800818d824:      	ldr	x10, [x26, #0x870]
+ffffff800818d828:      	eor	w9, w11, w9
+ffffff800818d82c:      	ror	w14, w11, #0x8
+ffffff800818d830:      	mov	w11, #-0x1      // =-1
+ffffff800818d834:      	sub	w8, w8, w13
+ffffff800818d838:      	add	x11, x12, x11
+ffffff800818d83c:      	and	x8, x11, x8
+ffffff800818d840:      	sub	w9, w9, w14
+ffffff800818d844:      	add	x25, x10, x8, lsl #6
+ffffff800818d848:      	and	x9, x11, x9
+ffffff800818d84c:      	add	x8, x25, #0x8
+ffffff800818d850:      	add	x26, x10, x9, lsl #6
+ffffff800818d854:      	cmp	x25, x26
+ffffff800818d858:      	str	x8, [sp, #0x38]
+ffffff800818d85c:      	add	x8, x26, #0x8
+ffffff800818d860:      	str	x8, [sp, #0x30]
+ffffff800818d864:      	b.ls	0xffffff800818db90 <do_futex+0x6a4>
+ffffff800818d868:      	b	0xffffff800818d874 <do_futex+0x388>
+ffffff800818d86c:      	ldr	w8, [sp, #0x24]
+ffffff800818d870:      	cbnz	w8, 0xffffff800818deac <do_futex+0x9c0>
+ffffff800818d874:      	ldr	x0, [sp, #0x30]
+ffffff800818d878:      	bl	0xffffff8009c196bc <_raw_spin_lock>
+ffffff800818d87c:      	ldr	x0, [sp, #0x38]
+ffffff800818d880:      	bl	0xffffff8009c196bc <_raw_spin_lock>
+ffffff800818d884:      	mov	w9, w27
+ffffff800818d888:      	tbz	w23, #0x1f, 0xffffff800818d8b8 <do_futex+0x3cc>
+ffffff800818d88c:      	mov	w8, w27
+ffffff800818d890:      	cmp	w27, #0x20
+ffffff800818d894:      	b.lo	0xffffff800818d8b4 <do_futex+0x3c8>
+ffffff800818d898:      	adrp	x0, 0xffffff800b24a000 <tick_bc_dev+0xf0>
+ffffff800818d89c:      	adrp	x1, 0xffffff800a5af000 <empty_windows+0x60c0>
+ffffff800818d8a0:      	add	x0, x0, #0x458
+ffffff800818d8a4:      	add	x1, x1, #0x54f
+ffffff800818d8a8:      	bl	0xffffff8009c0650c <___ratelimit>
+ffffff800818d8ac:      	cbnz	w0, 0xffffff800818db60 <do_futex+0x674>
+ffffff800818d8b0:      	ldr	w8, [sp, #0x4]
+ffffff800818d8b4:      	lsl	w9, w20, w8
+ffffff800818d8b8:      	ldrb	w10, [x28, #0x6e]
+ffffff800818d8bc:      	ldr	x8, [x28, #0x40]
+ffffff800818d8c0:      	tbnz	w10, #0x5, 0xffffff800818d8d0 <do_futex+0x3e4>
+ffffff800818d8c4:      	ldr	x11, [x28]
+ffffff800818d8c8:      	mov	x10, x22
+ffffff800818d8cc:      	tbz	w11, #0x1a, 0xffffff800818d8d4 <do_futex+0x3e8>
+ffffff800818d8d0:      	ldr	x10, [sp, #0x28]
+ffffff800818d8d4:      	adds	x10, x10, #0x4
+ffffff800818d8d8:      	csel	x8, xzr, x8, hi
+ffffff800818d8dc:      	csinv	x10, x10, xzr, lo
+ffffff800818d8e0:      	sbcs	xzr, x10, x8
+ffffff800818d8e4:      	cset	x10, ls
+ffffff800818d8e8:      	cbz	x10, 0xffffff800818d96c <do_futex+0x480>
+ffffff800818d8ec:      	ldr	x8, [x28, #0x40]
+ffffff800818d8f0:      	ldr	x11, [sp, #0x28]
+ffffff800818d8f4:      	bics	xzr, x11, x8
+ffffff800818d8f8:      	csel	x10, x22, xzr, eq
+ffffff800818d8fc:      	csdb
+ffffff800818d900:      	ldr	w8, [x28, #0xb08]
+ffffff800818d904:      	add	w8, w8, #0x1
+ffffff800818d908:      	str	w8, [x28, #0xb08]
+ffffff800818d90c:      	ldr	w8, [sp, #0x18]
+ffffff800818d910:      	cmp	w8, #0x1
+ffffff800818d914:      	b.le	0xffffff800818d978 <do_futex+0x48c>
+ffffff800818d918:      	cmp	w8, #0x2
+ffffff800818d91c:      	b.eq	0xffffff800818d9c0 <do_futex+0x4d4>
+ffffff800818d920:      	cmp	w8, #0x3
+ffffff800818d924:      	b.eq	0xffffff800818d9fc <do_futex+0x510>
+ffffff800818d928:      	cmp	w8, #0x4
+ffffff800818d92c:      	b.ne	0xffffff800818dab8 <do_futex+0x5cc>
+ffffff800818d930:      	mov	w11, #0x80      // =128
+ffffff800818d934:      	nop
+ffffff800818d938:      	mov	w13, #-0xe      // =-14
+ffffff800818d93c:      	mov	w14, #-0xb      // =-11
+ffffff800818d940:      	prfm	pstl1strm, [x10]
+ffffff800818d944:      	ldxr	w8, [x10]
+ffffff800818d948:      	eor	w12, w8, w9
+ffffff800818d94c:      	stlxr	w24, w12, [x10]
+ffffff800818d950:      	cbz	w24, 0xffffff800818d960 <do_futex+0x474>
+ffffff800818d954:      	sub	w11, w11, w24
+ffffff800818d958:      	cbnz	w11, 0xffffff800818d944 <do_futex+0x458>
+ffffff800818d95c:      	mov	w24, w14
+ffffff800818d960:      	dmb	ish
+ffffff800818d964:      	nop
+ffffff800818d968:      	b	0xffffff800818da74 <do_futex+0x588>
+ffffff800818d96c:      	mov	w8, #-0xe       // =-14
+ffffff800818d970:      	mov	w24, w8
+ffffff800818d974:      	b	0xffffff800818daf0 <do_futex+0x604>
+ffffff800818d978:      	cbz	w8, 0xffffff800818da3c <do_futex+0x550>
+ffffff800818d97c:      	cmp	w8, #0x1
+ffffff800818d980:      	b.ne	0xffffff800818dab8 <do_futex+0x5cc>
+ffffff800818d984:      	mov	w11, #0x80      // =128
+ffffff800818d988:      	nop
+ffffff800818d98c:      	mov	w13, #-0xe      // =-14
+ffffff800818d990:      	mov	w14, #-0xb      // =-11
+ffffff800818d994:      	prfm	pstl1strm, [x10]
+ffffff800818d998:      	ldxr	w8, [x10]
+ffffff800818d99c:      	add	w12, w8, w9
+ffffff800818d9a0:      	stlxr	w24, w12, [x10]
+ffffff800818d9a4:      	cbz	w24, 0xffffff800818d9b4 <do_futex+0x4c8>
+ffffff800818d9a8:      	sub	w11, w11, w24
+ffffff800818d9ac:      	cbnz	w11, 0xffffff800818d998 <do_futex+0x4ac>
+ffffff800818d9b0:      	mov	w24, w14
+ffffff800818d9b4:      	dmb	ish
+ffffff800818d9b8:      	nop
+ffffff800818d9bc:      	b	0xffffff800818da74 <do_futex+0x588>
+ffffff800818d9c0:      	mov	w11, #0x80      // =128
+ffffff800818d9c4:      	nop
+ffffff800818d9c8:      	mov	w13, #-0xe      // =-14
+ffffff800818d9cc:      	mov	w14, #-0xb      // =-11
+ffffff800818d9d0:      	prfm	pstl1strm, [x10]
+ffffff800818d9d4:      	ldxr	w8, [x10]
+ffffff800818d9d8:      	orr	w12, w8, w9
+ffffff800818d9dc:      	stlxr	w24, w12, [x10]
+ffffff800818d9e0:      	cbz	w24, 0xffffff800818d9f0 <do_futex+0x504>
+ffffff800818d9e4:      	sub	w11, w11, w24
+ffffff800818d9e8:      	cbnz	w11, 0xffffff800818d9d4 <do_futex+0x4e8>
+ffffff800818d9ec:      	mov	w24, w14
+ffffff800818d9f0:      	dmb	ish
+ffffff800818d9f4:      	nop
+ffffff800818d9f8:      	b	0xffffff800818da74 <do_futex+0x588>
+ffffff800818d9fc:      	mov	w11, #0x80      // =128
+ffffff800818da00:      	mvn	w9, w9
+ffffff800818da04:      	nop
+ffffff800818da08:      	mov	w13, #-0xe      // =-14
+ffffff800818da0c:      	mov	w14, #-0xb      // =-11
+ffffff800818da10:      	prfm	pstl1strm, [x10]
+ffffff800818da14:      	ldxr	w8, [x10]
+ffffff800818da18:      	and	w12, w8, w9
+ffffff800818da1c:      	stlxr	w24, w12, [x10]
+ffffff800818da20:      	cbz	w24, 0xffffff800818da30 <do_futex+0x544>
+ffffff800818da24:      	sub	w11, w11, w24
+ffffff800818da28:      	cbnz	w11, 0xffffff800818da14 <do_futex+0x528>
+ffffff800818da2c:      	mov	w24, w14
+ffffff800818da30:      	dmb	ish
+ffffff800818da34:      	nop
+ffffff800818da38:      	b	0xffffff800818da74 <do_futex+0x588>
+ffffff800818da3c:      	mov	w11, #0x80      // =128
+ffffff800818da40:      	nop
+ffffff800818da44:      	mov	w13, #-0xe      // =-14
+ffffff800818da48:      	mov	w14, #-0xb      // =-11
+ffffff800818da4c:      	prfm	pstl1strm, [x10]
+ffffff800818da50:      	ldxr	w8, [x10]
+ffffff800818da54:      	mov	w12, w9
+ffffff800818da58:      	stlxr	w24, w12, [x10]
+ffffff800818da5c:      	cbz	w24, 0xffffff800818da6c <do_futex+0x580>
+ffffff800818da60:      	sub	w11, w11, w24
+ffffff800818da64:      	cbnz	w11, 0xffffff800818da50 <do_futex+0x564>
+ffffff800818da68:      	mov	w24, w14
+ffffff800818da6c:      	dmb	ish
+ffffff800818da70:      	nop
+ffffff800818da74:      	ldr	w9, [x28, #0xb08]
+ffffff800818da78:      	sub	w9, w9, #0x1
+ffffff800818da7c:      	str	w9, [x28, #0xb08]
+ffffff800818da80:      	cbz	w24, 0xffffff800818da8c <do_futex+0x5a0>
+ffffff800818da84:      	tbz	w24, #0x1f, 0xffffff800818ea4c <do_futex+0x1560>
+ffffff800818da88:      	b	0xffffff800818daf0 <do_futex+0x604>
+ffffff800818da8c:      	ldr	w10, [sp, #0x8]
+ffffff800818da90:      	cmp	w10, #0x2
+ffffff800818da94:      	b.gt	0xffffff800818dad0 <do_futex+0x5e4>
+ffffff800818da98:      	cbz	w10, 0xffffff800818e9f0 <do_futex+0x1504>
+ffffff800818da9c:      	cmp	w10, #0x1
+ffffff800818daa0:      	b.eq	0xffffff800818ea00 <do_futex+0x1514>
+ffffff800818daa4:      	mov	w9, #-0x26      // =-38
+ffffff800818daa8:      	cmp	w10, #0x2
+ffffff800818daac:      	mov	w24, w9
+ffffff800818dab0:      	b.ne	0xffffff800818daf0 <do_futex+0x604>
+ffffff800818dab4:      	b	0xffffff800818ea10 <do_futex+0x1524>
+ffffff800818dab8:      	mov	w9, #-0x26      // =-38
+ffffff800818dabc:      	ldr	w8, [x28, #0xb08]
+ffffff800818dac0:      	mov	w24, w9
+ffffff800818dac4:      	sub	w8, w8, #0x1
+ffffff800818dac8:      	str	w8, [x28, #0xb08]
+ffffff800818dacc:      	b	0xffffff800818daf0 <do_futex+0x604>
+ffffff800818dad0:      	cmp	w10, #0x3
+ffffff800818dad4:      	b.eq	0xffffff800818ea20 <do_futex+0x1534>
+ffffff800818dad8:      	cmp	w10, #0x4
+ffffff800818dadc:      	b.eq	0xffffff800818ea30 <do_futex+0x1544>
+ffffff800818dae0:      	mov	w9, #-0x26      // =-38
+ffffff800818dae4:      	cmp	w10, #0x5
+ffffff800818dae8:      	mov	w24, w9
+ffffff800818daec:      	b.eq	0xffffff800818ea40 <do_futex+0x1554>
+ffffff800818daf0:      	ldr	x0, [sp, #0x38]
+ffffff800818daf4:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800818daf8:      	cmp	x25, x26
+ffffff800818dafc:      	b.eq	0xffffff800818db08 <do_futex+0x61c>
+ffffff800818db00:      	ldr	x0, [sp, #0x30]
+ffffff800818db04:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800818db08:      	cmn	w24, #0xb
+ffffff800818db0c:      	b.eq	0xffffff800818d86c <do_futex+0x380>
+ffffff800818db10:      	cmn	w24, #0xe
+ffffff800818db14:      	b.ne	0xffffff800818ed50 <do_futex+0x1864>
+ffffff800818db18:      	ldr	x24, [x28, #0x590]
+ffffff800818db1c:      	mov	x20, x26
+ffffff800818db20:      	add	x26, x24, #0x88
+ffffff800818db24:      	mov	x0, x26
+ffffff800818db28:      	bl	0xffffff8009c16ad4 <down_read>
+ffffff800818db2c:      	mov	x0, x28
+ffffff800818db30:      	mov	x1, x24
+ffffff800818db34:      	mov	x2, x22
+ffffff800818db38:      	mov	w3, #0x1        // =1
+ffffff800818db3c:      	mov	x4, xzr
+ffffff800818db40:      	bl	0xffffff800827affc <fixup_user_fault>
+ffffff800818db44:      	mov	w24, w0
+ffffff800818db48:      	mov	x0, x26
+ffffff800818db4c:      	mov	x26, x20
+ffffff800818db50:      	mov	w20, #0x1       // =1
+ffffff800818db54:      	bl	0xffffff80081471a4 <up_read>
+ffffff800818db58:      	tbz	w24, #0x1f, 0xffffff800818d86c <do_futex+0x380>
+ffffff800818db5c:      	b	0xffffff800818ed50 <do_futex+0x1864>
+ffffff800818db60:      	sub	x0, x29, #0x28
+ffffff800818db64:      	mov	w1, #0x10       // =16
+ffffff800818db68:      	mov	x2, x28
+ffffff800818db6c:      	bl	0xffffff80082d638c <__get_task_comm>
+ffffff800818db70:      	mov	x1, x0
+ffffff800818db74:      	adrp	x0, 0xffffff800a5af000 <empty_windows+0x60c0>
+ffffff800818db78:      	add	x0, x0, #0x566
+ffffff800818db7c:      	mov	w2, w27
+ffffff800818db80:      	bl	0xffffff8008150310 <printk>
+ffffff800818db84:      	b	0xffffff800818d8b0 <do_futex+0x3c4>
+ffffff800818db88:      	ldr	w8, [sp, #0x24]
+ffffff800818db8c:      	cbnz	w8, 0xffffff800818deac <do_futex+0x9c0>
+ffffff800818db90:      	ldr	x0, [sp, #0x38]
+ffffff800818db94:      	bl	0xffffff8009c196bc <_raw_spin_lock>
+ffffff800818db98:      	cmp	x25, x26
+ffffff800818db9c:      	b.hs	0xffffff800818dba8 <do_futex+0x6bc>
+ffffff800818dba0:      	ldr	x0, [sp, #0x30]
+ffffff800818dba4:      	bl	0xffffff8009c196bc <_raw_spin_lock>
+ffffff800818dba8:      	mov	w9, w27
+ffffff800818dbac:      	tbz	w23, #0x1f, 0xffffff800818dbdc <do_futex+0x6f0>
+ffffff800818dbb0:      	mov	w8, w27
+ffffff800818dbb4:      	cmp	w27, #0x20
+ffffff800818dbb8:      	b.lo	0xffffff800818dbd8 <do_futex+0x6ec>
+ffffff800818dbbc:      	adrp	x0, 0xffffff800b24a000 <tick_bc_dev+0xf0>
+ffffff800818dbc0:      	adrp	x1, 0xffffff800a5af000 <empty_windows+0x60c0>
+ffffff800818dbc4:      	add	x0, x0, #0x458
+ffffff800818dbc8:      	add	x1, x1, #0x54f
+ffffff800818dbcc:      	bl	0xffffff8009c0650c <___ratelimit>
+ffffff800818dbd0:      	cbnz	w0, 0xffffff800818de84 <do_futex+0x998>
+ffffff800818dbd4:      	ldr	w8, [sp, #0x4]
+ffffff800818dbd8:      	lsl	w9, w20, w8
+ffffff800818dbdc:      	ldrb	w10, [x28, #0x6e]
+ffffff800818dbe0:      	ldr	x8, [x28, #0x40]
+ffffff800818dbe4:      	tbnz	w10, #0x5, 0xffffff800818dbf4 <do_futex+0x708>
+ffffff800818dbe8:      	ldr	x11, [x28]
+ffffff800818dbec:      	mov	x10, x22
+ffffff800818dbf0:      	tbz	w11, #0x1a, 0xffffff800818dbf8 <do_futex+0x70c>
+ffffff800818dbf4:      	ldr	x10, [sp, #0x28]
+ffffff800818dbf8:      	adds	x10, x10, #0x4
+ffffff800818dbfc:      	csel	x8, xzr, x8, hi
+ffffff800818dc00:      	csinv	x10, x10, xzr, lo
+ffffff800818dc04:      	sbcs	xzr, x10, x8
+ffffff800818dc08:      	cset	x10, ls
+ffffff800818dc0c:      	cbz	x10, 0xffffff800818dc90 <do_futex+0x7a4>
+ffffff800818dc10:      	ldr	x8, [x28, #0x40]
+ffffff800818dc14:      	ldr	x11, [sp, #0x28]
+ffffff800818dc18:      	bics	xzr, x11, x8
+ffffff800818dc1c:      	csel	x10, x22, xzr, eq
+ffffff800818dc20:      	csdb
+ffffff800818dc24:      	ldr	w8, [x28, #0xb08]
+ffffff800818dc28:      	add	w8, w8, #0x1
+ffffff800818dc2c:      	str	w8, [x28, #0xb08]
+ffffff800818dc30:      	ldr	w8, [sp, #0x18]
+ffffff800818dc34:      	cmp	w8, #0x1
+ffffff800818dc38:      	b.le	0xffffff800818dc9c <do_futex+0x7b0>
+ffffff800818dc3c:      	cmp	w8, #0x2
+ffffff800818dc40:      	b.eq	0xffffff800818dce4 <do_futex+0x7f8>
+ffffff800818dc44:      	cmp	w8, #0x3
+ffffff800818dc48:      	b.eq	0xffffff800818dd20 <do_futex+0x834>
+ffffff800818dc4c:      	cmp	w8, #0x4
+ffffff800818dc50:      	b.ne	0xffffff800818dddc <do_futex+0x8f0>
+ffffff800818dc54:      	mov	w11, #0x80      // =128
+ffffff800818dc58:      	nop
+ffffff800818dc5c:      	mov	w13, #-0xe      // =-14
+ffffff800818dc60:      	mov	w14, #-0xb      // =-11
+ffffff800818dc64:      	prfm	pstl1strm, [x10]
+ffffff800818dc68:      	ldxr	w8, [x10]
+ffffff800818dc6c:      	eor	w12, w8, w9
+ffffff800818dc70:      	stlxr	w24, w12, [x10]
+ffffff800818dc74:      	cbz	w24, 0xffffff800818dc84 <do_futex+0x798>
+ffffff800818dc78:      	sub	w11, w11, w24
+ffffff800818dc7c:      	cbnz	w11, 0xffffff800818dc68 <do_futex+0x77c>
+ffffff800818dc80:      	mov	w24, w14
+ffffff800818dc84:      	dmb	ish
+ffffff800818dc88:      	nop
+ffffff800818dc8c:      	b	0xffffff800818dd98 <do_futex+0x8ac>
+ffffff800818dc90:      	mov	w8, #-0xe       // =-14
+ffffff800818dc94:      	mov	w24, w8
+ffffff800818dc98:      	b	0xffffff800818de14 <do_futex+0x928>
+ffffff800818dc9c:      	cbz	w8, 0xffffff800818dd60 <do_futex+0x874>
+ffffff800818dca0:      	cmp	w8, #0x1
+ffffff800818dca4:      	b.ne	0xffffff800818dddc <do_futex+0x8f0>
+ffffff800818dca8:      	mov	w11, #0x80      // =128
+ffffff800818dcac:      	nop
+ffffff800818dcb0:      	mov	w13, #-0xe      // =-14
+ffffff800818dcb4:      	mov	w14, #-0xb      // =-11
+ffffff800818dcb8:      	prfm	pstl1strm, [x10]
+ffffff800818dcbc:      	ldxr	w8, [x10]
+ffffff800818dcc0:      	add	w12, w8, w9
+ffffff800818dcc4:      	stlxr	w24, w12, [x10]
+ffffff800818dcc8:      	cbz	w24, 0xffffff800818dcd8 <do_futex+0x7ec>
+ffffff800818dccc:      	sub	w11, w11, w24
+ffffff800818dcd0:      	cbnz	w11, 0xffffff800818dcbc <do_futex+0x7d0>
+ffffff800818dcd4:      	mov	w24, w14
+ffffff800818dcd8:      	dmb	ish
+ffffff800818dcdc:      	nop
+ffffff800818dce0:      	b	0xffffff800818dd98 <do_futex+0x8ac>
+ffffff800818dce4:      	mov	w11, #0x80      // =128
+ffffff800818dce8:      	nop
+ffffff800818dcec:      	mov	w13, #-0xe      // =-14
+ffffff800818dcf0:      	mov	w14, #-0xb      // =-11
+ffffff800818dcf4:      	prfm	pstl1strm, [x10]
+ffffff800818dcf8:      	ldxr	w8, [x10]
+ffffff800818dcfc:      	orr	w12, w8, w9
+ffffff800818dd00:      	stlxr	w24, w12, [x10]
+ffffff800818dd04:      	cbz	w24, 0xffffff800818dd14 <do_futex+0x828>
+ffffff800818dd08:      	sub	w11, w11, w24
+ffffff800818dd0c:      	cbnz	w11, 0xffffff800818dcf8 <do_futex+0x80c>
+ffffff800818dd10:      	mov	w24, w14
+ffffff800818dd14:      	dmb	ish
+ffffff800818dd18:      	nop
+ffffff800818dd1c:      	b	0xffffff800818dd98 <do_futex+0x8ac>
+ffffff800818dd20:      	mov	w11, #0x80      // =128
+ffffff800818dd24:      	mvn	w9, w9
+ffffff800818dd28:      	nop
+ffffff800818dd2c:      	mov	w13, #-0xe      // =-14
+ffffff800818dd30:      	mov	w14, #-0xb      // =-11
+ffffff800818dd34:      	prfm	pstl1strm, [x10]
+ffffff800818dd38:      	ldxr	w8, [x10]
+ffffff800818dd3c:      	and	w12, w8, w9
+ffffff800818dd40:      	stlxr	w24, w12, [x10]
+ffffff800818dd44:      	cbz	w24, 0xffffff800818dd54 <do_futex+0x868>
+ffffff800818dd48:      	sub	w11, w11, w24
+ffffff800818dd4c:      	cbnz	w11, 0xffffff800818dd38 <do_futex+0x84c>
+ffffff800818dd50:      	mov	w24, w14
+ffffff800818dd54:      	dmb	ish
+ffffff800818dd58:      	nop
+ffffff800818dd5c:      	b	0xffffff800818dd98 <do_futex+0x8ac>
+ffffff800818dd60:      	mov	w11, #0x80      // =128
+ffffff800818dd64:      	nop
+ffffff800818dd68:      	mov	w13, #-0xe      // =-14
+ffffff800818dd6c:      	mov	w14, #-0xb      // =-11
+ffffff800818dd70:      	prfm	pstl1strm, [x10]
+ffffff800818dd74:      	ldxr	w8, [x10]
+ffffff800818dd78:      	mov	w12, w9
+ffffff800818dd7c:      	stlxr	w24, w12, [x10]
+ffffff800818dd80:      	cbz	w24, 0xffffff800818dd90 <do_futex+0x8a4>
+ffffff800818dd84:      	sub	w11, w11, w24
+ffffff800818dd88:      	cbnz	w11, 0xffffff800818dd74 <do_futex+0x888>
+ffffff800818dd8c:      	mov	w24, w14
+ffffff800818dd90:      	dmb	ish
+ffffff800818dd94:      	nop
+ffffff800818dd98:      	ldr	w9, [x28, #0xb08]
+ffffff800818dd9c:      	sub	w9, w9, #0x1
+ffffff800818dda0:      	str	w9, [x28, #0xb08]
+ffffff800818dda4:      	cbz	w24, 0xffffff800818ddb0 <do_futex+0x8c4>
+ffffff800818dda8:      	tbz	w24, #0x1f, 0xffffff800818ea4c <do_futex+0x1560>
+ffffff800818ddac:      	b	0xffffff800818de14 <do_futex+0x928>
+ffffff800818ddb0:      	ldr	w10, [sp, #0x8]
+ffffff800818ddb4:      	cmp	w10, #0x2
+ffffff800818ddb8:      	b.gt	0xffffff800818ddf4 <do_futex+0x908>
+ffffff800818ddbc:      	cbz	w10, 0xffffff800818e9f0 <do_futex+0x1504>
+ffffff800818ddc0:      	cmp	w10, #0x1
+ffffff800818ddc4:      	b.eq	0xffffff800818ea00 <do_futex+0x1514>
+ffffff800818ddc8:      	mov	w9, #-0x26      // =-38
+ffffff800818ddcc:      	cmp	w10, #0x2
+ffffff800818ddd0:      	mov	w24, w9
+ffffff800818ddd4:      	b.ne	0xffffff800818de14 <do_futex+0x928>
+ffffff800818ddd8:      	b	0xffffff800818ea10 <do_futex+0x1524>
+ffffff800818dddc:      	mov	w9, #-0x26      // =-38
+ffffff800818dde0:      	ldr	w8, [x28, #0xb08]
+ffffff800818dde4:      	mov	w24, w9
+ffffff800818dde8:      	sub	w8, w8, #0x1
+ffffff800818ddec:      	str	w8, [x28, #0xb08]
+ffffff800818ddf0:      	b	0xffffff800818de14 <do_futex+0x928>
+ffffff800818ddf4:      	cmp	w10, #0x3
+ffffff800818ddf8:      	b.eq	0xffffff800818ea20 <do_futex+0x1534>
+ffffff800818ddfc:      	cmp	w10, #0x4
+ffffff800818de00:      	b.eq	0xffffff800818ea30 <do_futex+0x1544>
+ffffff800818de04:      	mov	w9, #-0x26      // =-38
+ffffff800818de08:      	cmp	w10, #0x5
+ffffff800818de0c:      	mov	w24, w9
+ffffff800818de10:      	b.eq	0xffffff800818ea40 <do_futex+0x1554>
+ffffff800818de14:      	ldr	x0, [sp, #0x38]
+ffffff800818de18:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800818de1c:      	cmp	x25, x26
+ffffff800818de20:      	b.eq	0xffffff800818de2c <do_futex+0x940>
+ffffff800818de24:      	ldr	x0, [sp, #0x30]
+ffffff800818de28:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800818de2c:      	cmn	w24, #0xb
+ffffff800818de30:      	b.eq	0xffffff800818db88 <do_futex+0x69c>
+ffffff800818de34:      	cmn	w24, #0xe
+ffffff800818de38:      	b.ne	0xffffff800818ed50 <do_futex+0x1864>
+ffffff800818de3c:      	ldr	x24, [x28, #0x590]
+ffffff800818de40:      	mov	x20, x26
+ffffff800818de44:      	add	x26, x24, #0x88
+ffffff800818de48:      	mov	x0, x26
+ffffff800818de4c:      	bl	0xffffff8009c16ad4 <down_read>
+ffffff800818de50:      	mov	x0, x28
+ffffff800818de54:      	mov	x1, x24
+ffffff800818de58:      	mov	x2, x22
+ffffff800818de5c:      	mov	w3, #0x1        // =1
+ffffff800818de60:      	mov	x4, xzr
+ffffff800818de64:      	bl	0xffffff800827affc <fixup_user_fault>
+ffffff800818de68:      	mov	w24, w0
+ffffff800818de6c:      	mov	x0, x26
+ffffff800818de70:      	mov	x26, x20
+ffffff800818de74:      	mov	w20, #0x1       // =1
+ffffff800818de78:      	bl	0xffffff80081471a4 <up_read>
+ffffff800818de7c:      	tbz	w24, #0x1f, 0xffffff800818db88 <do_futex+0x69c>
+ffffff800818de80:      	b	0xffffff800818ed50 <do_futex+0x1864>
+ffffff800818de84:      	sub	x0, x29, #0x28
+ffffff800818de88:      	mov	w1, #0x10       // =16
+ffffff800818de8c:      	mov	x2, x28
+ffffff800818de90:      	bl	0xffffff80082d638c <__get_task_comm>
+ffffff800818de94:      	mov	x1, x0
+ffffff800818de98:      	adrp	x0, 0xffffff800a5af000 <empty_windows+0x60c0>
+ffffff800818de9c:      	add	x0, x0, #0x566
+ffffff800818dea0:      	mov	w2, w27
+ffffff800818dea4:      	bl	0xffffff8008150310 <printk>
+ffffff800818dea8:      	b	0xffffff800818dbd4 <do_futex+0x6e8>
+ffffff800818deac:      	ldr	x0, [sp, #0xc0]
+ffffff800818deb0:      	cbz	x0, 0xffffff800818def8 <do_futex+0xa0c>
+ffffff800818deb4:      	ldr	w8, [sp, #0x1c]
+ffffff800818deb8:      	mov	w25, #0xbeff    // =48895
+ffffff800818debc:      	movk	w25, #0xdead, lsl #16
+ffffff800818dec0:      	adrp	x26, 0xffffff800b21e000 <nf_conncount_locks+0x980>
+ffffff800818dec4:      	and	w8, w8, #0x3
+ffffff800818dec8:      	cmp	w8, #0x2
+ffffff800818decc:      	b.ne	0xffffff800818df08 <do_futex+0xa1c>
+ffffff800818ded0:      	add	x8, x0, #0x64
+ffffff800818ded4:      	prfm	pstl1strm, [x8]
+ffffff800818ded8:      	ldxr	w9, [x8]
+ffffff800818dedc:      	sub	w9, w9, #0x1
+ffffff800818dee0:      	stlxr	w10, w9, [x8]
+ffffff800818dee4:      	cbnz	w10, 0xffffff800818ded8 <do_futex+0x9ec>
+ffffff800818dee8:      	dmb	ish
+ffffff800818deec:      	cbnz	w9, 0xffffff800818df08 <do_futex+0xa1c>
+ffffff800818def0:      	bl	0xffffff80080b52fc <__mmdrop>
+ffffff800818def4:      	b	0xffffff800818df08 <do_futex+0xa1c>
+ffffff800818def8:      	mov	w25, #0xbeff    // =48895
+ffffff800818defc:      	brk	#0x800
+ffffff800818df00:      	movk	w25, #0xdead, lsl #16
+ffffff800818df04:      	adrp	x26, 0xffffff800b21e000 <nf_conncount_locks+0x980>
+ffffff800818df08:      	ldr	x0, [sp, #0x48]
+ffffff800818df0c:      	cbz	x0, 0xffffff800818df48 <do_futex+0xa5c>
+ffffff800818df10:      	ldr	w8, [sp, #0x20]
+ffffff800818df14:      	and	w8, w8, #0x3
+ffffff800818df18:      	cmp	w8, #0x2
+ffffff800818df1c:      	b.ne	0xffffff800818df4c <do_futex+0xa60>
+ffffff800818df20:      	add	x8, x0, #0x64
+ffffff800818df24:      	prfm	pstl1strm, [x8]
+ffffff800818df28:      	ldxr	w9, [x8]
+ffffff800818df2c:      	sub	w9, w9, #0x1
+ffffff800818df30:      	stlxr	w10, w9, [x8]
+ffffff800818df34:      	cbnz	w10, 0xffffff800818df28 <do_futex+0xa3c>
+ffffff800818df38:      	dmb	ish
+ffffff800818df3c:      	cbnz	w9, 0xffffff800818df4c <do_futex+0xa60>
+ffffff800818df40:      	bl	0xffffff80080b52fc <__mmdrop>
+ffffff800818df44:      	b	0xffffff800818df4c <do_futex+0xa60>
+ffffff800818df48:      	brk	#0x800
+ffffff800818df4c:      	ldr	w1, [sp, #0x24]
+ffffff800818df50:      	add	x2, sp, #0x48
+ffffff800818df54:      	mov	x0, x19
+ffffff800818df58:      	mov	w3, wzr
+ffffff800818df5c:      	bl	0xffffff80081920ac <get_futex_key>
+ffffff800818df60:      	cbz	w0, 0xffffff800818d698 <do_futex+0x1ac>
+ffffff800818df64:      	mov	w24, w0
+ffffff800818df68:      	sxtw	x0, w24
+ffffff800818df6c:      	b	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818df70:      	mov	w23, #-0x1      // =-1
+ffffff800818df74:      	str	w23, [sp, #0x44]
+ffffff800818df78:      	mov	x0, x19
+ffffff800818df7c:      	mov	w1, w24
+ffffff800818df80:      	mov	w2, w21
+ffffff800818df84:      	mov	x3, x25
+ffffff800818df88:      	mov	w4, w23
+ffffff800818df8c:      	bl	0xffffff800818f084 <futex_wait>
+ffffff800818df90:      	b	0xffffff800818e030 <do_futex+0xb44>
+ffffff800818df94:      	mov	w23, #-0x1      // =-1
+ffffff800818df98:      	str	w23, [sp, #0x44]
+ffffff800818df9c:      	mov	x0, x19
+ffffff800818dfa0:      	mov	w1, w24
+ffffff800818dfa4:      	mov	w2, w21
+ffffff800818dfa8:      	mov	w3, w23
+ffffff800818dfac:      	bl	0xffffff800818f494 <futex_wake>
+ffffff800818dfb0:      	b	0xffffff800818e030 <do_futex+0xb44>
+ffffff800818dfb4:      	cmp	w8, #0x6
+ffffff800818dfb8:      	b.eq	0xffffff800818e06c <do_futex+0xb80>
+ffffff800818dfbc:      	cmp	w8, #0x7
+ffffff800818dfc0:      	b.eq	0xffffff800818e084 <do_futex+0xb98>
+ffffff800818dfc4:      	cmp	w8, #0x8
+ffffff800818dfc8:      	b.ne	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818dfcc:      	mov	x0, x19
+ffffff800818dfd0:      	mov	w1, w24
+ffffff800818dfd4:      	mov	x2, xzr
+ffffff800818dfd8:      	mov	w3, #0x1        // =1
+ffffff800818dfdc:      	b	0xffffff800818e07c <do_futex+0xb90>
+ffffff800818dfe0:      	add	x5, sp, #0x44
+ffffff800818dfe4:      	mov	x0, x19
+ffffff800818dfe8:      	mov	w1, w24
+ffffff800818dfec:      	mov	x2, x22
+ffffff800818dff0:      	mov	w3, w21
+ffffff800818dff4:      	mov	w4, w11
+ffffff800818dff8:      	mov	w6, wzr
+ffffff800818dffc:      	b	0xffffff800818e02c <do_futex+0xb40>
+ffffff800818e000:      	cmp	w8, #0xb
+ffffff800818e004:      	b.eq	0xffffff800818e0bc <do_futex+0xbd0>
+ffffff800818e008:      	cmp	w8, #0xc
+ffffff800818e00c:      	b.ne	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818e010:      	add	x5, sp, #0x44
+ffffff800818e014:      	mov	x0, x19
+ffffff800818e018:      	mov	w1, w24
+ffffff800818e01c:      	mov	x2, x22
+ffffff800818e020:      	mov	w3, w21
+ffffff800818e024:      	mov	w4, w11
+ffffff800818e028:      	mov	w6, #0x1        // =1
+ffffff800818e02c:      	bl	0xffffff800818f824 <futex_requeue>
+ffffff800818e030:      	sxtw	x0, w0
+ffffff800818e034:      	adrp	x9, 0xffffff800b21e000 <nf_conncount_locks+0x980>
+ffffff800818e038:      	ldur	x8, [x29, #-0x10]
+ffffff800818e03c:      	ldr	x9, [x9, #0x688]
+ffffff800818e040:      	cmp	x9, x8
+ffffff800818e044:      	b.ne	0xffffff800818f018 <do_futex+0x1b2c>
+ffffff800818e048:      	ldp	x20, x19, [sp, #0x1d0]
+ffffff800818e04c:      	ldp	x22, x21, [sp, #0x1c0]
+ffffff800818e050:      	ldp	x24, x23, [sp, #0x1b0]
+ffffff800818e054:      	ldp	x26, x25, [sp, #0x1a0]
+ffffff800818e058:      	ldp	x28, x27, [sp, #0x190]
+ffffff800818e05c:      	ldp	x29, x16, [sp, #0x180]
+ffffff800818e060:      	eor	x30, x16, x17
+ffffff800818e064:      	add	sp, sp, #0x1e0
+ffffff800818e068:      	ret
+ffffff800818e06c:      	mov	x0, x19
+ffffff800818e070:      	mov	w1, w24
+ffffff800818e074:      	mov	x2, x25
+ffffff800818e078:      	mov	w3, wzr
+ffffff800818e07c:      	bl	0xffffff8008190944 <futex_lock_pi>
+ffffff800818e080:      	b	0xffffff800818e030 <do_futex+0xb44>
+ffffff800818e084:      	mrs	x20, SP_EL0
+ffffff800818e088:      	mov	x0, x20
+ffffff800818e08c:      	mov	w1, wzr
+ffffff800818e090:      	mov	x2, xzr
+ffffff800818e094:      	bl	0xffffff80080e01ec <__task_pid_nr_ns>
+ffffff800818e098:      	and	w9, w24, #0x1
+ffffff800818e09c:      	lsl	x8, x19, #8
+ffffff800818e0a0:      	mov	w21, w0
+ffffff800818e0a4:      	and	x28, x19, x8, asr #8
+ffffff800818e0a8:      	str	w9, [sp, #0x38]
+ffffff800818e0ac:      	add	x9, sp, #0xc0
+ffffff800818e0b0:      	stp	xzr, xzr, [x9, #0x8]
+ffffff800818e0b4:      	str	xzr, [sp, #0xc0]
+ffffff800818e0b8:      	b	0xffffff800818e19c <do_futex+0xcb0>
+ffffff800818e0bc:      	adrp	x8, 0xffffff8009e0b000 <clock_posix_dynamic>
+ffffff800818e0c0:      	mov	w26, #-0x1      // =-1
+ffffff800818e0c4:      	add	x8, x8, #0x178
+ffffff800818e0c8:      	cmp	x19, x22
+ffffff800818e0cc:      	stp	xzr, xzr, [x28, #0xa0]
+ffffff800818e0d0:      	str	w26, [sp, #0x44]
+ffffff800818e0d4:      	ldp	x9, x11, [x8, #0x50]
+ffffff800818e0d8:      	ldp	x10, x12, [x8, #0x60]
+ffffff800818e0dc:      	str	xzr, [x28, #0x98]
+ffffff800818e0e0:      	stp	x9, x11, [sp, #0x98]
+ffffff800818e0e4:      	stp	x10, x12, [sp, #0xa8]
+ffffff800818e0e8:      	ldp	x9, x12, [x8, #0x30]
+ffffff800818e0ec:      	str	x9, [sp, #0x78]
+ffffff800818e0f0:      	ldp	x10, x9, [x8, #0x40]
+ffffff800818e0f4:      	str	x12, [sp, #0x80]
+ffffff800818e0f8:      	stp	x10, x9, [sp, #0x88]
+ffffff800818e0fc:      	ldp	x10, x11, [x8, #0x10]
+ffffff800818e100:      	str	x10, [sp, #0x58]
+ffffff800818e104:      	ldp	x9, x10, [x8, #0x20]
+ffffff800818e108:      	str	x11, [sp, #0x60]
+ffffff800818e10c:      	stp	x9, x10, [sp, #0x68]
+ffffff800818e110:      	ldp	x9, x8, [x8]
+ffffff800818e114:      	stp	x9, x8, [sp, #0x48]
+ffffff800818e118:      	b.eq	0xffffff800818e668 <do_futex+0x117c>
+ffffff800818e11c:      	cbz	x25, 0xffffff800818e678 <do_futex+0x118c>
+ffffff800818e120:      	lsr	w8, w24, #1
+ffffff800818e124:      	eor	w1, w8, #0x1
+ffffff800818e128:      	sub	x0, x29, #0x70
+ffffff800818e12c:      	mov	w2, wzr
+ffffff800818e130:      	sub	x20, x29, #0x70
+ffffff800818e134:      	bl	0xffffff8008178e44 <hrtimer_init>
+ffffff800818e138:      	mrs	x23, SP_EL0
+ffffff800818e13c:      	sub	x0, x29, #0x70
+ffffff800818e140:      	mov	x1, x23
+ffffff800818e144:      	bl	0xffffff800817982c <hrtimer_init_sleeper>
+ffffff800818e148:      	ldr	x0, [x25]
+ffffff800818e14c:      	ldr	x1, [x23, #0xab0]
+ffffff800818e150:      	str	x0, [x28, #0x70]
+ffffff800818e154:      	bl	0xffffff8008178044 <ktime_add_safe>
+ffffff800818e158:      	str	x0, [x28, #0x68]
+ffffff800818e15c:      	b	0xffffff800818e67c <do_futex+0x1190>
+ffffff800818e160:      	brk	#0x800
+ffffff800818e164:      	ldr	x23, [x20, #0x590]
+ffffff800818e168:      	add	x24, x23, #0x88
+ffffff800818e16c:      	mov	x0, x24
+ffffff800818e170:      	bl	0xffffff8009c16ad4 <down_read>
+ffffff800818e174:      	mov	x0, x20
+ffffff800818e178:      	mov	x1, x23
+ffffff800818e17c:      	mov	x2, x19
+ffffff800818e180:      	mov	w3, #0x1        // =1
+ffffff800818e184:      	mov	x4, xzr
+ffffff800818e188:      	bl	0xffffff800827affc <fixup_user_fault>
+ffffff800818e18c:      	mov	w26, w0
+ffffff800818e190:      	mov	x0, x24
+ffffff800818e194:      	bl	0xffffff80081471a4 <up_read>
+ffffff800818e198:      	tbnz	w26, #0x1f, 0xffffff800818e92c <do_futex+0x1440>
+ffffff800818e19c:      	ldrb	w9, [x20, #0x6e]
+ffffff800818e1a0:      	ldr	x8, [x20, #0x40]
+ffffff800818e1a4:      	tbnz	w9, #0x5, 0xffffff800818e1b4 <do_futex+0xcc8>
+ffffff800818e1a8:      	ldr	x10, [x20]
+ffffff800818e1ac:      	mov	x9, x19
+ffffff800818e1b0:      	tbz	w10, #0x1a, 0xffffff800818e1b8 <do_futex+0xccc>
+ffffff800818e1b4:      	mov	x9, x28
+ffffff800818e1b8:      	adds	x9, x9, #0x4
+ffffff800818e1bc:      	csel	x8, xzr, x8, hi
+ffffff800818e1c0:      	csinv	x9, x9, xzr, lo
+ffffff800818e1c4:      	sbcs	xzr, x9, x8
+ffffff800818e1c8:      	cset	x9, ls
+ffffff800818e1cc:      	cbz	x9, 0xffffff800818e670 <do_futex+0x1184>
+ffffff800818e1d0:      	mov	w9, wzr
+ffffff800818e1d4:      	ldr	x8, [x20, #0x40]
+ffffff800818e1d8:      	bics	xzr, x28, x8
+ffffff800818e1dc:      	csel	x10, x19, xzr, eq
+ffffff800818e1e0:      	csdb
+ffffff800818e1e4:      	nop
+ffffff800818e1e8:      	ldr	w22, [x10]
+ffffff800818e1ec:      	nop
+ffffff800818e1f0:      	cbnz	w9, 0xffffff800818e670 <do_futex+0x1184>
+ffffff800818e1f4:      	and	w8, w22, #0x3fffffff
+ffffff800818e1f8:      	cmp	w8, w21
+ffffff800818e1fc:      	b.ne	0xffffff800818e8bc <do_futex+0x13d0>
+ffffff800818e200:      	ldr	w1, [sp, #0x38]
+ffffff800818e204:      	add	x2, sp, #0xc0
+ffffff800818e208:      	mov	x0, x19
+ffffff800818e20c:      	mov	w3, #0x1        // =1
+ffffff800818e210:      	bl	0xffffff80081920ac <get_futex_key>
+ffffff800818e214:      	cbnz	w0, 0xffffff800818e8cc <do_futex+0x13e0>
+ffffff800818e218:      	ldp	w12, w25, [sp, #0xcc]
+ffffff800818e21c:      	mov	w11, #0xbeff    // =48895
+ffffff800818e220:      	ldp	w8, w10, [sp, #0xc0]
+ffffff800818e224:      	movk	w11, #0xdead, lsl #16
+ffffff800818e228:      	ldr	w9, [sp, #0xc8]
+ffffff800818e22c:      	add	w11, w25, w11
+ffffff800818e230:      	add	w8, w8, w11
+ffffff800818e234:      	add	w10, w10, w11
+ffffff800818e238:      	add	w9, w9, w11
+ffffff800818e23c:      	sub	w8, w8, w9
+ffffff800818e240:      	eor	w8, w8, w9, ror #28
+ffffff800818e244:      	add	w9, w9, w10
+ffffff800818e248:      	sub	w11, w10, w8
+ffffff800818e24c:      	eor	w10, w11, w8, ror #26
+ffffff800818e250:      	add	w8, w8, w9
+ffffff800818e254:      	sub	w11, w9, w10
+ffffff800818e258:      	eor	w9, w11, w10, ror #24
+ffffff800818e25c:      	sub	w11, w8, w9
+ffffff800818e260:      	add	w8, w10, w8
+ffffff800818e264:      	eor	w10, w11, w9, ror #16
+ffffff800818e268:      	add	w9, w9, w8
+ffffff800818e26c:      	sub	w8, w8, w10
+ffffff800818e270:      	eor	w8, w8, w10, ror #13
+ffffff800818e274:      	add	w10, w10, w9
+ffffff800818e278:      	add	w11, w8, w10
+ffffff800818e27c:      	sub	w9, w9, w8
+ffffff800818e280:      	eor	w8, w9, w8, ror #28
+ffffff800818e284:      	add	w10, w10, w12
+ffffff800818e288:      	eor	w8, w8, w11
+ffffff800818e28c:      	ror	w13, w11, #0x12
+ffffff800818e290:      	sub	w8, w8, w13
+ffffff800818e294:      	eor	w10, w8, w10
+ffffff800818e298:      	ror	w9, w8, #0x15
+ffffff800818e29c:      	sub	w9, w10, w9
+ffffff800818e2a0:      	eor	w11, w9, w11
+ffffff800818e2a4:      	ror	w10, w9, #0x7
+ffffff800818e2a8:      	sub	w10, w11, w10
+ffffff800818e2ac:      	eor	w8, w10, w8
+ffffff800818e2b0:      	ror	w11, w10, #0x10
+ffffff800818e2b4:      	sub	w8, w8, w11
+ffffff800818e2b8:      	eor	w9, w8, w9
+ffffff800818e2bc:      	ror	w11, w8, #0x1c
+ffffff800818e2c0:      	sub	w9, w9, w11
+ffffff800818e2c4:      	ror	w11, w9, #0x12
+ffffff800818e2c8:      	eor	w9, w9, w10
+ffffff800818e2cc:      	adrp	x10, 0xffffff800b21e000 <nf_conncount_locks+0x980>
+ffffff800818e2d0:      	sub	w9, w9, w11
+ffffff800818e2d4:      	ldr	w10, [x10, #0x880]
+ffffff800818e2d8:      	eor	w8, w9, w8
+ffffff800818e2dc:      	ror	w11, w9, #0x8
+ffffff800818e2e0:      	adrp	x9, 0xffffff800b21e000 <nf_conncount_locks+0x980>
+ffffff800818e2e4:      	sub	w10, w10, #0x1
+ffffff800818e2e8:      	ldr	x9, [x9, #0x870]
+ffffff800818e2ec:      	sub	w8, w8, w11
+ffffff800818e2f0:      	and	x8, x10, x8
+ffffff800818e2f4:      	add	x24, x9, x8, lsl #6
+ffffff800818e2f8:      	add	x27, x24, #0x8
+ffffff800818e2fc:      	mov	x0, x27
+ffffff800818e300:      	bl	0xffffff8009c196bc <_raw_spin_lock>
+ffffff800818e304:      	ldr	x8, [x24, #0x18]!
+ffffff800818e308:      	cmp	x24, x8
+ffffff800818e30c:      	b.eq	0xffffff800818e494 <do_futex+0xfa8>
+ffffff800818e310:      	add	x9, sp, #0xc0
+ffffff800818e314:      	ldr	x23, [sp, #0xc0]
+ffffff800818e318:      	ldr	x9, [x9, #0x8]
+ffffff800818e31c:      	b	0xffffff800818e32c <do_futex+0xe40>
+ffffff800818e320:      	ldr	x8, [x8]
+ffffff800818e324:      	cmp	x24, x8
+ffffff800818e328:      	b.eq	0xffffff800818e494 <do_futex+0xfa8>
+ffffff800818e32c:      	adds	x10, x8, #0x20
+ffffff800818e330:      	b.eq	0xffffff800818e320 <do_futex+0xe34>
+ffffff800818e334:      	ldr	x11, [x8, #0x28]
+ffffff800818e338:      	cmp	x11, x9
+ffffff800818e33c:      	b.ne	0xffffff800818e320 <do_futex+0xe34>
+ffffff800818e340:      	ldr	x10, [x10]
+ffffff800818e344:      	cmp	x10, x23
+ffffff800818e348:      	b.ne	0xffffff800818e320 <do_futex+0xe34>
+ffffff800818e34c:      	ldr	w10, [x8, #0x30]
+ffffff800818e350:      	cmp	w10, w25
+ffffff800818e354:      	b.ne	0xffffff800818e320 <do_futex+0xe34>
+ffffff800818e358:      	cmp	x8, #0x18
+ffffff800818e35c:      	b.eq	0xffffff800818e494 <do_futex+0xfa8>
+ffffff800818e360:      	ldr	x24, [x8, #0x38]
+ffffff800818e364:      	cbz	x24, 0xffffff800818e994 <do_futex+0x14a8>
+ffffff800818e368:      	ldr	x8, [x24, #0x38]
+ffffff800818e36c:      	cmp	x8, x20
+ffffff800818e370:      	b.ne	0xffffff800818e994 <do_futex+0x14a8>
+ffffff800818e374:      	ldr	w8, [x24, #0x40]
+ffffff800818e378:      	cbz	w8, 0xffffff800818e658 <do_futex+0x116c>
+ffffff800818e37c:      	add	w9, w8, #0x1
+ffffff800818e380:      	add	x10, x24, #0x40
+ffffff800818e384:      	sxtw	x11, w8
+ffffff800818e388:      	sxtw	x9, w9
+ffffff800818e38c:      	prfm	pstl1strm, [x10]
+ffffff800818e390:      	ldxr	w13, [x10]
+ffffff800818e394:      	eor	w12, w13, w11
+ffffff800818e398:      	cbnz	w12, 0xffffff800818e3a8 <do_futex+0xebc>
+ffffff800818e39c:      	stlxr	w12, w9, [x10]
+ffffff800818e3a0:      	cbnz	w12, 0xffffff800818e390 <do_futex+0xea4>
+ffffff800818e3a4:      	dmb	ish
+ffffff800818e3a8:      	cmp	w8, w13
+ffffff800818e3ac:      	mov	w8, w13
+ffffff800818e3b0:      	b.ne	0xffffff800818e378 <do_futex+0xe8c>
+ffffff800818e3b4:      	add	x26, x24, #0x10
+ffffff800818e3b8:      	mov	x0, x26
+ffffff800818e3bc:      	bl	0xffffff8009c197dc <_raw_spin_lock_irq>
+ffffff800818e3c0:      	mov	x0, x27
+ffffff800818e3c4:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800818e3c8:      	mov	w8, #0x1        // =1
+ffffff800818e3cc:      	mov	x0, x26
+ffffff800818e3d0:      	str	wzr, [sp, #0x58]
+ffffff800818e3d4:      	str	x8, [sp, #0x48]
+ffffff800818e3d8:      	add	x8, sp, #0x48
+ffffff800818e3dc:      	str	x8, [sp, #0x50]
+ffffff800818e3e0:      	bl	0xffffff8008148fac <rt_mutex_next_owner>
+ffffff800818e3e4:      	cbz	x0, 0xffffff800818e660 <do_futex+0x1174>
+ffffff800818e3e8:      	mov	w1, wzr
+ffffff800818e3ec:      	mov	x2, xzr
+ffffff800818e3f0:      	mov	x27, x0
+ffffff800818e3f4:      	bl	0xffffff80080e01ec <__task_pid_nr_ns>
+ffffff800818e3f8:      	ldr	w8, [x20, #0xb08]
+ffffff800818e3fc:      	add	w8, w8, #0x1
+ffffff800818e400:      	str	w8, [x20, #0xb08]
+ffffff800818e404:      	ldrb	w9, [x20, #0x6e]
+ffffff800818e408:      	ldr	x8, [x20, #0x40]
+ffffff800818e40c:      	tbnz	w9, #0x5, 0xffffff800818e41c <do_futex+0xf30>
+ffffff800818e410:      	ldr	x10, [x20]
+ffffff800818e414:      	mov	x9, x19
+ffffff800818e418:      	tbz	w10, #0x1a, 0xffffff800818e420 <do_futex+0xf34>
+ffffff800818e41c:      	mov	x9, x28
+ffffff800818e420:      	str	x26, [sp, #0x28]
+ffffff800818e424:      	adds	x9, x9, #0x4
+ffffff800818e428:      	csel	x8, xzr, x8, hi
+ffffff800818e42c:      	csinv	x9, x9, xzr, lo
+ffffff800818e430:      	sbcs	xzr, x9, x8
+ffffff800818e434:      	cset	x9, ls
+ffffff800818e438:      	cbz	x9, 0xffffff800818e5f0 <do_futex+0x1104>
+ffffff800818e43c:      	mov	w26, wzr
+ffffff800818e440:      	ldr	x8, [x20, #0x40]
+ffffff800818e444:      	mov	w10, #0x80      // =128
+ffffff800818e448:      	orr	w9, w0, #0x80000000
+ffffff800818e44c:      	bics	xzr, x28, x8
+ffffff800818e450:      	csel	x11, x19, xzr, eq
+ffffff800818e454:      	csdb
+ffffff800818e458:      	nop
+ffffff800818e45c:      	mov	w13, #-0xe      // =-14
+ffffff800818e460:      	mov	w14, #-0xb      // =-11
+ffffff800818e464:      	prfm	pstl1strm, [x11]
+ffffff800818e468:      	ldxr	w8, [x11]
+ffffff800818e46c:      	sub	w12, w8, w22
+ffffff800818e470:      	cbnz	w12, 0xffffff800818e48c <do_futex+0xfa0>
+ffffff800818e474:      	stlxr	w12, w9, [x11]
+ffffff800818e478:      	cbz	w12, 0xffffff800818e488 <do_futex+0xf9c>
+ffffff800818e47c:      	sub	w10, w10, w12
+ffffff800818e480:      	cbnz	w10, 0xffffff800818e468 <do_futex+0xf7c>
+ffffff800818e484:      	mov	w26, w14
+ffffff800818e488:      	dmb	ish
+ffffff800818e48c:      	nop
+ffffff800818e490:      	b	0xffffff800818e5f8 <do_futex+0x110c>
+ffffff800818e494:      	ldr	w8, [x20, #0xb08]
+ffffff800818e498:      	add	w8, w8, #0x1
+ffffff800818e49c:      	str	w8, [x20, #0xb08]
+ffffff800818e4a0:      	ldrb	w9, [x20, #0x6e]
+ffffff800818e4a4:      	ldr	x8, [x20, #0x40]
+ffffff800818e4a8:      	tbnz	w9, #0x5, 0xffffff800818e4b8 <do_futex+0xfcc>
+ffffff800818e4ac:      	ldr	x10, [x20]
+ffffff800818e4b0:      	mov	x9, x19
+ffffff800818e4b4:      	tbz	w10, #0x1a, 0xffffff800818e4bc <do_futex+0xfd0>
+ffffff800818e4b8:      	mov	x9, x28
+ffffff800818e4bc:      	adds	x9, x9, #0x4
+ffffff800818e4c0:      	csel	x8, xzr, x8, hi
+ffffff800818e4c4:      	csinv	x9, x9, xzr, lo
+ffffff800818e4c8:      	sbcs	xzr, x9, x8
+ffffff800818e4cc:      	cset	x9, ls
+ffffff800818e4d0:      	cbz	x9, 0xffffff800818e538 <do_futex+0x104c>
+ffffff800818e4d4:      	mov	w26, wzr
+ffffff800818e4d8:      	ldr	x8, [x20, #0x40]
+ffffff800818e4dc:      	mov	w9, #0x80       // =128
+ffffff800818e4e0:      	bics	xzr, x28, x8
+ffffff800818e4e4:      	csel	x10, x19, xzr, eq
+ffffff800818e4e8:      	csdb
+ffffff800818e4ec:      	nop
+ffffff800818e4f0:      	mov	w12, #-0xe      // =-14
+ffffff800818e4f4:      	mov	w13, #-0xb      // =-11
+ffffff800818e4f8:      	prfm	pstl1strm, [x10]
+ffffff800818e4fc:      	ldxr	w8, [x10]
+ffffff800818e500:      	sub	w11, w8, w22
+ffffff800818e504:      	cbnz	w11, 0xffffff800818e520 <do_futex+0x1034>
+ffffff800818e508:      	stlxr	w11, w26, [x10]
+ffffff800818e50c:      	cbz	w11, 0xffffff800818e51c <do_futex+0x1030>
+ffffff800818e510:      	sub	w9, w9, w11
+ffffff800818e514:      	cbnz	w9, 0xffffff800818e4fc <do_futex+0x1010>
+ffffff800818e518:      	mov	w26, w13
+ffffff800818e51c:      	dmb	ish
+ffffff800818e520:      	cmp	w26, #0x0
+ffffff800818e524:      	ldr	w9, [sp, #0x30]
+ffffff800818e528:      	csel	w9, w8, w9, eq
+ffffff800818e52c:      	str	w9, [sp, #0x30]
+ffffff800818e530:      	nop
+ffffff800818e534:      	b	0xffffff800818e540 <do_futex+0x1054>
+ffffff800818e538:      	mov	w8, #-0xe       // =-14
+ffffff800818e53c:      	mov	w26, w8
+ffffff800818e540:      	ldr	w8, [x20, #0xb08]
+ffffff800818e544:      	sub	w8, w8, #0x1
+ffffff800818e548:      	str	w8, [x20, #0xb08]
+ffffff800818e54c:      	cbz	w26, 0xffffff800818e8d8 <do_futex+0x13ec>
+ffffff800818e550:      	mov	x0, x27
+ffffff800818e554:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800818e558:      	cmn	w26, #0xb
+ffffff800818e55c:      	b.eq	0xffffff800818e5a8 <do_futex+0x10bc>
+ffffff800818e560:      	cmn	w26, #0xe
+ffffff800818e564:      	b.ne	0xffffff800818e8f4 <do_futex+0x1408>
+ffffff800818e568:      	ldr	x23, [sp, #0xc0]
+ffffff800818e56c:      	cbz	x23, 0xffffff800818e160 <do_futex+0xc74>
+ffffff800818e570:      	and	w8, w25, #0x3
+ffffff800818e574:      	cmp	w8, #0x2
+ffffff800818e578:      	b.ne	0xffffff800818e164 <do_futex+0xc78>
+ffffff800818e57c:      	add	x8, x23, #0x64
+ffffff800818e580:      	prfm	pstl1strm, [x8]
+ffffff800818e584:      	ldxr	w9, [x8]
+ffffff800818e588:      	sub	w9, w9, #0x1
+ffffff800818e58c:      	stlxr	w10, w9, [x8]
+ffffff800818e590:      	cbnz	w10, 0xffffff800818e584 <do_futex+0x1098>
+ffffff800818e594:      	dmb	ish
+ffffff800818e598:      	cbnz	w9, 0xffffff800818e164 <do_futex+0xc78>
+ffffff800818e59c:      	mov	x0, x23
+ffffff800818e5a0:      	bl	0xffffff80080b52fc <__mmdrop>
+ffffff800818e5a4:      	b	0xffffff800818e164 <do_futex+0xc78>
+ffffff800818e5a8:      	ldr	x23, [sp, #0xc0]
+ffffff800818e5ac:      	cbz	x23, 0xffffff800818e5e8 <do_futex+0x10fc>
+ffffff800818e5b0:      	and	w8, w25, #0x3
+ffffff800818e5b4:      	cmp	w8, #0x2
+ffffff800818e5b8:      	b.ne	0xffffff800818e19c <do_futex+0xcb0>
+ffffff800818e5bc:      	add	x8, x23, #0x64
+ffffff800818e5c0:      	prfm	pstl1strm, [x8]
+ffffff800818e5c4:      	ldxr	w9, [x8]
+ffffff800818e5c8:      	sub	w9, w9, #0x1
+ffffff800818e5cc:      	stlxr	w10, w9, [x8]
+ffffff800818e5d0:      	cbnz	w10, 0xffffff800818e5c4 <do_futex+0x10d8>
+ffffff800818e5d4:      	dmb	ish
+ffffff800818e5d8:      	cbnz	w9, 0xffffff800818e19c <do_futex+0xcb0>
+ffffff800818e5dc:      	mov	x0, x23
+ffffff800818e5e0:      	bl	0xffffff80080b52fc <__mmdrop>
+ffffff800818e5e4:      	b	0xffffff800818e19c <do_futex+0xcb0>
+ffffff800818e5e8:      	brk	#0x800
+ffffff800818e5ec:      	b	0xffffff800818e19c <do_futex+0xcb0>
+ffffff800818e5f0:      	mov	w8, #-0xe       // =-14
+ffffff800818e5f4:      	mov	w26, w8
+ffffff800818e5f8:      	ldr	w9, [x20, #0xb08]
+ffffff800818e5fc:      	sub	w9, w9, #0x1
+ffffff800818e600:      	str	w9, [x20, #0xb08]
+ffffff800818e604:      	cbz	w26, 0xffffff800818e62c <do_futex+0x1140>
+ffffff800818e608:      	ldr	x0, [sp, #0x28]
+ffffff800818e60c:      	bl	0xffffff8009c199b4 <_raw_spin_unlock_irq>
+ffffff800818e610:      	mov	x0, x24
+ffffff800818e614:      	bl	0xffffff800818cc04 <put_pi_state>
+ffffff800818e618:      	cmn	w26, #0xe
+ffffff800818e61c:      	b.eq	0xffffff800818e56c <do_futex+0x1080>
+ffffff800818e620:      	cmn	w26, #0xb
+ffffff800818e624:      	b.eq	0xffffff800818e5ac <do_futex+0x10c0>
+ffffff800818e628:      	b	0xffffff800818e8f8 <do_futex+0x140c>
+ffffff800818e62c:      	cmp	w8, w22
+ffffff800818e630:      	b.eq	0xffffff800818eebc <do_futex+0x19d0>
+ffffff800818e634:      	ldr	x26, [sp, #0x28]
+ffffff800818e638:      	and	w8, w8, #0x3fffffff
+ffffff800818e63c:      	cmp	w8, w22
+ffffff800818e640:      	b.ne	0xffffff800818ef64 <do_futex+0x1a78>
+ffffff800818e644:      	mov	x0, x26
+ffffff800818e648:      	bl	0xffffff8009c199b4 <_raw_spin_unlock_irq>
+ffffff800818e64c:      	mov	x0, x24
+ffffff800818e650:      	bl	0xffffff800818cc04 <put_pi_state>
+ffffff800818e654:      	b	0xffffff800818e5ac <do_futex+0x10c0>
+ffffff800818e658:      	brk	#0x800
+ffffff800818e65c:      	b	0xffffff800818e3b4 <do_futex+0xec8>
+ffffff800818e660:      	brk	#0x800
+ffffff800818e664:      	b	0xffffff800818e644 <do_futex+0x1158>
+ffffff800818e668:      	mov	w23, #-0x16     // =-22
+ffffff800818e66c:      	b	0xffffff800818e778 <do_futex+0x128c>
+ffffff800818e670:      	mov	w8, #-0xe       // =-14
+ffffff800818e674:      	b	0xffffff800818e8c0 <do_futex+0x13d4>
+ffffff800818e678:      	mov	x20, xzr
+ffffff800818e67c:      	add	x0, sp, #0xc0
+ffffff800818e680:      	add	x25, sp, #0xc0
+ffffff800818e684:      	bl	0xffffff80081484bc <rt_mutex_init_waiter>
+ffffff800818e688:      	and	w1, w24, #0x1
+ffffff800818e68c:      	sub	x2, x29, #0x28
+ffffff800818e690:      	mov	x0, x22
+ffffff800818e694:      	mov	w3, #0x1        // =1
+ffffff800818e698:      	sub	x27, x29, #0x28
+ffffff800818e69c:      	bl	0xffffff80081920ac <get_futex_key>
+ffffff800818e6a0:      	cbnz	w0, 0xffffff800818eff8 <do_futex+0x1b0c>
+ffffff800818e6a4:      	add	x3, sp, #0x48
+ffffff800818e6a8:      	add	x4, sp, #0xb8
+ffffff800818e6ac:      	mov	x0, x19
+ffffff800818e6b0:      	mov	w1, w21
+ffffff800818e6b4:      	mov	w2, w24
+ffffff800818e6b8:      	str	w26, [sp, #0xb0]
+ffffff800818e6bc:      	stp	x25, x27, [sp, #0xa0]
+ffffff800818e6c0:      	bl	0xffffff800819196c <futex_wait_setup>
+ffffff800818e6c4:      	mov	w23, w0
+ffffff800818e6c8:      	cbz	w0, 0xffffff800818e710 <do_futex+0x1224>
+ffffff800818e6cc:      	ldr	x0, [x28, #0x98]
+ffffff800818e6d0:      	cbz	x0, 0xffffff800818e768 <do_futex+0x127c>
+ffffff800818e6d4:      	ldur	w8, [x29, #-0x18]
+ffffff800818e6d8:      	and	w8, w8, #0x3
+ffffff800818e6dc:      	cmp	w8, #0x2
+ffffff800818e6e0:      	b.ne	0xffffff800818e76c <do_futex+0x1280>
+ffffff800818e6e4:      	add	x8, x0, #0x64
+ffffff800818e6e8:      	prfm	pstl1strm, [x8]
+ffffff800818e6ec:      	ldxr	w9, [x8]
+ffffff800818e6f0:      	sub	w9, w9, #0x1
+ffffff800818e6f4:      	stlxr	w10, w9, [x8]
+ffffff800818e6f8:      	cbnz	w10, 0xffffff800818e6ec <do_futex+0x1200>
+ffffff800818e6fc:      	dmb	ish
+ffffff800818e700:      	cbnz	w9, 0xffffff800818e76c <do_futex+0x1280>
+ffffff800818e704:      	bl	0xffffff80080b52fc <__mmdrop>
+ffffff800818e708:      	cbnz	x20, 0xffffff800818e770 <do_futex+0x1284>
+ffffff800818e70c:      	b	0xffffff800818e778 <do_futex+0x128c>
+ffffff800818e710:      	ldr	x8, [sp, #0x88]
+ffffff800818e714:      	ldr	x9, [x28, #0xa0]
+ffffff800818e718:      	cmp	x8, x9
+ffffff800818e71c:      	b.ne	0xffffff800818e780 <do_futex+0x1294>
+ffffff800818e720:      	ldr	x8, [sp, #0x80]
+ffffff800818e724:      	ldr	x9, [x28, #0x98]
+ffffff800818e728:      	cmp	x8, x9
+ffffff800818e72c:      	b.ne	0xffffff800818e780 <do_futex+0x1294>
+ffffff800818e730:      	ldr	w8, [sp, #0x90]
+ffffff800818e734:      	ldur	w9, [x29, #-0x18]
+ffffff800818e738:      	ldr	x19, [sp, #0xb8]
+ffffff800818e73c:      	cmp	w8, w9
+ffffff800818e740:      	b.ne	0xffffff800818e784 <do_futex+0x1298>
+ffffff800818e744:      	add	x0, x19, #0x8
+ffffff800818e748:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800818e74c:      	prfm	pstl1strm, [x19]
+ffffff800818e750:      	ldxr	w8, [x19]
+ffffff800818e754:      	sub	w8, w8, #0x1
+ffffff800818e758:      	stxr	w9, w8, [x19]
+ffffff800818e75c:      	cbnz	w9, 0xffffff800818e750 <do_futex+0x1264>
+ffffff800818e760:      	mov	w23, #-0x16     // =-22
+ffffff800818e764:      	b	0xffffff800818e94c <do_futex+0x1460>
+ffffff800818e768:      	brk	#0x800
+ffffff800818e76c:      	cbz	x20, 0xffffff800818e778 <do_futex+0x128c>
+ffffff800818e770:      	mov	x0, x20
+ffffff800818e774:      	bl	0xffffff8008178964 <hrtimer_cancel>
+ffffff800818e778:      	sxtw	x0, w23
+ffffff800818e77c:      	b	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818e780:      	ldr	x19, [sp, #0xb8]
+ffffff800818e784:      	add	x1, sp, #0x48
+ffffff800818e788:      	mov	x0, x19
+ffffff800818e78c:      	mov	x2, x20
+ffffff800818e790:      	bl	0xffffff8008191f04 <futex_wait_queue_me>
+ffffff800818e794:      	add	x21, x19, #0x8
+ffffff800818e798:      	mov	x0, x21
+ffffff800818e79c:      	bl	0xffffff8009c196bc <_raw_spin_lock>
+ffffff800818e7a0:      	ldr	x8, [sp, #0x88]
+ffffff800818e7a4:      	ldr	x9, [x28, #0xa0]
+ffffff800818e7a8:      	cmp	x8, x9
+ffffff800818e7ac:      	b.ne	0xffffff800818e864 <do_futex+0x1378>
+ffffff800818e7b0:      	ldr	x8, [sp, #0x80]
+ffffff800818e7b4:      	ldr	x9, [x28, #0x98]
+ffffff800818e7b8:      	cmp	x8, x9
+ffffff800818e7bc:      	b.ne	0xffffff800818e864 <do_futex+0x1378>
+ffffff800818e7c0:      	ldr	w8, [sp, #0x90]
+ffffff800818e7c4:      	ldur	w9, [x29, #-0x18]
+ffffff800818e7c8:      	cmp	w8, w9
+ffffff800818e7cc:      	b.ne	0xffffff800818e864 <do_futex+0x1378>
+ffffff800818e7d0:      	mov	x0, x21
+ffffff800818e7d4:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800818e7d8:      	ldp	x8, x9, [sp, #0x98]
+ffffff800818e7dc:      	cbz	x9, 0xffffff800818e9a0 <do_futex+0x14b4>
+ffffff800818e7e0:      	cbz	x8, 0xffffff800818f038 <do_futex+0x1b4c>
+ffffff800818e7e4:      	add	x19, x8, #0x10
+ffffff800818e7e8:      	add	x2, sp, #0xc0
+ffffff800818e7ec:      	mov	x0, x19
+ffffff800818e7f0:      	mov	x1, x20
+ffffff800818e7f4:      	bl	0xffffff8008148fe4 <rt_mutex_wait_proxy_lock>
+ffffff800818e7f8:      	ldr	x8, [sp, #0x78]
+ffffff800818e7fc:      	mov	w21, w0
+ffffff800818e800:      	mov	x0, x8
+ffffff800818e804:      	bl	0xffffff8009c196bc <_raw_spin_lock>
+ffffff800818e808:      	cbz	w21, 0xffffff800818e820 <do_futex+0x1334>
+ffffff800818e80c:      	add	x1, sp, #0xc0
+ffffff800818e810:      	mov	x0, x19
+ffffff800818e814:      	bl	0xffffff8008149074 <rt_mutex_cleanup_proxy_lock>
+ffffff800818e818:      	tst	w0, #0x1
+ffffff800818e81c:      	csel	w21, w21, wzr, ne
+ffffff800818e820:      	ldr	x8, [sp, #0x98]
+ffffff800818e824:      	cmp	w21, #0x0
+ffffff800818e828:      	cset	w19, eq
+ffffff800818e82c:      	mrs	x23, SP_EL0
+ffffff800818e830:      	ldr	x3, [x8, #0x38]
+ffffff800818e834:      	cbz	w21, 0xffffff800818ede8 <do_futex+0x18fc>
+ffffff800818e838:      	cmp	x3, x23
+ffffff800818e83c:      	b.eq	0xffffff800818ee00 <do_futex+0x1914>
+ffffff800818e840:      	ldr	x2, [x8, #0x30]
+ffffff800818e844:      	and	x8, x2, #0xfffffffffffffffe
+ffffff800818e848:      	cmp	x8, x23
+ffffff800818e84c:      	b.ne	0xffffff800818ee18 <do_futex+0x192c>
+ffffff800818e850:      	adrp	x0, 0xffffff800a5af000 <empty_windows+0x60c0>
+ffffff800818e854:      	mov	w1, wzr
+ffffff800818e858:      	add	x0, x0, #0x5a5
+ffffff800818e85c:      	bl	0xffffff8008150310 <printk>
+ffffff800818e860:      	b	0xffffff800818ee18 <do_futex+0x192c>
+ffffff800818e864:      	ldr	x8, [sp, #0x78]
+ffffff800818e868:      	cmp	x21, x8
+ffffff800818e86c:      	b.eq	0xffffff800818e874 <do_futex+0x1388>
+ffffff800818e870:      	cbnz	x8, 0xffffff800818f004 <do_futex+0x1b18>
+ffffff800818e874:      	add	x1, x19, #0x18
+ffffff800818e878:      	add	x0, sp, #0x48
+ffffff800818e87c:      	bl	0xffffff8009c03ac4 <plist_del>
+ffffff800818e880:      	prfm	pstl1strm, [x19]
+ffffff800818e884:      	ldxr	w8, [x19]
+ffffff800818e888:      	sub	w8, w8, #0x1
+ffffff800818e88c:      	stxr	w9, w8, [x19]
+ffffff800818e890:      	cbnz	w9, 0xffffff800818e884 <do_futex+0x1398>
+ffffff800818e894:      	cbz	x20, 0xffffff800818e8a0 <do_futex+0x13b4>
+ffffff800818e898:      	ldr	x8, [x20, #0x40]
+ffffff800818e89c:      	cbz	x8, 0xffffff800818e940 <do_futex+0x1454>
+ffffff800818e8a0:      	mrs	x8, SP_EL0
+ffffff800818e8a4:      	mov	w9, #-0xb       // =-11
+ffffff800818e8a8:      	ldr	x8, [x8]
+ffffff800818e8ac:      	tst	x8, #0x1
+ffffff800818e8b0:      	mov	w8, #-0x201     // =-513
+ffffff800818e8b4:      	csel	w23, w9, w8, eq
+ffffff800818e8b8:      	b	0xffffff800818e944 <do_futex+0x1458>
+ffffff800818e8bc:      	mov	w8, #-0x1       // =-1
+ffffff800818e8c0:      	mov	w26, w8
+ffffff800818e8c4:      	sxtw	x0, w26
+ffffff800818e8c8:      	b	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818e8cc:      	mov	w26, w0
+ffffff800818e8d0:      	sxtw	x0, w26
+ffffff800818e8d4:      	b	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818e8d8:      	ldr	w8, [sp, #0x30]
+ffffff800818e8dc:      	cmp	w8, w22
+ffffff800818e8e0:      	mov	w8, #-0xb       // =-11
+ffffff800818e8e4:      	csel	w26, wzr, w8, eq
+ffffff800818e8e8:      	mov	x0, x27
+ffffff800818e8ec:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800818e8f0:      	b	0xffffff800818e8f8 <do_futex+0x140c>
+ffffff800818e8f4:      	brk	#0x800
+ffffff800818e8f8:      	ldr	x0, [sp, #0xc0]
+ffffff800818e8fc:      	cbz	x0, 0xffffff800818e934 <do_futex+0x1448>
+ffffff800818e900:      	and	w8, w25, #0x3
+ffffff800818e904:      	cmp	w8, #0x2
+ffffff800818e908:      	b.ne	0xffffff800818e92c <do_futex+0x1440>
+ffffff800818e90c:      	add	x8, x0, #0x64
+ffffff800818e910:      	prfm	pstl1strm, [x8]
+ffffff800818e914:      	ldxr	w9, [x8]
+ffffff800818e918:      	sub	w9, w9, #0x1
+ffffff800818e91c:      	stlxr	w10, w9, [x8]
+ffffff800818e920:      	cbnz	w10, 0xffffff800818e914 <do_futex+0x1428>
+ffffff800818e924:      	dmb	ish
+ffffff800818e928:      	cbz	w9, 0xffffff800818f01c <do_futex+0x1b30>
+ffffff800818e92c:      	sxtw	x0, w26
+ffffff800818e930:      	b	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818e934:      	brk	#0x800
+ffffff800818e938:      	sxtw	x0, w26
+ffffff800818e93c:      	b	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818e940:      	mov	w23, #-0x6e     // =-110
+ffffff800818e944:      	mov	x0, x21
+ffffff800818e948:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800818e94c:      	ldr	x0, [sp, #0x80]
+ffffff800818e950:      	cbz	x0, 0xffffff800818e98c <do_futex+0x14a0>
+ffffff800818e954:      	ldr	w8, [sp, #0x90]
+ffffff800818e958:      	and	w8, w8, #0x3
+ffffff800818e95c:      	cmp	w8, #0x2
+ffffff800818e960:      	b.ne	0xffffff800818e6cc <do_futex+0x11e0>
+ffffff800818e964:      	add	x8, x0, #0x64
+ffffff800818e968:      	prfm	pstl1strm, [x8]
+ffffff800818e96c:      	ldxr	w9, [x8]
+ffffff800818e970:      	sub	w9, w9, #0x1
+ffffff800818e974:      	stlxr	w10, w9, [x8]
+ffffff800818e978:      	cbnz	w10, 0xffffff800818e96c <do_futex+0x1480>
+ffffff800818e97c:      	dmb	ish
+ffffff800818e980:      	cbnz	w9, 0xffffff800818e6cc <do_futex+0x11e0>
+ffffff800818e984:      	bl	0xffffff80080b52fc <__mmdrop>
+ffffff800818e988:      	b	0xffffff800818e6cc <do_futex+0x11e0>
+ffffff800818e98c:      	brk	#0x800
+ffffff800818e990:      	b	0xffffff800818e6cc <do_futex+0x11e0>
+ffffff800818e994:      	mov	w8, #-0x16      // =-22
+ffffff800818e998:      	mov	w26, w8
+ffffff800818e99c:      	b	0xffffff800818e8e8 <do_futex+0x13fc>
+ffffff800818e9a0:      	cbz	x8, 0xffffff800818edf8 <do_futex+0x190c>
+ffffff800818e9a4:      	ldr	x8, [x8, #0x38]
+ffffff800818e9a8:      	mrs	x23, SP_EL0
+ffffff800818e9ac:      	cmp	x8, x23
+ffffff800818e9b0:      	b.eq	0xffffff800818edf8 <do_futex+0x190c>
+ffffff800818e9b4:      	ldr	x0, [sp, #0x78]
+ffffff800818e9b8:      	bl	0xffffff8009c196bc <_raw_spin_lock>
+ffffff800818e9bc:      	add	x1, sp, #0x48
+ffffff800818e9c0:      	mov	x0, x22
+ffffff800818e9c4:      	mov	x2, x23
+ffffff800818e9c8:      	bl	0xffffff8008192f34 <fixup_pi_state_owner>
+ffffff800818e9cc:      	mov	w19, w0
+ffffff800818e9d0:      	cbz	w0, 0xffffff800818e9e8 <do_futex+0x14fc>
+ffffff800818e9d4:      	ldr	x21, [sp, #0x98]
+ffffff800818e9d8:      	ldr	x8, [x21, #0x30]
+ffffff800818e9dc:      	and	x8, x8, #0xfffffffffffffffe
+ffffff800818e9e0:      	cmp	x8, x23
+ffffff800818e9e4:      	b.eq	0xffffff800818ef94 <do_futex+0x1aa8>
+ffffff800818e9e8:      	mov	x21, xzr
+ffffff800818e9ec:      	b	0xffffff800818efd4 <do_futex+0x1ae8>
+ffffff800818e9f0:      	lsl	w9, w23, #20
+ffffff800818e9f4:      	cmp	w8, w9, asr #20
+ffffff800818e9f8:      	cset	w24, eq
+ffffff800818e9fc:      	b	0xffffff800818ea4c <do_futex+0x1560>
+ffffff800818ea00:      	lsl	w9, w23, #20
+ffffff800818ea04:      	cmp	w8, w9, asr #20
+ffffff800818ea08:      	cset	w24, ne
+ffffff800818ea0c:      	b	0xffffff800818ea4c <do_futex+0x1560>
+ffffff800818ea10:      	lsl	w9, w23, #20
+ffffff800818ea14:      	cmp	w8, w9, asr #20
+ffffff800818ea18:      	cset	w24, lt
+ffffff800818ea1c:      	b	0xffffff800818ea4c <do_futex+0x1560>
+ffffff800818ea20:      	lsl	w9, w23, #20
+ffffff800818ea24:      	cmp	w8, w9, asr #20
+ffffff800818ea28:      	cset	w24, le
+ffffff800818ea2c:      	b	0xffffff800818ea4c <do_futex+0x1560>
+ffffff800818ea30:      	lsl	w9, w23, #20
+ffffff800818ea34:      	cmp	w8, w9, asr #20
+ffffff800818ea38:      	cset	w24, gt
+ffffff800818ea3c:      	b	0xffffff800818ea4c <do_futex+0x1560>
+ffffff800818ea40:      	lsl	w9, w23, #20
+ffffff800818ea44:      	cmp	w8, w9, asr #20
+ffffff800818ea48:      	cset	w24, ge
+ffffff800818ea4c:      	str	x26, [sp, #0x10]
+ffffff800818ea50:      	mov	x26, x25
+ffffff800818ea54:      	str	x25, [sp, #0x28]
+ffffff800818ea58:      	ldr	x8, [x26, #0x18]!
+ffffff800818ea5c:      	cmp	x26, x8
+ffffff800818ea60:      	b.eq	0xffffff800818eba4 <do_futex+0x16b8>
+ffffff800818ea64:      	ldr	x9, [x8]
+ffffff800818ea68:      	mov	w23, wzr
+ffffff800818ea6c:      	ldp	x28, x19, [sp, #0x48]
+ffffff800818ea70:      	mov	x25, x8
+ffffff800818ea74:      	b	0xffffff800818ea94 <do_futex+0x15a8>
+ffffff800818ea78:      	add	w23, w23, #0x1
+ffffff800818ea7c:      	cmp	w23, w21
+ffffff800818ea80:      	b.ge	0xffffff800818eba8 <do_futex+0x16bc>
+ffffff800818ea84:      	ldr	x9, [x25]
+ffffff800818ea88:      	mov	x8, x25
+ffffff800818ea8c:      	cmp	x26, x25
+ffffff800818ea90:      	b.eq	0xffffff800818eba8 <do_futex+0x16bc>
+ffffff800818ea94:      	mov	x27, x25
+ffffff800818ea98:      	mov	x25, x9
+ffffff800818ea9c:      	adds	x9, x27, #0x20
+ffffff800818eaa0:      	b.eq	0xffffff800818ea84 <do_futex+0x1598>
+ffffff800818eaa4:      	ldr	x10, [x27, #0x28]
+ffffff800818eaa8:      	cmp	x10, x19
+ffffff800818eaac:      	b.ne	0xffffff800818ea84 <do_futex+0x1598>
+ffffff800818eab0:      	ldr	x9, [x9]
+ffffff800818eab4:      	cmp	x9, x28
+ffffff800818eab8:      	b.ne	0xffffff800818ea84 <do_futex+0x1598>
+ffffff800818eabc:      	ldr	w9, [x27, #0x30]
+ffffff800818eac0:      	ldr	w10, [sp, #0x20]
+ffffff800818eac4:      	cmp	w9, w10
+ffffff800818eac8:      	b.ne	0xffffff800818ea84 <do_futex+0x1598>
+ffffff800818eacc:      	ldr	x9, [x27, #0x38]
+ffffff800818ead0:      	cbnz	x9, 0xffffff800818eddc <do_futex+0x18f0>
+ffffff800818ead4:      	ldr	x9, [x27, #0x40]
+ffffff800818ead8:      	cbnz	x9, 0xffffff800818eddc <do_futex+0x18f0>
+ffffff800818eadc:      	ldr	x22, [x27, #0x10]
+ffffff800818eae0:      	add	x9, x22, #0x68
+ffffff800818eae4:      	prfm	pstl1strm, [x9]
+ffffff800818eae8:      	ldxr	w10, [x9]
+ffffff800818eaec:      	add	w10, w10, #0x1
+ffffff800818eaf0:      	stxr	w11, w10, [x9]
+ffffff800818eaf4:      	cbnz	w11, 0xffffff800818eae8 <do_futex+0x15fc>
+ffffff800818eaf8:      	ldr	x9, [x27, #0x18]
+ffffff800818eafc:      	cbz	x9, 0xffffff800818eb7c <do_futex+0x1690>
+ffffff800818eb00:      	ldr	w10, [x9]
+ffffff800818eb04:      	cbz	w10, 0xffffff800818eb7c <do_futex+0x1690>
+ffffff800818eb08:      	ldr	x10, [x27]
+ffffff800818eb0c:      	cmp	x8, x10
+ffffff800818eb10:      	b.eq	0xffffff800818eb90 <do_futex+0x16a4>
+ffffff800818eb14:      	sub	x0, x27, #0x18
+ffffff800818eb18:      	add	x1, x9, #0x10
+ffffff800818eb1c:      	sub	x20, x9, #0x8
+ffffff800818eb20:      	bl	0xffffff8009c03ac4 <plist_del>
+ffffff800818eb24:      	prfm	pstl1strm, [x20]
+ffffff800818eb28:      	ldxr	w8, [x20]
+ffffff800818eb2c:      	sub	w8, w8, #0x1
+ffffff800818eb30:      	stxr	w9, w8, [x20]
+ffffff800818eb34:      	cbnz	w9, 0xffffff800818eb28 <do_futex+0x163c>
+ffffff800818eb38:      	sub	x0, x29, #0x70
+ffffff800818eb3c:      	mov	x1, x22
+ffffff800818eb40:      	mov	x8, xzr
+ffffff800818eb44:      	add	x9, x27, #0x18
+ffffff800818eb48:      	stlr	x8, [x9]
+ffffff800818eb4c:      	bl	0xffffff80080f5f14 <wake_q_add>
+ffffff800818eb50:      	add	x8, x22, #0x68
+ffffff800818eb54:      	prfm	pstl1strm, [x8]
+ffffff800818eb58:      	ldxr	w9, [x8]
+ffffff800818eb5c:      	sub	w9, w9, #0x1
+ffffff800818eb60:      	stlxr	w10, w9, [x8]
+ffffff800818eb64:      	cbnz	w10, 0xffffff800818eb58 <do_futex+0x166c>
+ffffff800818eb68:      	dmb	ish
+ffffff800818eb6c:      	cbnz	w9, 0xffffff800818ea78 <do_futex+0x158c>
+ffffff800818eb70:      	mov	x0, x22
+ffffff800818eb74:      	bl	0xffffff80080b542c <__put_task_struct>
+ffffff800818eb78:      	b	0xffffff800818ea78 <do_futex+0x158c>
+ffffff800818eb7c:      	adrp	x0, 0xffffff800a59e000 <rtic_mp+0x29e000>
+ffffff800818eb80:      	add	x0, x0, #0xeb4
+ffffff800818eb84:      	bl	0xffffff8008150310 <printk>
+ffffff800818eb88:      	brk	#0x800
+ffffff800818eb8c:      	b	0xffffff800818eb38 <do_futex+0x164c>
+ffffff800818eb90:      	adrp	x0, 0xffffff800a59e000 <rtic_mp+0x29e000>
+ffffff800818eb94:      	add	x0, x0, #0xeb4
+ffffff800818eb98:      	bl	0xffffff8008150310 <printk>
+ffffff800818eb9c:      	brk	#0x800
+ffffff800818eba0:      	b	0xffffff800818eb38 <do_futex+0x164c>
+ffffff800818eba4:      	mov	w23, wzr
+ffffff800818eba8:      	ldr	x19, [sp, #0x30]
+ffffff800818ebac:      	cmp	w24, #0x1
+ffffff800818ebb0:      	b.lt	0xffffff800818ed14 <do_futex+0x1828>
+ffffff800818ebb4:      	ldr	x22, [sp, #0x10]
+ffffff800818ebb8:      	ldr	x8, [x22, #0x18]!
+ffffff800818ebbc:      	cmp	x22, x8
+ffffff800818ebc0:      	b.eq	0xffffff800818ed1c <do_futex+0x1830>
+ffffff800818ebc4:      	add	x10, sp, #0xc0
+ffffff800818ebc8:      	ldr	x9, [x8]
+ffffff800818ebcc:      	ldr	x27, [sp, #0xc0]
+ffffff800818ebd0:      	mov	w26, wzr
+ffffff800818ebd4:      	mov	w24, #-0x16     // =-22
+ffffff800818ebd8:      	mov	x19, x8
+ffffff800818ebdc:      	ldr	x28, [x10, #0x8]
+ffffff800818ebe0:      	b	0xffffff800818ec04 <do_futex+0x1718>
+ffffff800818ebe4:      	ldr	w8, [sp, #0xc]
+ffffff800818ebe8:      	add	w26, w26, #0x1
+ffffff800818ebec:      	cmp	w26, w8
+ffffff800818ebf0:      	b.ge	0xffffff800818ed20 <do_futex+0x1834>
+ffffff800818ebf4:      	ldr	x9, [x19]
+ffffff800818ebf8:      	mov	x8, x19
+ffffff800818ebfc:      	cmp	x22, x19
+ffffff800818ec00:      	b.eq	0xffffff800818ed20 <do_futex+0x1834>
+ffffff800818ec04:      	mov	x25, x19
+ffffff800818ec08:      	mov	x19, x9
+ffffff800818ec0c:      	adds	x9, x25, #0x20
+ffffff800818ec10:      	b.eq	0xffffff800818ebf4 <do_futex+0x1708>
+ffffff800818ec14:      	ldr	x10, [x25, #0x28]
+ffffff800818ec18:      	cmp	x10, x28
+ffffff800818ec1c:      	b.ne	0xffffff800818ebf4 <do_futex+0x1708>
+ffffff800818ec20:      	ldr	x9, [x9]
+ffffff800818ec24:      	cmp	x9, x27
+ffffff800818ec28:      	b.ne	0xffffff800818ebf4 <do_futex+0x1708>
+ffffff800818ec2c:      	ldr	w9, [x25, #0x30]
+ffffff800818ec30:      	ldr	w10, [sp, #0x1c]
+ffffff800818ec34:      	cmp	w9, w10
+ffffff800818ec38:      	b.ne	0xffffff800818ebf4 <do_futex+0x1708>
+ffffff800818ec3c:      	ldr	x9, [x25, #0x38]
+ffffff800818ec40:      	cbnz	x9, 0xffffff800818ed24 <do_futex+0x1838>
+ffffff800818ec44:      	ldr	x9, [x25, #0x40]
+ffffff800818ec48:      	cbnz	x9, 0xffffff800818ed24 <do_futex+0x1838>
+ffffff800818ec4c:      	ldr	x21, [x25, #0x10]
+ffffff800818ec50:      	add	x9, x21, #0x68
+ffffff800818ec54:      	prfm	pstl1strm, [x9]
+ffffff800818ec58:      	ldxr	w10, [x9]
+ffffff800818ec5c:      	add	w10, w10, #0x1
+ffffff800818ec60:      	stxr	w11, w10, [x9]
+ffffff800818ec64:      	cbnz	w11, 0xffffff800818ec58 <do_futex+0x176c>
+ffffff800818ec68:      	ldr	x9, [x25, #0x18]
+ffffff800818ec6c:      	cbz	x9, 0xffffff800818ecec <do_futex+0x1800>
+ffffff800818ec70:      	ldr	w10, [x9]
+ffffff800818ec74:      	cbz	w10, 0xffffff800818ecec <do_futex+0x1800>
+ffffff800818ec78:      	ldr	x10, [x25]
+ffffff800818ec7c:      	cmp	x8, x10
+ffffff800818ec80:      	b.eq	0xffffff800818ed00 <do_futex+0x1814>
+ffffff800818ec84:      	sub	x0, x25, #0x18
+ffffff800818ec88:      	add	x1, x9, #0x10
+ffffff800818ec8c:      	sub	x20, x9, #0x8
+ffffff800818ec90:      	bl	0xffffff8009c03ac4 <plist_del>
+ffffff800818ec94:      	prfm	pstl1strm, [x20]
+ffffff800818ec98:      	ldxr	w8, [x20]
+ffffff800818ec9c:      	sub	w8, w8, #0x1
+ffffff800818eca0:      	stxr	w9, w8, [x20]
+ffffff800818eca4:      	cbnz	w9, 0xffffff800818ec98 <do_futex+0x17ac>
+ffffff800818eca8:      	sub	x0, x29, #0x70
+ffffff800818ecac:      	mov	x1, x21
+ffffff800818ecb0:      	mov	x8, xzr
+ffffff800818ecb4:      	add	x9, x25, #0x18
+ffffff800818ecb8:      	stlr	x8, [x9]
+ffffff800818ecbc:      	bl	0xffffff80080f5f14 <wake_q_add>
+ffffff800818ecc0:      	add	x8, x21, #0x68
+ffffff800818ecc4:      	prfm	pstl1strm, [x8]
+ffffff800818ecc8:      	ldxr	w9, [x8]
+ffffff800818eccc:      	sub	w9, w9, #0x1
+ffffff800818ecd0:      	stlxr	w10, w9, [x8]
+ffffff800818ecd4:      	cbnz	w10, 0xffffff800818ecc8 <do_futex+0x17dc>
+ffffff800818ecd8:      	dmb	ish
+ffffff800818ecdc:      	cbnz	w9, 0xffffff800818ebe4 <do_futex+0x16f8>
+ffffff800818ece0:      	mov	x0, x21
+ffffff800818ece4:      	bl	0xffffff80080b542c <__put_task_struct>
+ffffff800818ece8:      	b	0xffffff800818ebe4 <do_futex+0x16f8>
+ffffff800818ecec:      	adrp	x0, 0xffffff800a59e000 <rtic_mp+0x29e000>
+ffffff800818ecf0:      	add	x0, x0, #0xeb4
+ffffff800818ecf4:      	bl	0xffffff8008150310 <printk>
+ffffff800818ecf8:      	brk	#0x800
+ffffff800818ecfc:      	b	0xffffff800818eca8 <do_futex+0x17bc>
+ffffff800818ed00:      	adrp	x0, 0xffffff800a59e000 <rtic_mp+0x29e000>
+ffffff800818ed04:      	add	x0, x0, #0xeb4
+ffffff800818ed08:      	bl	0xffffff8008150310 <printk>
+ffffff800818ed0c:      	brk	#0x800
+ffffff800818ed10:      	b	0xffffff800818eca8 <do_futex+0x17bc>
+ffffff800818ed14:      	mov	w24, w23
+ffffff800818ed18:      	b	0xffffff800818ed28 <do_futex+0x183c>
+ffffff800818ed1c:      	mov	w26, wzr
+ffffff800818ed20:      	add	w24, w26, w23
+ffffff800818ed24:      	ldr	x19, [sp, #0x30]
+ffffff800818ed28:      	ldr	x0, [sp, #0x38]
+ffffff800818ed2c:      	ldr	x20, [sp, #0x10]
+ffffff800818ed30:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800818ed34:      	ldr	x8, [sp, #0x28]
+ffffff800818ed38:      	cmp	x8, x20
+ffffff800818ed3c:      	b.eq	0xffffff800818ed48 <do_futex+0x185c>
+ffffff800818ed40:      	mov	x0, x19
+ffffff800818ed44:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800818ed48:      	sub	x0, x29, #0x70
+ffffff800818ed4c:      	bl	0xffffff80080f5f7c <wake_up_q>
+ffffff800818ed50:      	ldr	x0, [sp, #0xc0]
+ffffff800818ed54:      	cbz	x0, 0xffffff800818ed98 <do_futex+0x18ac>
+ffffff800818ed58:      	ldr	w8, [sp, #0x1c]
+ffffff800818ed5c:      	and	w8, w8, #0x3
+ffffff800818ed60:      	cmp	w8, #0x2
+ffffff800818ed64:      	b.ne	0xffffff800818ed9c <do_futex+0x18b0>
+ffffff800818ed68:      	add	x8, x0, #0x64
+ffffff800818ed6c:      	prfm	pstl1strm, [x8]
+ffffff800818ed70:      	ldxr	w9, [x8]
+ffffff800818ed74:      	sub	w9, w9, #0x1
+ffffff800818ed78:      	stlxr	w10, w9, [x8]
+ffffff800818ed7c:      	cbnz	w10, 0xffffff800818ed70 <do_futex+0x1884>
+ffffff800818ed80:      	dmb	ish
+ffffff800818ed84:      	cbnz	w9, 0xffffff800818ed9c <do_futex+0x18b0>
+ffffff800818ed88:      	bl	0xffffff80080b52fc <__mmdrop>
+ffffff800818ed8c:      	ldr	x0, [sp, #0x48]
+ffffff800818ed90:      	cbnz	x0, 0xffffff800818eda4 <do_futex+0x18b8>
+ffffff800818ed94:      	b	0xffffff800818ef88 <do_futex+0x1a9c>
+ffffff800818ed98:      	brk	#0x800
+ffffff800818ed9c:      	ldr	x0, [sp, #0x48]
+ffffff800818eda0:      	cbz	x0, 0xffffff800818ef88 <do_futex+0x1a9c>
+ffffff800818eda4:      	ldr	w8, [sp, #0x58]
+ffffff800818eda8:      	and	w8, w8, #0x3
+ffffff800818edac:      	cmp	w8, #0x2
+ffffff800818edb0:      	b.ne	0xffffff800818edd4 <do_futex+0x18e8>
+ffffff800818edb4:      	add	x8, x0, #0x64
+ffffff800818edb8:      	prfm	pstl1strm, [x8]
+ffffff800818edbc:      	ldxr	w9, [x8]
+ffffff800818edc0:      	sub	w9, w9, #0x1
+ffffff800818edc4:      	stlxr	w10, w9, [x8]
+ffffff800818edc8:      	cbnz	w10, 0xffffff800818edbc <do_futex+0x18d0>
+ffffff800818edcc:      	dmb	ish
+ffffff800818edd0:      	cbz	w9, 0xffffff800818eff0 <do_futex+0x1b04>
+ffffff800818edd4:      	sxtw	x0, w24
+ffffff800818edd8:      	b	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818eddc:      	mov	w8, #-0x16      // =-22
+ffffff800818ede0:      	mov	w24, w8
+ffffff800818ede4:      	b	0xffffff800818ed24 <do_futex+0x1838>
+ffffff800818ede8:      	cmp	x3, x23
+ffffff800818edec:      	b.eq	0xffffff800818ee18 <do_futex+0x192c>
+ffffff800818edf0:      	mov	x2, x23
+ffffff800818edf4:      	b	0xffffff800818ee04 <do_futex+0x1918>
+ffffff800818edf8:      	mov	w23, wzr
+ffffff800818edfc:      	b	0xffffff800818e94c <do_futex+0x1460>
+ffffff800818ee00:      	mov	x2, xzr
+ffffff800818ee04:      	add	x1, sp, #0x48
+ffffff800818ee08:      	mov	x0, x22
+ffffff800818ee0c:      	bl	0xffffff8008192f34 <fixup_pi_state_owner>
+ffffff800818ee10:      	cmp	w0, #0x0
+ffffff800818ee14:      	csel	w19, w19, w0, eq
+ffffff800818ee18:      	cbz	w19, 0xffffff800818ee28 <do_futex+0x193c>
+ffffff800818ee1c:      	tbnz	w19, #0x1f, 0xffffff800818ee30 <do_futex+0x1944>
+ffffff800818ee20:      	mov	w19, wzr
+ffffff800818ee24:      	b	0xffffff800818ee44 <do_futex+0x1958>
+ffffff800818ee28:      	mov	w19, w21
+ffffff800818ee2c:      	cbz	w21, 0xffffff800818ee44 <do_futex+0x1958>
+ffffff800818ee30:      	ldr	x21, [sp, #0x98]
+ffffff800818ee34:      	ldr	x8, [x21, #0x30]
+ffffff800818ee38:      	and	x8, x8, #0xfffffffffffffffe
+ffffff800818ee3c:      	cmp	x8, x23
+ffffff800818ee40:      	b.eq	0xffffff800818ee74 <do_futex+0x1988>
+ffffff800818ee44:      	mov	x21, xzr
+ffffff800818ee48:      	add	x0, sp, #0x48
+ffffff800818ee4c:      	bl	0xffffff8008192e84 <unqueue_me_pi>
+ffffff800818ee50:      	cbz	x21, 0xffffff800818ee64 <do_futex+0x1978>
+ffffff800818ee54:      	add	x0, x21, #0x10
+ffffff800818ee58:      	bl	0xffffff8009c17244 <rt_mutex_futex_unlock>
+ffffff800818ee5c:      	mov	x0, x21
+ffffff800818ee60:      	bl	0xffffff800818cc04 <put_pi_state>
+ffffff800818ee64:      	cmn	w19, #0x4
+ffffff800818ee68:      	mov	w8, #-0xb       // =-11
+ffffff800818ee6c:      	csel	w23, w8, w19, eq
+ffffff800818ee70:      	b	0xffffff800818e94c <do_futex+0x1460>
+ffffff800818ee74:      	ldr	w8, [x21, #0x40]
+ffffff800818ee78:      	cbz	w8, 0xffffff800818f028 <do_futex+0x1b3c>
+ffffff800818ee7c:      	add	w9, w8, #0x1
+ffffff800818ee80:      	add	x10, x21, #0x40
+ffffff800818ee84:      	sxtw	x11, w8
+ffffff800818ee88:      	sxtw	x9, w9
+ffffff800818ee8c:      	prfm	pstl1strm, [x10]
+ffffff800818ee90:      	ldxr	w13, [x10]
+ffffff800818ee94:      	eor	w12, w13, w11
+ffffff800818ee98:      	cbnz	w12, 0xffffff800818eea8 <do_futex+0x19bc>
+ffffff800818ee9c:      	stlxr	w12, w9, [x10]
+ffffff800818eea0:      	cbnz	w12, 0xffffff800818ee90 <do_futex+0x19a4>
+ffffff800818eea4:      	dmb	ish
+ffffff800818eea8:      	cmp	w8, w13
+ffffff800818eeac:      	mov	w8, w13
+ffffff800818eeb0:      	b.ne	0xffffff800818ee78 <do_futex+0x198c>
+ffffff800818eeb4:      	add	x28, sp, #0xc0
+ffffff800818eeb8:      	b	0xffffff800818ee48 <do_futex+0x195c>
+ffffff800818eebc:      	ldr	x8, [x24, #0x38]
+ffffff800818eec0:      	add	x0, x8, #0x8c8
+ffffff800818eec4:      	bl	0xffffff8009c196bc <_raw_spin_lock>
+ffffff800818eec8:      	ldr	x8, [x24]
+ffffff800818eecc:      	cmp	x24, x8
+ffffff800818eed0:      	b.eq	0xffffff800818f050 <do_futex+0x1b64>
+ffffff800818eed4:      	ldr	x9, [x24, #0x8]
+ffffff800818eed8:      	str	x9, [x8, #0x8]
+ffffff800818eedc:      	str	x8, [x9]
+ffffff800818eee0:      	str	x24, [x24]
+ffffff800818eee4:      	ldr	x8, [x24, #0x38]
+ffffff800818eee8:      	str	x24, [x24, #0x8]
+ffffff800818eeec:      	add	x0, x8, #0x8c8
+ffffff800818eef0:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800818eef4:      	add	x19, x27, #0x8c8
+ffffff800818eef8:      	mov	x0, x19
+ffffff800818eefc:      	bl	0xffffff8009c196bc <_raw_spin_lock>
+ffffff800818ef00:      	ldr	x8, [x24]
+ffffff800818ef04:      	cmp	x24, x8
+ffffff800818ef08:      	b.ne	0xffffff800818f068 <do_futex+0x1b7c>
+ffffff800818ef0c:      	ldr	x8, [x27, #0x9e8]
+ffffff800818ef10:      	add	x9, x27, #0x9e8
+ffffff800818ef14:      	mov	x0, x19
+ffffff800818ef18:      	str	x24, [x8, #0x8]
+ffffff800818ef1c:      	stp	x8, x9, [x24]
+ffffff800818ef20:      	str	x24, [x27, #0x9e8]
+ffffff800818ef24:      	str	x27, [x24, #0x38]
+ffffff800818ef28:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800818ef2c:      	ldr	x20, [sp, #0x28]
+ffffff800818ef30:      	add	x1, sp, #0x48
+ffffff800818ef34:      	mov	x0, x20
+ffffff800818ef38:      	bl	0xffffff8009c171f4 <__rt_mutex_futex_unlock>
+ffffff800818ef3c:      	mov	w19, w0
+ffffff800818ef40:      	mov	x0, x20
+ffffff800818ef44:      	bl	0xffffff8009c199b4 <_raw_spin_unlock_irq>
+ffffff800818ef48:      	tbz	w19, #0x0, 0xffffff800818ef54 <do_futex+0x1a68>
+ffffff800818ef4c:      	add	x0, sp, #0x48
+ffffff800818ef50:      	bl	0xffffff80081484d4 <rt_mutex_postunlock>
+ffffff800818ef54:      	mov	x0, x24
+ffffff800818ef58:      	bl	0xffffff800818cc04 <put_pi_state>
+ffffff800818ef5c:      	mov	w26, wzr
+ffffff800818ef60:      	b	0xffffff800818e8f8 <do_futex+0x140c>
+ffffff800818ef64:      	mov	x0, x26
+ffffff800818ef68:      	bl	0xffffff8009c199b4 <_raw_spin_unlock_irq>
+ffffff800818ef6c:      	mov	x0, x24
+ffffff800818ef70:      	bl	0xffffff800818cc04 <put_pi_state>
+ffffff800818ef74:      	mov	w26, #-0x16     // =-22
+ffffff800818ef78:      	b	0xffffff800818e8f8 <do_futex+0x140c>
+ffffff800818ef7c:      	mov	w24, w0
+ffffff800818ef80:      	ldr	x0, [sp, #0x48]
+ffffff800818ef84:      	cbnz	x0, 0xffffff800818eda4 <do_futex+0x18b8>
+ffffff800818ef88:      	brk	#0x800
+ffffff800818ef8c:      	sxtw	x0, w24
+ffffff800818ef90:      	b	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818ef94:      	ldr	w8, [x21, #0x40]
+ffffff800818ef98:      	cbz	w8, 0xffffff800818f030 <do_futex+0x1b44>
+ffffff800818ef9c:      	add	w9, w8, #0x1
+ffffff800818efa0:      	add	x10, x21, #0x40
+ffffff800818efa4:      	sxtw	x11, w8
+ffffff800818efa8:      	sxtw	x9, w9
+ffffff800818efac:      	prfm	pstl1strm, [x10]
+ffffff800818efb0:      	ldxr	w13, [x10]
+ffffff800818efb4:      	eor	w12, w13, w11
+ffffff800818efb8:      	cbnz	w12, 0xffffff800818efc8 <do_futex+0x1adc>
+ffffff800818efbc:      	stlxr	w12, w9, [x10]
+ffffff800818efc0:      	cbnz	w12, 0xffffff800818efb0 <do_futex+0x1ac4>
+ffffff800818efc4:      	dmb	ish
+ffffff800818efc8:      	cmp	w8, w13
+ffffff800818efcc:      	mov	w8, w13
+ffffff800818efd0:      	b.ne	0xffffff800818ef98 <do_futex+0x1aac>
+ffffff800818efd4:      	ldr	x0, [sp, #0x98]
+ffffff800818efd8:      	bl	0xffffff800818cc04 <put_pi_state>
+ffffff800818efdc:      	ldr	x0, [sp, #0x78]
+ffffff800818efe0:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800818efe4:      	add	x28, sp, #0xc0
+ffffff800818efe8:      	cbnz	x21, 0xffffff800818ee54 <do_futex+0x1968>
+ffffff800818efec:      	b	0xffffff800818ee64 <do_futex+0x1978>
+ffffff800818eff0:      	bl	0xffffff80080b52fc <__mmdrop>
+ffffff800818eff4:      	b	0xffffff800818edd4 <do_futex+0x18e8>
+ffffff800818eff8:      	mov	w23, w0
+ffffff800818effc:      	cbnz	x20, 0xffffff800818e770 <do_futex+0x1284>
+ffffff800818f000:      	b	0xffffff800818e778 <do_futex+0x128c>
+ffffff800818f004:      	adrp	x0, 0xffffff800a59e000 <rtic_mp+0x29e000>
+ffffff800818f008:      	add	x0, x0, #0xeb4
+ffffff800818f00c:      	bl	0xffffff8008150310 <printk>
+ffffff800818f010:      	brk	#0x800
+ffffff800818f014:      	b	0xffffff800818e874 <do_futex+0x1388>
+ffffff800818f018:      	bl	0xffffff80080b94e4 <__stack_chk_fail>
+ffffff800818f01c:      	bl	0xffffff80080b52fc <__mmdrop>
+ffffff800818f020:      	sxtw	x0, w26
+ffffff800818f024:      	b	0xffffff800818e034 <do_futex+0xb48>
+ffffff800818f028:      	brk	#0x800
+ffffff800818f02c:      	b	0xffffff800818eeb4 <do_futex+0x19c8>
+ffffff800818f030:      	brk	#0x800
+ffffff800818f034:      	b	0xffffff800818efd4 <do_futex+0x1ae8>
+ffffff800818f038:      	adrp	x0, 0xffffff800a59e000 <rtic_mp+0x29e000>
+ffffff800818f03c:      	add	x0, x0, #0xeb4
+ffffff800818f040:      	bl	0xffffff8008150310 <printk>
+ffffff800818f044:      	brk	#0x800
+ffffff800818f048:      	ldr	x8, [sp, #0x98]
+ffffff800818f04c:      	b	0xffffff800818e7e4 <do_futex+0x12f8>
+ffffff800818f050:      	adrp	x0, 0xffffff800a59e000 <rtic_mp+0x29e000>
+ffffff800818f054:      	add	x0, x0, #0xeb4
+ffffff800818f058:      	bl	0xffffff8008150310 <printk>
+ffffff800818f05c:      	brk	#0x800
+ffffff800818f060:      	ldr	x8, [x24]
+ffffff800818f064:      	b	0xffffff800818eed4 <do_futex+0x19e8>
+ffffff800818f068:      	adrp	x0, 0xffffff800a59e000 <rtic_mp+0x29e000>
+ffffff800818f06c:      	add	x0, x0, #0xeb4
+ffffff800818f070:      	bl	0xffffff8008150310 <printk>
+ffffff800818f074:      	brk	#0x800
+ffffff800818f078:      	b	0xffffff800818ef0c <do_futex+0x1a20>
+ffffff800818f07c:      	nop
+ffffff800818f080:      	<unknown>
+
+===================================================================
+### __arm64_sys_sendmsg
+===================================================================
+ffffff8009917cd4 <__arm64_sys_sendmsg>:
+ffffff8009917cd4:      	sub	sp, sp, #0x90
+ffffff8009917cd8:      	eor	x16, x30, x17
+ffffff8009917cdc:      	stp	x29, x16, [sp, #0x60]
+ffffff8009917ce0:      	add	x29, sp, #0x60
+ffffff8009917ce4:      	stp	x22, x21, [sp, #0x70]
+ffffff8009917ce8:      	stp	x20, x19, [sp, #0x80]
+ffffff8009917cec:      	adrp	x8, 0xffffff800b21e000 <nf_conncount_locks+0x980>
+ffffff8009917cf0:      	ldr	x8, [x8, #0x688]
+ffffff8009917cf4:      	stur	x8, [x29, #-0x8]
+ffffff8009917cf8:      	ldr	w20, [x0, #0x10]
+ffffff8009917cfc:      	tbnz	w20, #0x1f, 0xffffff8009917d38 <__arm64_sys_sendmsg+0x64>
+ffffff8009917d00:      	ldp	x8, x21, [x0]
+ffffff8009917d04:      	mov	w0, w8
+ffffff8009917d08:      	bl	0xffffff80082f544c <__fdget>
+ffffff8009917d0c:      	mov	x19, x0
+ffffff8009917d10:      	ands	x0, x0, #0xfffffffffffffffc
+ffffff8009917d14:      	b.eq	0xffffff8009917d40 <__arm64_sys_sendmsg+0x6c>
+ffffff8009917d18:      	ldr	x8, [x0, #0x28]
+ffffff8009917d1c:      	adrp	x9, 0xffffff800a1ef000 <clk_ops_shadow_vco_7nm+0x30>
+ffffff8009917d20:      	add	x9, x9, #0x680
+ffffff8009917d24:      	cmp	x8, x9
+ffffff8009917d28:      	b.eq	0xffffff8009917d48 <__arm64_sys_sendmsg+0x74>
+ffffff8009917d2c:      	mov	w20, #-0x58     // =-88
+ffffff8009917d30:      	tbnz	w19, #0x0, 0xffffff8009917d7c <__arm64_sys_sendmsg+0xa8>
+ffffff8009917d34:      	b	0xffffff8009917d80 <__arm64_sys_sendmsg+0xac>
+ffffff8009917d38:      	mov	x0, #-0x16      // =-22
+ffffff8009917d3c:      	b	0xffffff8009917d84 <__arm64_sys_sendmsg+0xb0>
+ffffff8009917d40:      	mov	w20, #-0x9      // =-9
+ffffff8009917d44:      	b	0xffffff8009917d80 <__arm64_sys_sendmsg+0xac>
+ffffff8009917d48:      	ldr	x22, [x0, #0x108]
+ffffff8009917d4c:      	cbz	x22, 0xffffff8009917db0 <__arm64_sys_sendmsg+0xdc>
+ffffff8009917d50:      	mov	x2, sp
+ffffff8009917d54:      	mov	x0, x22
+ffffff8009917d58:      	mov	x1, x21
+ffffff8009917d5c:      	mov	w3, w20
+ffffff8009917d60:      	mov	x4, xzr
+ffffff8009917d64:      	mov	w5, wzr
+ffffff8009917d68:      	bl	0xffffff80099179fc <___sys_sendmsg>
+ffffff8009917d6c:      	mov	w20, w0
+ffffff8009917d70:      	tst	x19, #0x3
+ffffff8009917d74:      	b.eq	0xffffff8009917d80 <__arm64_sys_sendmsg+0xac>
+ffffff8009917d78:      	ldr	x0, [x22, #0x18]
+ffffff8009917d7c:      	bl	0xffffff80082d0054 <fput>
+ffffff8009917d80:      	sxtw	x0, w20
+ffffff8009917d84:      	adrp	x9, 0xffffff800b21e000 <nf_conncount_locks+0x980>
+ffffff8009917d88:      	ldur	x8, [x29, #-0x8]
+ffffff8009917d8c:      	ldr	x9, [x9, #0x688]
+ffffff8009917d90:      	cmp	x9, x8
+ffffff8009917d94:      	b.ne	0xffffff8009917dbc <__arm64_sys_sendmsg+0xe8>
+ffffff8009917d98:      	ldp	x20, x19, [sp, #0x80]
+ffffff8009917d9c:      	ldp	x22, x21, [sp, #0x70]
+ffffff8009917da0:      	ldp	x29, x16, [sp, #0x60]
+ffffff8009917da4:      	eor	x30, x16, x17
+ffffff8009917da8:      	add	sp, sp, #0x90
+ffffff8009917dac:      	ret
+ffffff8009917db0:      	mov	w20, #-0x9      // =-9
+ffffff8009917db4:      	tbnz	w19, #0x0, 0xffffff8009917d7c <__arm64_sys_sendmsg+0xa8>
+ffffff8009917db8:      	b	0xffffff8009917d80 <__arm64_sys_sendmsg+0xac>
+ffffff8009917dbc:      	bl	0xffffff80080b94e4 <__stack_chk_fail>
+ffffff8009917dc0:      	<unknown>
+
+===================================================================
+### ___sys_sendmsg
+===================================================================
+ffffff80099179fc <___sys_sendmsg>:
+ffffff80099179fc:      	sub	sp, sp, #0x190
+ffffff8009917a00:      	eor	x16, x30, x17
+ffffff8009917a04:      	stp	x29, x16, [sp, #0x140]
+ffffff8009917a08:      	add	x29, sp, #0x140
+ffffff8009917a0c:      	stp	x28, x25, [sp, #0x150]
+ffffff8009917a10:      	stp	x24, x23, [sp, #0x160]
+ffffff8009917a14:      	stp	x22, x21, [sp, #0x170]
+ffffff8009917a18:      	stp	x20, x19, [sp, #0x180]
+ffffff8009917a1c:      	adrp	x8, 0xffffff800b21e000 <nf_conncount_locks+0x980>
+ffffff8009917a20:      	mov	w23, w5
+ffffff8009917a24:      	mov	x21, x4
+ffffff8009917a28:      	mov	w24, w3
+ffffff8009917a2c:      	mov	x22, x2
+ffffff8009917a30:      	mov	x19, x0
+ffffff8009917a34:      	ldr	x8, [x8, #0x688]
+ffffff8009917a38:      	add	x9, sp, #0x38
+ffffff8009917a3c:      	sub	x10, x29, #0x88
+ffffff8009917a40:      	stur	x8, [x29, #-0x8]
+ffffff8009917a44:      	str	x9, [sp, #0x8]
+ffffff8009917a48:      	str	x10, [x2]
+ffffff8009917a4c:      	tbnz	w3, #0x1f, 0xffffff8009917a78 <___sys_sendmsg+0x7c>
+ffffff8009917a50:      	add	x3, sp, #0x8
+ffffff8009917a54:      	mov	x0, x22
+ffffff8009917a58:      	mov	x2, xzr
+ffffff8009917a5c:      	bl	0xffffff800991bd0c <copy_msghdr_from_user>
+ffffff8009917a60:      	tbnz	w0, #0x1f, 0xffffff8009917a8c <___sys_sendmsg+0x90>
+ffffff8009917a64:      	ldr	x20, [x22, #0x40]
+ffffff8009917a68:      	lsr	x8, x20, #31
+ffffff8009917a6c:      	cbz	x8, 0xffffff8009917a94 <___sys_sendmsg+0x98>
+ffffff8009917a70:      	mov	x24, #-0x69     // =-105
+ffffff8009917a74:      	b	0xffffff8009917c64 <___sys_sendmsg+0x268>
+ffffff8009917a78:      	add	x3, sp, #0x8
+ffffff8009917a7c:      	mov	x0, x22
+ffffff8009917a80:      	mov	x2, xzr
+ffffff8009917a84:      	bl	0xffffff800997d734 <get_compat_msghdr>
+ffffff8009917a88:      	tbz	w0, #0x1f, 0xffffff8009917a64 <___sys_sendmsg+0x68>
+ffffff8009917a8c:      	sxtw	x24, w0
+ffffff8009917a90:      	b	0xffffff8009917c6c <___sys_sendmsg+0x270>
+ffffff8009917a94:      	ldr	w8, [x22, #0x48]
+ffffff8009917a98:      	and	w8, w8, w23
+ffffff8009917a9c:      	orr	w24, w8, w24
+ffffff8009917aa0:      	cbz	w20, 0xffffff8009917ac8 <___sys_sendmsg+0xcc>
+ffffff8009917aa4:      	tbz	w24, #0x1f, 0xffffff8009917ac8 <___sys_sendmsg+0xcc>
+ffffff8009917aa8:      	ldr	x1, [x19, #0x20]
+ffffff8009917aac:      	mov	w3, #0x24       // =36
+ffffff8009917ab0:      	add	x2, sp, #0x10
+ffffff8009917ab4:      	mov	x0, x22
+ffffff8009917ab8:      	bl	0xffffff800997d8c4 <cmsghdr_from_user_compat_to_kern>
+ffffff8009917abc:      	cbz	w0, 0xffffff8009917afc <___sys_sendmsg+0x100>
+ffffff8009917ac0:      	sxtw	x24, w0
+ffffff8009917ac4:      	b	0xffffff8009917c64 <___sys_sendmsg+0x268>
+ffffff8009917ac8:      	cbz	w20, 0xffffff8009917af4 <___sys_sendmsg+0xf8>
+ffffff8009917acc:      	cmp	x20, #0x25
+ffffff8009917ad0:      	b.lo	0xffffff8009917b08 <___sys_sendmsg+0x10c>
+ffffff8009917ad4:      	ldr	x0, [x19, #0x20]
+ffffff8009917ad8:      	mov	w2, #0xc0       // =192
+ffffff8009917adc:      	movk	w2, #0x60, lsl #16
+ffffff8009917ae0:      	mov	w1, w20
+ffffff8009917ae4:      	bl	0xffffff8009920c6c <sock_kmalloc>
+ffffff8009917ae8:      	mov	x23, x0
+ffffff8009917aec:      	cbnz	x0, 0xffffff8009917b0c <___sys_sendmsg+0x110>
+ffffff8009917af0:      	b	0xffffff8009917a70 <___sys_sendmsg+0x74>
+ffffff8009917af4:      	add	x23, sp, #0x10
+ffffff8009917af8:      	b	0xffffff8009917b88 <___sys_sendmsg+0x18c>
+ffffff8009917afc:      	ldr	x23, [x22, #0x38]
+ffffff8009917b00:      	ldr	w20, [x22, #0x40]
+ffffff8009917b04:      	b	0xffffff8009917b88 <___sys_sendmsg+0x18c>
+ffffff8009917b08:      	add	x23, sp, #0x10
+ffffff8009917b0c:      	ldr	x25, [x22, #0x38]
+ffffff8009917b10:      	mov	x0, x23
+ffffff8009917b14:      	mov	x1, x20
+ffffff8009917b18:      	mov	w2, wzr
+ffffff8009917b1c:      	bl	0xffffff80082c5fbc <__check_object_size>
+ffffff8009917b20:      	mrs	x8, SP_EL0
+ffffff8009917b24:      	ldrb	w11, [x8, #0x6e]
+ffffff8009917b28:      	ldr	x10, [x8, #0x40]
+ffffff8009917b2c:      	lsl	x9, x25, #8
+ffffff8009917b30:      	tbnz	w11, #0x5, 0xffffff8009917b40 <___sys_sendmsg+0x144>
+ffffff8009917b34:      	ldr	x12, [x8]
+ffffff8009917b38:      	mov	x11, x25
+ffffff8009917b3c:      	tbz	w12, #0x1a, 0xffffff8009917b44 <___sys_sendmsg+0x148>
+ffffff8009917b40:      	and	x11, x25, x9, asr #8
+ffffff8009917b44:      	adds	x11, x11, x20
+ffffff8009917b48:      	csel	x10, xzr, x10, hi
+ffffff8009917b4c:      	csinv	x11, x11, xzr, lo
+ffffff8009917b50:      	sbcs	xzr, x11, x10
+ffffff8009917b54:      	cset	x11, ls
+ffffff8009917b58:      	cbz	x11, 0xffffff8009917ca4 <___sys_sendmsg+0x2a8>
+ffffff8009917b5c:      	mov	x0, x23
+ffffff8009917b60:      	mov	x2, x20
+ffffff8009917b64:      	ldr	x8, [x8, #0x40]
+ffffff8009917b68:      	and	x9, x25, x9, asr #8
+ffffff8009917b6c:      	bics	xzr, x9, x8
+ffffff8009917b70:      	csel	x1, x25, xzr, eq
+ffffff8009917b74:      	csdb
+ffffff8009917b78:      	bl	0xffffff8009bf7c00 <__arch_copy_from_user>
+ffffff8009917b7c:      	mov	x2, x0
+ffffff8009917b80:      	cbnz	x2, 0xffffff8009917cac <___sys_sendmsg+0x2b0>
+ffffff8009917b84:      	str	x23, [x22, #0x38]
+ffffff8009917b88:      	str	w24, [x22, #0x48]
+ffffff8009917b8c:      	ldr	x8, [x19, #0x18]
+ffffff8009917b90:      	ldrb	w8, [x8, #0x51]
+ffffff8009917b94:      	tbz	w8, #0x3, 0xffffff8009917ba0 <___sys_sendmsg+0x1a4>
+ffffff8009917b98:      	orr	w8, w24, #0x40
+ffffff8009917b9c:      	str	w8, [x22, #0x48]
+ffffff8009917ba0:      	cbz	x21, 0xffffff8009917bc8 <___sys_sendmsg+0x1cc>
+ffffff8009917ba4:      	ldr	x1, [x22]
+ffffff8009917ba8:      	cbz	x1, 0xffffff8009917bc8 <___sys_sendmsg+0x1cc>
+ffffff8009917bac:      	ldr	w2, [x21, #0x80]
+ffffff8009917bb0:      	ldr	w8, [x22, #0x8]
+ffffff8009917bb4:      	cmp	w2, w8
+ffffff8009917bb8:      	b.ne	0xffffff8009917bc8 <___sys_sendmsg+0x1cc>
+ffffff8009917bbc:      	mov	x0, x21
+ffffff8009917bc0:      	bl	0xffffff8009bf86d4 <memcmp>
+ffffff8009917bc4:      	cbz	w0, 0xffffff8009917c24 <___sys_sendmsg+0x228>
+ffffff8009917bc8:      	ldr	w2, [x22, #0x20]
+ffffff8009917bcc:      	mov	x0, x19
+ffffff8009917bd0:      	mov	x1, x22
+ffffff8009917bd4:      	bl	0xffffff80084f1cc4 <security_socket_sendmsg>
+ffffff8009917bd8:      	cbnz	w0, 0xffffff8009917bfc <___sys_sendmsg+0x200>
+ffffff8009917bdc:      	ldr	x8, [x19, #0x28]
+ffffff8009917be0:      	mov	x0, x19
+ffffff8009917be4:      	ldr	x2, [x22, #0x20]
+ffffff8009917be8:      	mov	x1, x22
+ffffff8009917bec:      	ldr	x8, [x8, #0x88]
+ffffff8009917bf0:      	bl	0xffffff8009c2164c <jopp_springboard_blr_x8>
+ffffff8009917bf4:      	cmn	w0, #0x211
+ffffff8009917bf8:      	b.eq	0xffffff8009917cc8 <___sys_sendmsg+0x2cc>
+ffffff8009917bfc:      	sxtw	x24, w0
+ffffff8009917c00:      	cbz	x21, 0xffffff8009917c48 <___sys_sendmsg+0x24c>
+ffffff8009917c04:      	tbnz	w0, #0x1f, 0xffffff8009917c48 <___sys_sendmsg+0x24c>
+ffffff8009917c08:      	ldr	w2, [x22, #0x8]
+ffffff8009917c0c:      	str	w2, [x21, #0x80]
+ffffff8009917c10:      	ldr	x1, [x22]
+ffffff8009917c14:      	cbz	x1, 0xffffff8009917c48 <___sys_sendmsg+0x24c>
+ffffff8009917c18:      	mov	x0, x21
+ffffff8009917c1c:      	bl	0xffffff8009bf88c0 <memcpy>
+ffffff8009917c20:      	b	0xffffff8009917c48 <___sys_sendmsg+0x24c>
+ffffff8009917c24:      	ldr	x8, [x19, #0x28]
+ffffff8009917c28:      	mov	x0, x19
+ffffff8009917c2c:      	ldr	x2, [x22, #0x20]
+ffffff8009917c30:      	mov	x1, x22
+ffffff8009917c34:      	ldr	x8, [x8, #0x88]
+ffffff8009917c38:      	bl	0xffffff8009c2164c <jopp_springboard_blr_x8>
+ffffff8009917c3c:      	cmn	w0, #0x211
+ffffff8009917c40:      	b.eq	0xffffff8009917ccc <___sys_sendmsg+0x2d0>
+ffffff8009917c44:      	sxtw	x24, w0
+ffffff8009917c48:      	add	x8, sp, #0x10
+ffffff8009917c4c:      	cmp	x23, x8
+ffffff8009917c50:      	b.eq	0xffffff8009917c64 <___sys_sendmsg+0x268>
+ffffff8009917c54:      	ldr	x0, [x19, #0x20]
+ffffff8009917c58:      	mov	x1, x23
+ffffff8009917c5c:      	mov	w2, w20
+ffffff8009917c60:      	bl	0xffffff8009920cfc <sock_kfree_s>
+ffffff8009917c64:      	ldr	x0, [sp, #0x8]
+ffffff8009917c68:      	bl	0xffffff80082a806c <kfree>
+ffffff8009917c6c:      	adrp	x9, 0xffffff800b21e000 <nf_conncount_locks+0x980>
+ffffff8009917c70:      	ldur	x8, [x29, #-0x8]
+ffffff8009917c74:      	ldr	x9, [x9, #0x688]
+ffffff8009917c78:      	cmp	x9, x8
+ffffff8009917c7c:      	b.ne	0xffffff8009917cc4 <___sys_sendmsg+0x2c8>
+ffffff8009917c80:      	mov	w0, w24
+ffffff8009917c84:      	ldp	x20, x19, [sp, #0x180]
+ffffff8009917c88:      	ldp	x22, x21, [sp, #0x170]
+ffffff8009917c8c:      	ldp	x24, x23, [sp, #0x160]
+ffffff8009917c90:      	ldp	x28, x25, [sp, #0x150]
+ffffff8009917c94:      	ldp	x29, x16, [sp, #0x140]
+ffffff8009917c98:      	eor	x30, x16, x17
+ffffff8009917c9c:      	add	sp, sp, #0x190
+ffffff8009917ca0:      	ret
+ffffff8009917ca4:      	mov	x2, x20
+ffffff8009917ca8:      	cbz	x2, 0xffffff8009917b84 <___sys_sendmsg+0x188>
+ffffff8009917cac:      	sub	x8, x20, x2
+ffffff8009917cb0:      	mov	w1, wzr
+ffffff8009917cb4:      	add	x0, x23, x8
+ffffff8009917cb8:      	bl	0xffffff8009bf8bc0 <memset>
+ffffff8009917cbc:      	mov	x24, #-0xe      // =-14
+ffffff8009917cc0:      	b	0xffffff8009917c48 <___sys_sendmsg+0x24c>
+ffffff8009917cc4:      	bl	0xffffff80080b94e4 <__stack_chk_fail>
+ffffff8009917cc8:      	brk	#0x800
+ffffff8009917ccc:      	brk	#0x800
+ffffff8009917cd0:      	<unknown>
+
+===================================================================
+### rt_mutex_adjust_prio_chain
+===================================================================
+ffffff8008147c64 <rt_mutex_adjust_prio_chain>:
+ffffff8008147c64:      	sub	sp, sp, #0x80
+ffffff8008147c68:      	eor	x16, x30, x17
+ffffff8008147c6c:      	stp	x29, x16, [sp, #0x20]
+ffffff8008147c70:      	add	x29, sp, #0x20
+ffffff8008147c74:      	stp	x28, x27, [sp, #0x30]
+ffffff8008147c78:      	stp	x26, x25, [sp, #0x40]
+ffffff8008147c7c:      	stp	x24, x23, [sp, #0x50]
+ffffff8008147c80:      	stp	x22, x21, [sp, #0x60]
+ffffff8008147c84:      	stp	x20, x19, [sp, #0x70]
+ffffff8008147c88:      	adrp	x20, 0xffffff800b244000 <files+0x2d0>
+ffffff8008147c8c:      	mov	w24, w1
+ffffff8008147c90:      	mov	x19, x0
+ffffff8008147c94:      	ldr	w1, [x20, #0xf58]
+ffffff8008147c98:      	cmp	w1, #0x1
+ffffff8008147c9c:      	b.lt	0xffffff80081483c8 <rt_mutex_adjust_prio_chain+0x764>
+ffffff8008147ca0:      	cmp	w24, #0x1
+ffffff8008147ca4:      	mov	x21, x3
+ffffff8008147ca8:      	mov	x23, x2
+ffffff8008147cac:      	mov	w28, #0x1       // =1
+ffffff8008147cb0:      	cset	w8, ne
+ffffff8008147cb4:      	mov	x22, x4
+ffffff8008147cb8:      	mov	w27, #0x1       // =1
+ffffff8008147cbc:      	str	x5, [sp, #0x10]
+ffffff8008147cc0:      	stur	x4, [x29, #-0x8]
+ffffff8008147cc4:      	str	w8, [sp, #0xc]
+ffffff8008147cc8:      	add	x26, x19, #0x8c8
+ffffff8008147ccc:      	mov	x0, x26
+ffffff8008147cd0:      	bl	0xffffff8009c197dc <_raw_spin_lock_irq>
+ffffff8008147cd4:      	ldr	x25, [x19, #0x8f8]
+ffffff8008147cd8:      	cbz	x25, 0xffffff8008148374 <rt_mutex_adjust_prio_chain+0x710>
+ffffff8008147cdc:      	ldur	x8, [x29, #-0x8]
+ffffff8008147ce0:      	cbz	x8, 0xffffff8008147d94 <rt_mutex_adjust_prio_chain+0x130>
+ffffff8008147ce4:      	ldr	x8, [x23, #0x20]
+ffffff8008147ce8:      	cmp	x8, #0x2
+ffffff8008147cec:      	b.lo	0xffffff8008148374 <rt_mutex_adjust_prio_chain+0x710>
+ffffff8008147cf0:      	ldr	x8, [x25, #0x38]
+ffffff8008147cf4:      	cmp	x21, x8
+ffffff8008147cf8:      	b.ne	0xffffff8008148374 <rt_mutex_adjust_prio_chain+0x710>
+ffffff8008147cfc:      	cbz	x22, 0xffffff8008147d28 <rt_mutex_adjust_prio_chain+0xc4>
+ffffff8008147d00:      	ldr	x8, [x19, #0x8e0]
+ffffff8008147d04:      	cbz	x8, 0xffffff8008148374 <rt_mutex_adjust_prio_chain+0x710>
+ffffff8008147d08:      	ldr	x8, [x19, #0x8e8]
+ffffff8008147d0c:      	sub	x8, x8, #0x18
+ffffff8008147d10:      	cmp	x22, x8
+ffffff8008147d14:      	csel	w28, w28, wzr, eq
+ffffff8008147d18:      	cmp	w24, #0x1
+ffffff8008147d1c:      	b.eq	0xffffff8008147d28 <rt_mutex_adjust_prio_chain+0xc4>
+ffffff8008147d20:      	cmp	x22, x8
+ffffff8008147d24:      	b.ne	0xffffff8008148374 <rt_mutex_adjust_prio_chain+0x710>
+ffffff8008147d28:      	ldr	w8, [x19, #0xac]
+ffffff8008147d2c:      	ldr	w9, [x25, #0x40]
+ffffff8008147d30:      	cmp	w9, w8
+ffffff8008147d34:      	b.ne	0xffffff8008147d68 <rt_mutex_adjust_prio_chain+0x104>
+ffffff8008147d38:      	tbnz	w8, #0x1f, 0xffffff8008147d44 <rt_mutex_adjust_prio_chain+0xe0>
+ffffff8008147d3c:      	mov	w8, #0x1        // =1
+ffffff8008147d40:      	b	0xffffff8008147d54 <rt_mutex_adjust_prio_chain+0xf0>
+ffffff8008147d44:      	ldr	x8, [x19, #0x430]
+ffffff8008147d48:      	ldr	x9, [x25, #0x48]
+ffffff8008147d4c:      	cmp	x9, x8
+ffffff8008147d50:      	cset	w8, eq
+ffffff8008147d54:      	cmp	w8, #0x0
+ffffff8008147d58:      	csel	w28, w28, wzr, eq
+ffffff8008147d5c:      	cmp	w24, #0x1
+ffffff8008147d60:      	b.eq	0xffffff8008147d68 <rt_mutex_adjust_prio_chain+0x104>
+ffffff8008147d64:      	cbnz	w8, 0xffffff8008148374 <rt_mutex_adjust_prio_chain+0x710>
+ffffff8008147d68:      	mov	x0, x21
+ffffff8008147d6c:      	bl	0xffffff8009c1958c <_raw_spin_trylock>
+ffffff8008147d70:      	cbnz	w0, 0xffffff8008147e38 <rt_mutex_adjust_prio_chain+0x1d4>
+ffffff8008147d74:      	mov	x0, x26
+ffffff8008147d78:      	bl	0xffffff8009c199b4 <_raw_spin_unlock_irq>
+ffffff8008147d7c:      	mov	x0, x26
+ffffff8008147d80:      	yield
+ffffff8008147d84:      	bl	0xffffff8009c197dc <_raw_spin_lock_irq>
+ffffff8008147d88:      	ldr	x25, [x19, #0x8f8]
+ffffff8008147d8c:      	cbnz	x25, 0xffffff8008147ce4 <rt_mutex_adjust_prio_chain+0x80>
+ffffff8008147d90:      	b	0xffffff8008148374 <rt_mutex_adjust_prio_chain+0x710>
+ffffff8008147d94:      	cbz	x22, 0xffffff8008147ee0 <rt_mutex_adjust_prio_chain+0x27c>
+ffffff8008147d98:      	ldr	x8, [x25, #0x38]
+ffffff8008147d9c:      	cmp	x21, x8
+ffffff8008147da0:      	b.ne	0xffffff8008148374 <rt_mutex_adjust_prio_chain+0x710>
+ffffff8008147da4:      	ldr	x8, [x19, #0x8e0]
+ffffff8008147da8:      	cbz	x8, 0xffffff8008148374 <rt_mutex_adjust_prio_chain+0x710>
+ffffff8008147dac:      	ldr	x8, [x19, #0x8e8]
+ffffff8008147db0:      	sub	x8, x8, #0x18
+ffffff8008147db4:      	cmp	x22, x8
+ffffff8008147db8:      	csel	w28, w28, wzr, eq
+ffffff8008147dbc:      	cmp	w24, #0x1
+ffffff8008147dc0:      	b.eq	0xffffff8008147dcc <rt_mutex_adjust_prio_chain+0x168>
+ffffff8008147dc4:      	cmp	x22, x8
+ffffff8008147dc8:      	b.ne	0xffffff8008148374 <rt_mutex_adjust_prio_chain+0x710>
+ffffff8008147dcc:      	ldr	w8, [x19, #0xac]
+ffffff8008147dd0:      	ldr	w9, [x25, #0x40]
+ffffff8008147dd4:      	cmp	w9, w8
+ffffff8008147dd8:      	b.ne	0xffffff8008147e0c <rt_mutex_adjust_prio_chain+0x1a8>
+ffffff8008147ddc:      	tbnz	w8, #0x1f, 0xffffff8008147de8 <rt_mutex_adjust_prio_chain+0x184>
+ffffff8008147de0:      	mov	w8, #0x1        // =1
+ffffff8008147de4:      	b	0xffffff8008147df8 <rt_mutex_adjust_prio_chain+0x194>
+ffffff8008147de8:      	ldr	x8, [x19, #0x430]
+ffffff8008147dec:      	ldr	x9, [x25, #0x48]
+ffffff8008147df0:      	cmp	x9, x8
+ffffff8008147df4:      	cset	w8, eq
+ffffff8008147df8:      	cmp	w8, #0x0
+ffffff8008147dfc:      	csel	w28, w28, wzr, eq
+ffffff8008147e00:      	cmp	w24, #0x1
+ffffff8008147e04:      	b.eq	0xffffff8008147e0c <rt_mutex_adjust_prio_chain+0x1a8>
+ffffff8008147e08:      	cbnz	w8, 0xffffff8008148374 <rt_mutex_adjust_prio_chain+0x710>
+ffffff8008147e0c:      	mov	x0, x21
+ffffff8008147e10:      	bl	0xffffff8009c1958c <_raw_spin_trylock>
+ffffff8008147e14:      	cbnz	w0, 0xffffff8008147e38 <rt_mutex_adjust_prio_chain+0x1d4>
+ffffff8008147e18:      	mov	x0, x26
+ffffff8008147e1c:      	bl	0xffffff8009c199b4 <_raw_spin_unlock_irq>
+ffffff8008147e20:      	mov	x0, x26
+ffffff8008147e24:      	yield
+ffffff8008147e28:      	bl	0xffffff8009c197dc <_raw_spin_lock_irq>
+ffffff8008147e2c:      	ldr	x25, [x19, #0x8f8]
+ffffff8008147e30:      	cbnz	x25, 0xffffff8008147d98 <rt_mutex_adjust_prio_chain+0x134>
+ffffff8008147e34:      	b	0xffffff8008148374 <rt_mutex_adjust_prio_chain+0x710>
+ffffff8008147e38:      	mov	w22, #0x8       // =8
+ffffff8008147e3c:      	mov	w15, #0x10      // =16
+ffffff8008147e40:      	cmp	x21, x23
+ffffff8008147e44:      	b.eq	0xffffff80081483ac <rt_mutex_adjust_prio_chain+0x748>
+ffffff8008147e48:      	ldr	x8, [x21, #0x20]
+ffffff8008147e4c:      	ldr	x9, [sp, #0x10]
+ffffff8008147e50:      	and	x8, x8, #0xfffffffffffffffe
+ffffff8008147e54:      	cmp	x8, x9
+ffffff8008147e58:      	b.eq	0xffffff80081483ac <rt_mutex_adjust_prio_chain+0x748>
+ffffff8008147e5c:      	tbnz	w28, #0x0, 0xffffff8008147f5c <rt_mutex_adjust_prio_chain+0x2f8>
+ffffff8008147e60:      	mov	x0, x26
+ffffff8008147e64:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff8008147e68:      	add	x8, x19, #0x68
+ffffff8008147e6c:      	prfm	pstl1strm, [x8]
+ffffff8008147e70:      	ldxr	w9, [x8]
+ffffff8008147e74:      	sub	w9, w9, #0x1
+ffffff8008147e78:      	stlxr	w10, w9, [x8]
+ffffff8008147e7c:      	cbnz	w10, 0xffffff8008147e70 <rt_mutex_adjust_prio_chain+0x20c>
+ffffff8008147e80:      	dmb	ish
+ffffff8008147e84:      	cbnz	w9, 0xffffff8008147e90 <rt_mutex_adjust_prio_chain+0x22c>
+ffffff8008147e88:      	mov	x0, x19
+ffffff8008147e8c:      	bl	0xffffff80080b542c <__put_task_struct>
+ffffff8008147e90:      	ldr	x8, [x21, #0x20]
+ffffff8008147e94:      	cmp	x8, #0x1
+ffffff8008147e98:      	b.ls	0xffffff800814848c <rt_mutex_adjust_prio_chain+0x828>
+ffffff8008147e9c:      	ldr	x8, [x21, #0x20]
+ffffff8008147ea0:      	and	x19, x8, #0xfffffffffffffffe
+ffffff8008147ea4:      	add	x25, x19, #0x8c8
+ffffff8008147ea8:      	add	x8, x19, #0x68
+ffffff8008147eac:      	mov	x0, x25
+ffffff8008147eb0:      	prfm	pstl1strm, [x8]
+ffffff8008147eb4:      	ldxr	w9, [x8]
+ffffff8008147eb8:      	add	w9, w9, #0x1
+ffffff8008147ebc:      	stxr	w10, w9, [x8]
+ffffff8008147ec0:      	cbnz	w10, 0xffffff8008147eb4 <rt_mutex_adjust_prio_chain+0x250>
+ffffff8008147ec4:      	bl	0xffffff8009c196bc <_raw_spin_lock>
+ffffff8008147ec8:      	ldr	x8, [x19, #0x8f8]
+ffffff8008147ecc:      	cbz	x8, 0xffffff8008148128 <rt_mutex_adjust_prio_chain+0x4c4>
+ffffff8008147ed0:      	ldr	x26, [x8, #0x38]
+ffffff8008147ed4:      	ldr	x22, [x21, #0x18]
+ffffff8008147ed8:      	cbnz	x22, 0xffffff8008148134 <rt_mutex_adjust_prio_chain+0x4d0>
+ffffff8008147edc:      	b	0xffffff8008148140 <rt_mutex_adjust_prio_chain+0x4dc>
+ffffff8008147ee0:      	mov	w22, #0x8       // =8
+ffffff8008147ee4:      	ldr	x8, [x25, #0x38]
+ffffff8008147ee8:      	cmp	x21, x8
+ffffff8008147eec:      	b.ne	0xffffff8008148374 <rt_mutex_adjust_prio_chain+0x710>
+ffffff8008147ef0:      	ldr	w8, [x19, #0xac]
+ffffff8008147ef4:      	ldr	w9, [x25, #0x40]
+ffffff8008147ef8:      	cmp	w9, w8
+ffffff8008147efc:      	b.ne	0xffffff8008147f30 <rt_mutex_adjust_prio_chain+0x2cc>
+ffffff8008147f00:      	tbnz	w8, #0x1f, 0xffffff8008147f0c <rt_mutex_adjust_prio_chain+0x2a8>
+ffffff8008147f04:      	mov	w8, #0x1        // =1
+ffffff8008147f08:      	b	0xffffff8008147f1c <rt_mutex_adjust_prio_chain+0x2b8>
+ffffff8008147f0c:      	ldr	x8, [x19, #0x430]
+ffffff8008147f10:      	ldr	x9, [x25, #0x48]
+ffffff8008147f14:      	cmp	x9, x8
+ffffff8008147f18:      	cset	w8, eq
+ffffff8008147f1c:      	cmp	w8, #0x0
+ffffff8008147f20:      	csel	w28, w28, wzr, eq
+ffffff8008147f24:      	cmp	w24, #0x1
+ffffff8008147f28:      	b.eq	0xffffff8008147f30 <rt_mutex_adjust_prio_chain+0x2cc>
+ffffff8008147f2c:      	cbnz	w8, 0xffffff8008148374 <rt_mutex_adjust_prio_chain+0x710>
+ffffff8008147f30:      	mov	x0, x21
+ffffff8008147f34:      	bl	0xffffff8009c1958c <_raw_spin_trylock>
+ffffff8008147f38:      	cbnz	w0, 0xffffff8008147e3c <rt_mutex_adjust_prio_chain+0x1d8>
+ffffff8008147f3c:      	mov	x0, x26
+ffffff8008147f40:      	bl	0xffffff8009c199b4 <_raw_spin_unlock_irq>
+ffffff8008147f44:      	mov	x0, x26
+ffffff8008147f48:      	yield
+ffffff8008147f4c:      	bl	0xffffff8009c197dc <_raw_spin_lock_irq>
+ffffff8008147f50:      	ldr	x25, [x19, #0x8f8]
+ffffff8008147f54:      	cbnz	x25, 0xffffff8008147ee4 <rt_mutex_adjust_prio_chain+0x280>
+ffffff8008147f58:      	b	0xffffff8008148374 <rt_mutex_adjust_prio_chain+0x710>
+ffffff8008147f5c:      	ldr	x8, [x21, #0x18]
+ffffff8008147f60:      	cbz	x8, 0xffffff8008147f78 <rt_mutex_adjust_prio_chain+0x314>
+ffffff8008147f64:      	str	x8, [sp]
+ffffff8008147f68:      	ldr	x8, [x8, #0x38]
+ffffff8008147f6c:      	cmp	x8, x21
+ffffff8008147f70:      	b.eq	0xffffff8008147f7c <rt_mutex_adjust_prio_chain+0x318>
+ffffff8008147f74:      	b	0xffffff800814849c <rt_mutex_adjust_prio_chain+0x838>
+ffffff8008147f78:      	str	xzr, [sp]
+ffffff8008147f7c:      	ldr	x8, [x25]
+ffffff8008147f80:      	cmp	x8, x25
+ffffff8008147f84:      	b.eq	0xffffff8008147f9c <rt_mutex_adjust_prio_chain+0x338>
+ffffff8008147f88:      	add	x1, x21, #0x10
+ffffff8008147f8c:      	mov	x0, x25
+ffffff8008147f90:      	bl	0xffffff8009c06e94 <rb_erase_cached>
+ffffff8008147f94:      	mov	w15, #0x10      // =16
+ffffff8008147f98:      	str	x25, [x25]
+ffffff8008147f9c:      	ldr	w10, [x19, #0xac]
+ffffff8008147fa0:      	mov	x1, x21
+ffffff8008147fa4:      	str	w10, [x25, #0x40]
+ffffff8008147fa8:      	ldr	x11, [x19, #0x430]
+ffffff8008147fac:      	str	x11, [x25, #0x48]
+ffffff8008147fb0:      	ldr	x13, [x1, #0x10]!
+ffffff8008147fb4:      	cbz	x13, 0xffffff8008148034 <rt_mutex_adjust_prio_chain+0x3d0>
+ffffff8008147fb8:      	mov	w9, #0x1        // =1
+ffffff8008147fbc:      	tbnz	w10, #0x1f, 0xffffff800814801c <rt_mutex_adjust_prio_chain+0x3b8>
+ffffff8008147fc0:      	ldr	w11, [x13, #0x40]
+ffffff8008147fc4:      	mov	x8, x13
+ffffff8008147fc8:      	add	x12, x8, #0x8
+ffffff8008147fcc:      	cmp	w10, w11
+ffffff8008147fd0:      	csel	x11, x15, x22, lt
+ffffff8008147fd4:      	csel	w9, w9, wzr, lt
+ffffff8008147fd8:      	ldr	x13, [x13, x11]
+ffffff8008147fdc:      	add	x11, x8, #0x10
+ffffff8008147fe0:      	csel	x12, x11, x12, lt
+ffffff8008147fe4:      	cbnz	x13, 0xffffff8008147fc0 <rt_mutex_adjust_prio_chain+0x35c>
+ffffff8008147fe8:      	and	w2, w9, #0x1
+ffffff8008147fec:      	b	0xffffff8008148040 <rt_mutex_adjust_prio_chain+0x3dc>
+ffffff8008147ff0:      	ldr	x12, [x8, #0x48]
+ffffff8008147ff4:      	sub	x12, x11, x12
+ffffff8008147ff8:      	lsr	x12, x12, #63
+ffffff8008147ffc:      	cmp	w12, #0x0
+ffffff8008148000:      	add	x14, x8, #0x8
+ffffff8008148004:      	csel	x12, x15, x22, ne
+ffffff8008148008:      	csel	w9, w9, wzr, ne
+ffffff800814800c:      	ldr	x13, [x8, x12]
+ffffff8008148010:      	add	x12, x8, #0x10
+ffffff8008148014:      	csel	x12, x12, x14, ne
+ffffff8008148018:      	cbz	x13, 0xffffff8008147fe8 <rt_mutex_adjust_prio_chain+0x384>
+ffffff800814801c:      	ldr	w12, [x13, #0x40]
+ffffff8008148020:      	mov	x8, x13
+ffffff8008148024:      	cmp	w10, w12
+ffffff8008148028:      	b.ge	0xffffff8008147ff0 <rt_mutex_adjust_prio_chain+0x38c>
+ffffff800814802c:      	mov	w12, #0x1       // =1
+ffffff8008148030:      	b	0xffffff8008147ffc <rt_mutex_adjust_prio_chain+0x398>
+ffffff8008148034:      	mov	x8, xzr
+ffffff8008148038:      	mov	w2, #0x1        // =1
+ffffff800814803c:      	mov	x12, x1
+ffffff8008148040:      	mov	x0, x25
+ffffff8008148044:      	stp	x8, xzr, [x25]
+ffffff8008148048:      	str	xzr, [x25, #0x10]
+ffffff800814804c:      	str	x25, [x12]
+ffffff8008148050:      	bl	0xffffff8009c06d4c <rb_insert_color_cached>
+ffffff8008148054:      	mov	x0, x26
+ffffff8008148058:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800814805c:      	add	x8, x19, #0x68
+ffffff8008148060:      	prfm	pstl1strm, [x8]
+ffffff8008148064:      	ldxr	w9, [x8]
+ffffff8008148068:      	sub	w9, w9, #0x1
+ffffff800814806c:      	stlxr	w10, w9, [x8]
+ffffff8008148070:      	cbnz	w10, 0xffffff8008148064 <rt_mutex_adjust_prio_chain+0x400>
+ffffff8008148074:      	dmb	ish
+ffffff8008148078:      	cbnz	w9, 0xffffff8008148084 <rt_mutex_adjust_prio_chain+0x420>
+ffffff800814807c:      	mov	x0, x19
+ffffff8008148080:      	bl	0xffffff80080b542c <__put_task_struct>
+ffffff8008148084:      	ldr	x8, [x21, #0x20]
+ffffff8008148088:      	cmp	x8, #0x1
+ffffff800814808c:      	b.ls	0xffffff8008148448 <rt_mutex_adjust_prio_chain+0x7e4>
+ffffff8008148090:      	ldr	x8, [x21, #0x20]
+ffffff8008148094:      	and	x19, x8, #0xfffffffffffffffe
+ffffff8008148098:      	add	x26, x19, #0x8c8
+ffffff800814809c:      	add	x8, x19, #0x68
+ffffff80081480a0:      	mov	x0, x26
+ffffff80081480a4:      	prfm	pstl1strm, [x8]
+ffffff80081480a8:      	ldxr	w9, [x8]
+ffffff80081480ac:      	add	w9, w9, #0x1
+ffffff80081480b0:      	stxr	w10, w9, [x8]
+ffffff80081480b4:      	cbnz	w10, 0xffffff80081480a8 <rt_mutex_adjust_prio_chain+0x444>
+ffffff80081480b8:      	bl	0xffffff8009c196bc <_raw_spin_lock>
+ffffff80081480bc:      	ldr	x8, [x21, #0x18]
+ffffff80081480c0:      	cbz	x8, 0xffffff8008148158 <rt_mutex_adjust_prio_chain+0x4f4>
+ffffff80081480c4:      	ldr	x10, [x8, #0x38]
+ffffff80081480c8:      	mov	x9, x8
+ffffff80081480cc:      	ldr	x0, [sp]
+ffffff80081480d0:      	mov	w14, #0x10      // =16
+ffffff80081480d4:      	cmp	x10, x21
+ffffff80081480d8:      	b.ne	0xffffff80081484a0 <rt_mutex_adjust_prio_chain+0x83c>
+ffffff80081480dc:      	cmp	x25, x9
+ffffff80081480e0:      	b.eq	0xffffff800814816c <rt_mutex_adjust_prio_chain+0x508>
+ffffff80081480e4:      	cmp	x0, x25
+ffffff80081480e8:      	b.ne	0xffffff8008148264 <rt_mutex_adjust_prio_chain+0x600>
+ffffff80081480ec:      	ldr	x9, [x25, #0x18]!
+ffffff80081480f0:      	cmp	x9, x25
+ffffff80081480f4:      	b.eq	0xffffff8008148110 <rt_mutex_adjust_prio_chain+0x4ac>
+ffffff80081480f8:      	add	x1, x19, #0x8e0
+ffffff80081480fc:      	mov	x0, x25
+ffffff8008148100:      	bl	0xffffff8009c06e94 <rb_erase_cached>
+ffffff8008148104:      	str	x25, [x25]
+ffffff8008148108:      	mov	w14, #0x10      // =16
+ffffff800814810c:      	ldr	x8, [x21, #0x18]
+ffffff8008148110:      	cbz	x8, 0xffffff80081481d8 <rt_mutex_adjust_prio_chain+0x574>
+ffffff8008148114:      	ldr	x9, [x8, #0x38]
+ffffff8008148118:      	mov	x25, x8
+ffffff800814811c:      	cmp	x9, x21
+ffffff8008148120:      	b.eq	0xffffff80081481dc <rt_mutex_adjust_prio_chain+0x578>
+ffffff8008148124:      	b	0xffffff80081484a4 <rt_mutex_adjust_prio_chain+0x840>
+ffffff8008148128:      	mov	x26, xzr
+ffffff800814812c:      	ldr	x22, [x21, #0x18]
+ffffff8008148130:      	cbz	x22, 0xffffff8008148140 <rt_mutex_adjust_prio_chain+0x4dc>
+ffffff8008148134:      	ldr	x8, [x22, #0x38]
+ffffff8008148138:      	cmp	x8, x21
+ffffff800814813c:      	b.ne	0xffffff80081484ac <rt_mutex_adjust_prio_chain+0x848>
+ffffff8008148140:      	mov	x0, x25
+ffffff8008148144:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff8008148148:      	mov	x0, x21
+ffffff800814814c:      	bl	0xffffff8009c199b4 <_raw_spin_unlock_irq>
+ffffff8008148150:      	cbnz	x26, 0xffffff80081482bc <rt_mutex_adjust_prio_chain+0x658>
+ffffff8008148154:      	b	0xffffff80081483bc <rt_mutex_adjust_prio_chain+0x758>
+ffffff8008148158:      	ldr	x0, [sp]
+ffffff800814815c:      	mov	x9, xzr
+ffffff8008148160:      	mov	w14, #0x10      // =16
+ffffff8008148164:      	cmp	x25, x9
+ffffff8008148168:      	b.ne	0xffffff80081480e4 <rt_mutex_adjust_prio_chain+0x480>
+ffffff800814816c:      	ldr	x8, [x0, #0x18]!
+ffffff8008148170:      	cmp	x8, x0
+ffffff8008148174:      	b.eq	0xffffff8008148194 <rt_mutex_adjust_prio_chain+0x530>
+ffffff8008148178:      	add	x1, x19, #0x8e0
+ffffff800814817c:      	str	x26, [sp]
+ffffff8008148180:      	mov	x26, x0
+ffffff8008148184:      	bl	0xffffff8009c06e94 <rb_erase_cached>
+ffffff8008148188:      	str	x26, [x26]
+ffffff800814818c:      	mov	w14, #0x10      // =16
+ffffff8008148190:      	ldr	x26, [sp]
+ffffff8008148194:      	ldr	x12, [x19, #0x8e0]
+ffffff8008148198:      	add	x1, x19, #0x8e0
+ffffff800814819c:      	cbz	x12, 0xffffff8008148224 <rt_mutex_adjust_prio_chain+0x5c0>
+ffffff80081481a0:      	ldr	w10, [x25, #0x40]
+ffffff80081481a4:      	tbnz	w10, #0x1f, 0xffffff80081482d4 <rt_mutex_adjust_prio_chain+0x670>
+ffffff80081481a8:      	mov	w9, #0x1        // =1
+ffffff80081481ac:      	ldr	w11, [x12, #0x28]
+ffffff80081481b0:      	mov	x8, x12
+ffffff80081481b4:      	add	x13, x8, #0x8
+ffffff80081481b8:      	cmp	w10, w11
+ffffff80081481bc:      	csel	x11, x14, x22, lt
+ffffff80081481c0:      	csel	w9, w9, wzr, lt
+ffffff80081481c4:      	ldr	x12, [x12, x11]
+ffffff80081481c8:      	add	x11, x8, #0x10
+ffffff80081481cc:      	csel	x11, x11, x13, lt
+ffffff80081481d0:      	cbnz	x12, 0xffffff80081481ac <rt_mutex_adjust_prio_chain+0x548>
+ffffff80081481d4:      	b	0xffffff800814821c <rt_mutex_adjust_prio_chain+0x5b8>
+ffffff80081481d8:      	mov	x25, xzr
+ffffff80081481dc:      	ldr	x12, [x19, #0x8e0]
+ffffff80081481e0:      	add	x1, x19, #0x8e0
+ffffff80081481e4:      	cbz	x12, 0xffffff8008148224 <rt_mutex_adjust_prio_chain+0x5c0>
+ffffff80081481e8:      	ldr	w10, [x25, #0x40]
+ffffff80081481ec:      	tbnz	w10, #0x1f, 0xffffff8008148324 <rt_mutex_adjust_prio_chain+0x6c0>
+ffffff80081481f0:      	mov	w9, #0x1        // =1
+ffffff80081481f4:      	ldr	w11, [x12, #0x28]
+ffffff80081481f8:      	mov	x8, x12
+ffffff80081481fc:      	add	x13, x8, #0x8
+ffffff8008148200:      	cmp	w10, w11
+ffffff8008148204:      	csel	x11, x14, x22, lt
+ffffff8008148208:      	csel	w9, w9, wzr, lt
+ffffff800814820c:      	ldr	x12, [x12, x11]
+ffffff8008148210:      	add	x11, x8, #0x10
+ffffff8008148214:      	csel	x11, x11, x13, lt
+ffffff8008148218:      	cbnz	x12, 0xffffff80081481f4 <rt_mutex_adjust_prio_chain+0x590>
+ffffff800814821c:      	and	w2, w9, #0x1
+ffffff8008148220:      	b	0xffffff8008148230 <rt_mutex_adjust_prio_chain+0x5cc>
+ffffff8008148224:      	mov	x8, xzr
+ffffff8008148228:      	mov	w2, #0x1        // =1
+ffffff800814822c:      	mov	x11, x1
+ffffff8008148230:      	mov	x0, x25
+ffffff8008148234:      	str	x8, [x0, #0x18]!
+ffffff8008148238:      	stp	xzr, xzr, [x0, #0x8]
+ffffff800814823c:      	str	x0, [x11]
+ffffff8008148240:      	bl	0xffffff8009c06d4c <rb_insert_color_cached>
+ffffff8008148244:      	ldr	x8, [x19, #0x8e0]
+ffffff8008148248:      	cbz	x8, 0xffffff8008148258 <rt_mutex_adjust_prio_chain+0x5f4>
+ffffff800814824c:      	ldr	x8, [x19, #0x8e8]
+ffffff8008148250:      	ldr	x1, [x8, #0x18]
+ffffff8008148254:      	b	0xffffff800814825c <rt_mutex_adjust_prio_chain+0x5f8>
+ffffff8008148258:      	mov	x1, xzr
+ffffff800814825c:      	mov	x0, x19
+ffffff8008148260:      	bl	0xffffff80080f9f74 <rt_mutex_setprio>
+ffffff8008148264:      	ldr	x8, [x19, #0x8f8]
+ffffff8008148268:      	mov	x0, x26
+ffffff800814826c:      	cbz	x8, 0xffffff8008148280 <rt_mutex_adjust_prio_chain+0x61c>
+ffffff8008148270:      	ldr	x26, [x8, #0x38]
+ffffff8008148274:      	ldr	x22, [x21, #0x18]
+ffffff8008148278:      	cbnz	x22, 0xffffff800814828c <rt_mutex_adjust_prio_chain+0x628>
+ffffff800814827c:      	b	0xffffff8008148298 <rt_mutex_adjust_prio_chain+0x634>
+ffffff8008148280:      	mov	x26, xzr
+ffffff8008148284:      	ldr	x22, [x21, #0x18]
+ffffff8008148288:      	cbz	x22, 0xffffff8008148298 <rt_mutex_adjust_prio_chain+0x634>
+ffffff800814828c:      	ldr	x8, [x22, #0x38]
+ffffff8008148290:      	cmp	x8, x21
+ffffff8008148294:      	b.ne	0xffffff80081484a8 <rt_mutex_adjust_prio_chain+0x844>
+ffffff8008148298:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff800814829c:      	mov	x0, x21
+ffffff80081482a0:      	bl	0xffffff8009c199b4 <_raw_spin_unlock_irq>
+ffffff80081482a4:      	cmp	x25, x22
+ffffff80081482a8:      	cset	w8, ne
+ffffff80081482ac:      	cbz	x26, 0xffffff80081483bc <rt_mutex_adjust_prio_chain+0x758>
+ffffff80081482b0:      	ldr	w9, [sp, #0xc]
+ffffff80081482b4:      	and	w8, w8, w9
+ffffff80081482b8:      	tbnz	w8, #0x0, 0xffffff80081483bc <rt_mutex_adjust_prio_chain+0x758>
+ffffff80081482bc:      	ldr	w1, [x20, #0xf58]
+ffffff80081482c0:      	add	w27, w27, #0x1
+ffffff80081482c4:      	mov	x21, x26
+ffffff80081482c8:      	cmp	w27, w1
+ffffff80081482cc:      	b.le	0xffffff8008147cc8 <rt_mutex_adjust_prio_chain+0x64>
+ffffff80081482d0:      	b	0xffffff80081483c4 <rt_mutex_adjust_prio_chain+0x760>
+ffffff80081482d4:      	mov	w9, #0x1        // =1
+ffffff80081482d8:      	b	0xffffff800814830c <rt_mutex_adjust_prio_chain+0x6a8>
+ffffff80081482dc:      	ldr	x11, [x25, #0x48]
+ffffff80081482e0:      	ldr	x12, [x8, #0x30]
+ffffff80081482e4:      	sub	x11, x11, x12
+ffffff80081482e8:      	lsr	x11, x11, #63
+ffffff80081482ec:      	cmp	w11, #0x0
+ffffff80081482f0:      	add	x13, x8, #0x8
+ffffff80081482f4:      	csel	x11, x14, x22, ne
+ffffff80081482f8:      	csel	w9, w9, wzr, ne
+ffffff80081482fc:      	ldr	x12, [x8, x11]
+ffffff8008148300:      	add	x11, x8, #0x10
+ffffff8008148304:      	csel	x11, x11, x13, ne
+ffffff8008148308:      	cbz	x12, 0xffffff800814821c <rt_mutex_adjust_prio_chain+0x5b8>
+ffffff800814830c:      	ldr	w11, [x12, #0x28]
+ffffff8008148310:      	mov	x8, x12
+ffffff8008148314:      	cmp	w10, w11
+ffffff8008148318:      	b.ge	0xffffff80081482dc <rt_mutex_adjust_prio_chain+0x678>
+ffffff800814831c:      	mov	w11, #0x1       // =1
+ffffff8008148320:      	b	0xffffff80081482ec <rt_mutex_adjust_prio_chain+0x688>
+ffffff8008148324:      	mov	w9, #0x1        // =1
+ffffff8008148328:      	b	0xffffff800814835c <rt_mutex_adjust_prio_chain+0x6f8>
+ffffff800814832c:      	ldr	x11, [x25, #0x48]
+ffffff8008148330:      	ldr	x12, [x8, #0x30]
+ffffff8008148334:      	sub	x11, x11, x12
+ffffff8008148338:      	lsr	x11, x11, #63
+ffffff800814833c:      	cmp	w11, #0x0
+ffffff8008148340:      	add	x13, x8, #0x8
+ffffff8008148344:      	csel	x11, x14, x22, ne
+ffffff8008148348:      	csel	w9, w9, wzr, ne
+ffffff800814834c:      	ldr	x12, [x8, x11]
+ffffff8008148350:      	add	x11, x8, #0x10
+ffffff8008148354:      	csel	x11, x11, x13, ne
+ffffff8008148358:      	cbz	x12, 0xffffff800814821c <rt_mutex_adjust_prio_chain+0x5b8>
+ffffff800814835c:      	ldr	w11, [x12, #0x28]
+ffffff8008148360:      	mov	x8, x12
+ffffff8008148364:      	cmp	w10, w11
+ffffff8008148368:      	b.ge	0xffffff800814832c <rt_mutex_adjust_prio_chain+0x6c8>
+ffffff800814836c:      	mov	w11, #0x1       // =1
+ffffff8008148370:      	b	0xffffff800814833c <rt_mutex_adjust_prio_chain+0x6d8>
+ffffff8008148374:      	mov	w20, wzr
+ffffff8008148378:      	mov	x0, x26
+ffffff800814837c:      	bl	0xffffff8009c199b4 <_raw_spin_unlock_irq>
+ffffff8008148380:      	add	x8, x19, #0x68
+ffffff8008148384:      	prfm	pstl1strm, [x8]
+ffffff8008148388:      	ldxr	w9, [x8]
+ffffff800814838c:      	sub	w9, w9, #0x1
+ffffff8008148390:      	stlxr	w10, w9, [x8]
+ffffff8008148394:      	cbnz	w10, 0xffffff8008148388 <rt_mutex_adjust_prio_chain+0x724>
+ffffff8008148398:      	dmb	ish
+ffffff800814839c:      	cbnz	w9, 0xffffff8008148404 <rt_mutex_adjust_prio_chain+0x7a0>
+ffffff80081483a0:      	mov	x0, x19
+ffffff80081483a4:      	bl	0xffffff80080b542c <__put_task_struct>
+ffffff80081483a8:      	b	0xffffff8008148404 <rt_mutex_adjust_prio_chain+0x7a0>
+ffffff80081483ac:      	mov	x0, x21
+ffffff80081483b0:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff80081483b4:      	mov	w20, #-0x23     // =-35
+ffffff80081483b8:      	b	0xffffff8008148378 <rt_mutex_adjust_prio_chain+0x714>
+ffffff80081483bc:      	mov	w20, wzr
+ffffff80081483c0:      	b	0xffffff8008148380 <rt_mutex_adjust_prio_chain+0x71c>
+ffffff80081483c4:      	ldr	x5, [sp, #0x10]
+ffffff80081483c8:      	adrp	x8, 0xffffff800b56a000 <group_path+0x4bc>
+ffffff80081483cc:      	ldr	w9, [x8, #0xf14]
+ffffff80081483d0:      	cmp	w9, w1
+ffffff80081483d4:      	b.ne	0xffffff800814842c <rt_mutex_adjust_prio_chain+0x7c8>
+ffffff80081483d8:      	add	x8, x19, #0x68
+ffffff80081483dc:      	prfm	pstl1strm, [x8]
+ffffff80081483e0:      	ldxr	w9, [x8]
+ffffff80081483e4:      	sub	w9, w9, #0x1
+ffffff80081483e8:      	stlxr	w10, w9, [x8]
+ffffff80081483ec:      	cbnz	w10, 0xffffff80081483e0 <rt_mutex_adjust_prio_chain+0x77c>
+ffffff80081483f0:      	dmb	ish
+ffffff80081483f4:      	cbnz	w9, 0xffffff8008148400 <rt_mutex_adjust_prio_chain+0x79c>
+ffffff80081483f8:      	mov	x0, x19
+ffffff80081483fc:      	bl	0xffffff80080b542c <__put_task_struct>
+ffffff8008148400:      	mov	w20, #-0x23     // =-35
+ffffff8008148404:      	mov	w0, w20
+ffffff8008148408:      	ldp	x20, x19, [sp, #0x70]
+ffffff800814840c:      	ldp	x22, x21, [sp, #0x60]
+ffffff8008148410:      	ldp	x24, x23, [sp, #0x50]
+ffffff8008148414:      	ldp	x26, x25, [sp, #0x40]
+ffffff8008148418:      	ldp	x28, x27, [sp, #0x30]
+ffffff800814841c:      	ldp	x29, x16, [sp, #0x20]
+ffffff8008148420:      	eor	x30, x16, x17
+ffffff8008148424:      	add	sp, sp, #0x80
+ffffff8008148428:      	ret
+ffffff800814842c:      	ldr	w3, [x5, #0x640]
+ffffff8008148430:      	adrp	x0, 0xffffff800a5aa000 <empty_windows+0x10c0>
+ffffff8008148434:      	add	x2, x5, #0x800
+ffffff8008148438:      	add	x0, x0, #0xa3e
+ffffff800814843c:      	str	w1, [x8, #0xf14]
+ffffff8008148440:      	bl	0xffffff8008150310 <printk>
+ffffff8008148444:      	b	0xffffff80081483d8 <rt_mutex_adjust_prio_chain+0x774>
+ffffff8008148448:      	ldr	x8, [x21, #0x18]
+ffffff800814844c:      	cbz	x8, 0xffffff8008148464 <rt_mutex_adjust_prio_chain+0x800>
+ffffff8008148450:      	ldr	x10, [x8, #0x38]
+ffffff8008148454:      	mov	x9, x8
+ffffff8008148458:      	cmp	x10, x21
+ffffff800814845c:      	b.eq	0xffffff8008148468 <rt_mutex_adjust_prio_chain+0x804>
+ffffff8008148460:      	brk	#0x800
+ffffff8008148464:      	mov	x9, xzr
+ffffff8008148468:      	ldr	x10, [sp]
+ffffff800814846c:      	cmp	x10, x9
+ffffff8008148470:      	b.eq	0xffffff800814848c <rt_mutex_adjust_prio_chain+0x828>
+ffffff8008148474:      	cbz	x8, 0xffffff8008148484 <rt_mutex_adjust_prio_chain+0x820>
+ffffff8008148478:      	ldr	x9, [x8, #0x38]
+ffffff800814847c:      	cmp	x9, x21
+ffffff8008148480:      	b.ne	0xffffff80081484b0 <rt_mutex_adjust_prio_chain+0x84c>
+ffffff8008148484:      	ldr	x0, [x8, #0x30]
+ffffff8008148488:      	bl	0xffffff80080f89cc <wake_up_process>
+ffffff800814848c:      	mov	x0, x21
+ffffff8008148490:      	bl	0xffffff8009c199b4 <_raw_spin_unlock_irq>
+ffffff8008148494:      	mov	w20, wzr
+ffffff8008148498:      	b	0xffffff8008148404 <rt_mutex_adjust_prio_chain+0x7a0>
+ffffff800814849c:      	brk	#0x800
+ffffff80081484a0:      	brk	#0x800
+ffffff80081484a4:      	brk	#0x800
+ffffff80081484a8:      	brk	#0x800
+ffffff80081484ac:      	brk	#0x800
+ffffff80081484b0:      	brk	#0x800
+ffffff80081484b4:      	nop
+ffffff80081484b8:      	<unknown>
+
+===================================================================
+### rt_mutex_adjust_pi
+===================================================================
+ffffff8008147bac <rt_mutex_adjust_pi>:
+ffffff8008147bac:      	eor	x16, x30, x17
+ffffff8008147bb0:      	stp	x29, x16, [sp, #-0x30]!
+ffffff8008147bb4:      	str	x21, [sp, #0x10]
+ffffff8008147bb8:      	mov	x29, sp
+ffffff8008147bbc:      	stp	x20, x19, [sp, #0x20]
+ffffff8008147bc0:      	add	x20, x0, #0x8c8
+ffffff8008147bc4:      	mov	x19, x0
+ffffff8008147bc8:      	mov	x0, x20
+ffffff8008147bcc:      	bl	0xffffff8009c19744 <_raw_spin_lock_irqsave>
+ffffff8008147bd0:      	ldr	x8, [x19, #0x8f8]
+ffffff8008147bd4:      	mov	x1, x0
+ffffff8008147bd8:      	cbz	x8, 0xffffff8008147c00 <rt_mutex_adjust_pi+0x54>
+ffffff8008147bdc:      	ldr	w9, [x19, #0xac]
+ffffff8008147be0:      	ldr	w10, [x8, #0x40]
+ffffff8008147be4:      	cmp	w10, w9
+ffffff8008147be8:      	b.ne	0xffffff8008147c0c <rt_mutex_adjust_pi+0x60>
+ffffff8008147bec:      	tbz	w9, #0x1f, 0xffffff8008147c00 <rt_mutex_adjust_pi+0x54>
+ffffff8008147bf0:      	ldr	x9, [x19, #0x430]
+ffffff8008147bf4:      	ldr	x10, [x8, #0x48]
+ffffff8008147bf8:      	cmp	x10, x9
+ffffff8008147bfc:      	b.ne	0xffffff8008147c0c <rt_mutex_adjust_pi+0x60>
+ffffff8008147c00:      	mov	x0, x20
+ffffff8008147c04:      	bl	0xffffff8009c1994c <_raw_spin_unlock_irqrestore>
+ffffff8008147c08:      	b	0xffffff8008147c4c <rt_mutex_adjust_pi+0xa0>
+ffffff8008147c0c:      	ldr	x21, [x8, #0x38]
+ffffff8008147c10:      	mov	x0, x20
+ffffff8008147c14:      	bl	0xffffff8009c1994c <_raw_spin_unlock_irqrestore>
+ffffff8008147c18:      	mov	x0, x19
+ffffff8008147c1c:      	mov	w1, wzr
+ffffff8008147c20:      	mov	x2, xzr
+ffffff8008147c24:      	mov	x3, x21
+ffffff8008147c28:      	mov	x4, xzr
+ffffff8008147c2c:      	mov	x5, x19
+ffffff8008147c30:      	add	x8, x19, #0x68
+ffffff8008147c34:      	prfm	pstl1strm, [x8]
+ffffff8008147c38:      	ldxr	w9, [x8]
+ffffff8008147c3c:      	add	w9, w9, #0x1
+ffffff8008147c40:      	stxr	w10, w9, [x8]
+ffffff8008147c44:      	cbnz	w10, 0xffffff8008147c38 <rt_mutex_adjust_pi+0x8c>
+ffffff8008147c48:      	bl	0xffffff8008147c64 <rt_mutex_adjust_prio_chain>
+ffffff8008147c4c:      	ldp	x20, x19, [sp, #0x20]
+ffffff8008147c50:      	ldr	x21, [sp, #0x10]
+ffffff8008147c54:      	ldp	x29, x16, [sp], #0x30
+ffffff8008147c58:      	eor	x30, x16, x17
+ffffff8008147c5c:      	ret
+ffffff8008147c60:      	<unknown>
+
+===================================================================
+### remove_waiter
+===================================================================
+ffffff8008148d74 <remove_waiter>:
+ffffff8008148d74:      	eor	x16, x30, x17
+ffffff8008148d78:      	stp	x29, x16, [sp, #-0x40]!
+ffffff8008148d7c:      	stp	x24, x23, [sp, #0x10]
+ffffff8008148d80:      	mov	x29, sp
+ffffff8008148d84:      	stp	x22, x21, [sp, #0x20]
+ffffff8008148d88:      	stp	x20, x19, [sp, #0x30]
+ffffff8008148d8c:      	ldr	x22, [x0, #0x18]
+ffffff8008148d90:      	mov	x19, x0
+ffffff8008148d94:      	mov	x23, x1
+ffffff8008148d98:      	cbz	x22, 0xffffff8008148da8 <remove_waiter+0x34>
+ffffff8008148d9c:      	ldr	x8, [x22, #0x38]
+ffffff8008148da0:      	cmp	x8, x19
+ffffff8008148da4:      	b.ne	0xffffff8008148f9c <remove_waiter+0x228>
+ffffff8008148da8:      	mrs	x20, SP_EL0
+ffffff8008148dac:      	add	x21, x20, #0x8c8
+ffffff8008148db0:      	ldr	x24, [x19, #0x20]
+ffffff8008148db4:      	mov	x0, x21
+ffffff8008148db8:      	bl	0xffffff8009c196bc <_raw_spin_lock>
+ffffff8008148dbc:      	ldr	x8, [x23]
+ffffff8008148dc0:      	cmp	x8, x23
+ffffff8008148dc4:      	b.eq	0xffffff8008148dd8 <remove_waiter+0x64>
+ffffff8008148dc8:      	add	x1, x19, #0x10
+ffffff8008148dcc:      	mov	x0, x23
+ffffff8008148dd0:      	bl	0xffffff8009c06e94 <rb_erase_cached>
+ffffff8008148dd4:      	str	x23, [x23]
+ffffff8008148dd8:      	mov	x0, x21
+ffffff8008148ddc:      	str	xzr, [x20, #0x8f8]
+ffffff8008148de0:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff8008148de4:      	cmp	x22, x23
+ffffff8008148de8:      	b.ne	0xffffff8008148f2c <remove_waiter+0x1b8>
+ffffff8008148dec:      	and	x21, x24, #0xfffffffffffffffe
+ffffff8008148df0:      	cbz	x21, 0xffffff8008148f2c <remove_waiter+0x1b8>
+ffffff8008148df4:      	add	x22, x21, #0x8c8
+ffffff8008148df8:      	mov	x0, x22
+ffffff8008148dfc:      	bl	0xffffff8009c196bc <_raw_spin_lock>
+ffffff8008148e00:      	ldr	x8, [x23, #0x18]!
+ffffff8008148e04:      	cmp	x8, x23
+ffffff8008148e08:      	b.eq	0xffffff8008148e1c <remove_waiter+0xa8>
+ffffff8008148e0c:      	add	x1, x21, #0x8e0
+ffffff8008148e10:      	mov	x0, x23
+ffffff8008148e14:      	bl	0xffffff8009c06e94 <rb_erase_cached>
+ffffff8008148e18:      	str	x23, [x23]
+ffffff8008148e1c:      	ldr	x8, [x19, #0x10]
+ffffff8008148e20:      	cbz	x8, 0xffffff8008148ea4 <remove_waiter+0x130>
+ffffff8008148e24:      	ldr	x0, [x19, #0x18]
+ffffff8008148e28:      	cbz	x0, 0xffffff8008148e38 <remove_waiter+0xc4>
+ffffff8008148e2c:      	ldr	x8, [x0, #0x38]
+ffffff8008148e30:      	cmp	x8, x19
+ffffff8008148e34:      	b.ne	0xffffff8008148fa0 <remove_waiter+0x22c>
+ffffff8008148e38:      	ldr	x12, [x21, #0x8e0]
+ffffff8008148e3c:      	add	x1, x21, #0x8e0
+ffffff8008148e40:      	cbz	x12, 0xffffff8008148e88 <remove_waiter+0x114>
+ffffff8008148e44:      	ldr	w10, [x0, #0x40]
+ffffff8008148e48:      	tbnz	w10, #0x1f, 0xffffff8008148f44 <remove_waiter+0x1d0>
+ffffff8008148e4c:      	mov	w8, #0x1        // =1
+ffffff8008148e50:      	mov	w11, #0x8       // =8
+ffffff8008148e54:      	mov	w14, #0x10      // =16
+ffffff8008148e58:      	mov	x9, x12
+ffffff8008148e5c:      	ldr	w12, [x12, #0x28]
+ffffff8008148e60:      	add	x13, x9, #0x10
+ffffff8008148e64:      	add	x15, x9, #0x8
+ffffff8008148e68:      	cmp	w10, w12
+ffffff8008148e6c:      	csel	x12, x14, x11, lt
+ffffff8008148e70:      	csel	w8, w8, wzr, lt
+ffffff8008148e74:      	csel	x13, x13, x15, lt
+ffffff8008148e78:      	ldr	x12, [x9, x12]
+ffffff8008148e7c:      	cbnz	x12, 0xffffff8008148e58 <remove_waiter+0xe4>
+ffffff8008148e80:      	and	w2, w8, #0x1
+ffffff8008148e84:      	b	0xffffff8008148e94 <remove_waiter+0x120>
+ffffff8008148e88:      	mov	x9, xzr
+ffffff8008148e8c:      	mov	w2, #0x1        // =1
+ffffff8008148e90:      	mov	x13, x1
+ffffff8008148e94:      	str	x9, [x0, #0x18]!
+ffffff8008148e98:      	stp	xzr, xzr, [x0, #0x8]
+ffffff8008148e9c:      	str	x0, [x13]
+ffffff8008148ea0:      	bl	0xffffff8009c06d4c <rb_insert_color_cached>
+ffffff8008148ea4:      	ldr	x8, [x21, #0x8e0]
+ffffff8008148ea8:      	cbz	x8, 0xffffff8008148eb8 <remove_waiter+0x144>
+ffffff8008148eac:      	ldr	x8, [x21, #0x8e8]
+ffffff8008148eb0:      	ldr	x1, [x8, #0x18]
+ffffff8008148eb4:      	b	0xffffff8008148ebc <remove_waiter+0x148>
+ffffff8008148eb8:      	mov	x1, xzr
+ffffff8008148ebc:      	mov	x0, x21
+ffffff8008148ec0:      	bl	0xffffff80080f9f74 <rt_mutex_setprio>
+ffffff8008148ec4:      	ldr	x8, [x21, #0x8f8]
+ffffff8008148ec8:      	cbz	x8, 0xffffff8008148f24 <remove_waiter+0x1b0>
+ffffff8008148ecc:      	ldr	x23, [x8, #0x38]
+ffffff8008148ed0:      	mov	x0, x22
+ffffff8008148ed4:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff8008148ed8:      	cbz	x23, 0xffffff8008148f2c <remove_waiter+0x1b8>
+ffffff8008148edc:      	mov	x0, x19
+ffffff8008148ee0:      	add	x8, x21, #0x68
+ffffff8008148ee4:      	prfm	pstl1strm, [x8]
+ffffff8008148ee8:      	ldxr	w9, [x8]
+ffffff8008148eec:      	add	w9, w9, #0x1
+ffffff8008148ef0:      	stxr	w10, w9, [x8]
+ffffff8008148ef4:      	cbnz	w10, 0xffffff8008148ee8 <remove_waiter+0x174>
+ffffff8008148ef8:      	bl	0xffffff8009c199b4 <_raw_spin_unlock_irq>
+ffffff8008148efc:      	mov	x0, x21
+ffffff8008148f00:      	mov	w1, wzr
+ffffff8008148f04:      	mov	x2, x19
+ffffff8008148f08:      	mov	x3, x23
+ffffff8008148f0c:      	mov	x4, xzr
+ffffff8008148f10:      	mov	x5, x20
+ffffff8008148f14:      	bl	0xffffff8008147c64 <rt_mutex_adjust_prio_chain>
+ffffff8008148f18:      	mov	x0, x19
+ffffff8008148f1c:      	bl	0xffffff8009c197dc <_raw_spin_lock_irq>
+ffffff8008148f20:      	b	0xffffff8008148f2c <remove_waiter+0x1b8>
+ffffff8008148f24:      	mov	x0, x22
+ffffff8008148f28:      	bl	0xffffff8009c198ec <_raw_spin_unlock>
+ffffff8008148f2c:      	ldp	x20, x19, [sp, #0x30]
+ffffff8008148f30:      	ldp	x22, x21, [sp, #0x20]
+ffffff8008148f34:      	ldp	x24, x23, [sp, #0x10]
+ffffff8008148f38:      	ldp	x29, x16, [sp], #0x40
+ffffff8008148f3c:      	eor	x30, x16, x17
+ffffff8008148f40:      	ret
+ffffff8008148f44:      	mov	w8, #0x1        // =1
+ffffff8008148f48:      	mov	w11, #0x8       // =8
+ffffff8008148f4c:      	mov	w14, #0x10      // =16
+ffffff8008148f50:      	b	0xffffff8008148f84 <remove_waiter+0x210>
+ffffff8008148f54:      	ldr	x12, [x0, #0x48]
+ffffff8008148f58:      	ldr	x13, [x9, #0x30]
+ffffff8008148f5c:      	sub	x12, x12, x13
+ffffff8008148f60:      	lsr	x12, x12, #63
+ffffff8008148f64:      	cmp	w12, #0x0
+ffffff8008148f68:      	add	x13, x9, #0x10
+ffffff8008148f6c:      	csel	x12, x14, x11, ne
+ffffff8008148f70:      	add	x15, x9, #0x8
+ffffff8008148f74:      	csel	w8, w8, wzr, ne
+ffffff8008148f78:      	csel	x13, x13, x15, ne
+ffffff8008148f7c:      	ldr	x12, [x9, x12]
+ffffff8008148f80:      	cbz	x12, 0xffffff8008148e80 <remove_waiter+0x10c>
+ffffff8008148f84:      	mov	x9, x12
+ffffff8008148f88:      	ldr	w12, [x12, #0x28]
+ffffff8008148f8c:      	cmp	w10, w12
+ffffff8008148f90:      	b.ge	0xffffff8008148f54 <remove_waiter+0x1e0>
+ffffff8008148f94:      	mov	w12, #0x1       // =1
+ffffff8008148f98:      	b	0xffffff8008148f64 <remove_waiter+0x1f0>
+ffffff8008148f9c:      	brk	#0x800
+ffffff8008148fa0:      	brk	#0x800
+ffffff8008148fa4:      	nop
+ffffff8008148fa8:      	<unknown>
+
+===================================================================
+### rt_mutex_start_proxy_lock
+===================================================================
+ffffff8008148cd4 <rt_mutex_start_proxy_lock>:
+ffffff8008148cd4:      	eor	x16, x30, x17
+ffffff8008148cd8:      	stp	x29, x16, [sp, #-0x30]!
+ffffff8008148cdc:      	str	x21, [sp, #0x10]
+ffffff8008148ce0:      	mov	x29, sp
+ffffff8008148ce4:      	stp	x20, x19, [sp, #0x20]
+ffffff8008148ce8:      	mov	x21, x2
+ffffff8008148cec:      	mov	x20, x1
+ffffff8008148cf0:      	mov	x19, x0
+ffffff8008148cf4:      	bl	0xffffff8009c197dc <_raw_spin_lock_irq>
+ffffff8008148cf8:      	mov	x0, x19
+ffffff8008148cfc:      	mov	x1, x21
+ffffff8008148d00:      	mov	x2, xzr
+ffffff8008148d04:      	bl	0xffffff800814877c <try_to_take_rt_mutex>
+ffffff8008148d08:      	cbz	w0, 0xffffff8008148d3c <rt_mutex_start_proxy_lock+0x68>
+ffffff8008148d0c:      	mov	w21, #0x1       // =1
+ffffff8008148d10:      	mov	x0, x19
+ffffff8008148d14:      	mov	x1, x20
+ffffff8008148d18:      	bl	0xffffff8008148d74 <remove_waiter>
+ffffff8008148d1c:      	mov	x0, x19
+ffffff8008148d20:      	bl	0xffffff8009c199b4 <_raw_spin_unlock_irq>
+ffffff8008148d24:      	mov	w0, w21
+ffffff8008148d28:      	ldr	x21, [sp, #0x10]
+ffffff8008148d2c:      	ldp	x20, x19, [sp, #0x20]
+ffffff8008148d30:      	ldp	x29, x16, [sp], #0x30
+ffffff8008148d34:      	eor	x30, x16, x17
+ffffff8008148d38:      	ret
+ffffff8008148d3c:      	mov	x0, x19
+ffffff8008148d40:      	mov	x1, x20
+ffffff8008148d44:      	mov	x2, x21
+ffffff8008148d48:      	mov	w3, #0x1        // =1
+ffffff8008148d4c:      	bl	0xffffff8008148994 <task_blocks_on_rt_mutex>
+ffffff8008148d50:      	mov	w21, w0
+ffffff8008148d54:      	cbz	w0, 0xffffff8008148d1c <rt_mutex_start_proxy_lock+0x48>
+ffffff8008148d58:      	ldr	x8, [x19, #0x20]
+ffffff8008148d5c:      	cmp	x8, #0x2
+ffffff8008148d60:      	b.hs	0xffffff8008148d10 <rt_mutex_start_proxy_lock+0x3c>
+ffffff8008148d64:      	mov	w21, wzr
+ffffff8008148d68:      	b	0xffffff8008148d1c <rt_mutex_start_proxy_lock+0x48>
+ffffff8008148d6c:      	nop
+ffffff8008148d70:      	<unknown>
+
+===================================================================
+### _raw_spin_trylock
+===================================================================
+ffffff8009c1958c <_raw_spin_trylock>:
+ffffff8009c1958c:      	eor	x16, x30, x17
+ffffff8009c19590:      	stp	x29, x16, [sp, #-0x10]!
+ffffff8009c19594:      	mov	x29, sp
+ffffff8009c19598:      	mrs	x9, SP_EL0
+ffffff8009c1959c:      	ldr	w8, [x9, #0x48]
+ffffff8009c195a0:      	add	w8, w8, #0x1
+ffffff8009c195a4:      	str	w8, [x9, #0x48]
+ffffff8009c195a8:      	ldr	w8, [x0]
+ffffff8009c195ac:      	cbnz	w8, 0xffffff8009c195d4 <_raw_spin_trylock+0x48>
+ffffff8009c195b0:      	mov	x8, xzr
+ffffff8009c195b4:      	mov	w10, #0x1       // =1
+ffffff8009c195b8:      	prfm	pstl1strm, [x0]
+ffffff8009c195bc:      	ldaxr	w12, [x0]
+ffffff8009c195c0:      	eor	w11, w12, w8
+ffffff8009c195c4:      	cbnz	w11, 0xffffff8009c195d0 <_raw_spin_trylock+0x44>
+ffffff8009c195c8:      	stxr	w11, w10, [x0]
+ffffff8009c195cc:      	cbnz	w11, 0xffffff8009c195bc <_raw_spin_trylock+0x30>
+ffffff8009c195d0:      	cbz	w12, 0xffffff8009c19600 <_raw_spin_trylock+0x74>
+ffffff8009c195d4:      	ldr	w8, [x9, #0x48]
+ffffff8009c195d8:      	subs	w8, w8, #0x1
+ffffff8009c195dc:      	str	w8, [x9, #0x48]
+ffffff8009c195e0:      	b.ne	0xffffff8009c195ec <_raw_spin_trylock+0x60>
+ffffff8009c195e4:      	ldr	x8, [x9]
+ffffff8009c195e8:      	tbnz	w8, #0x1, 0xffffff8009c19620 <_raw_spin_trylock+0x94>
+ffffff8009c195ec:      	mov	w8, wzr
+ffffff8009c195f0:      	mov	w0, w8
+ffffff8009c195f4:      	ldp	x29, x16, [sp], #0x10
+ffffff8009c195f8:      	eor	x30, x16, x17
+ffffff8009c195fc:      	ret
+ffffff8009c19600:      	adrp	x10, 0xffffff800ad12000 <bp_hardening_data>
+ffffff8009c19604:      	mrs	x8, TPIDR_EL1
+ffffff8009c19608:      	add	x10, x10, #0x28
+ffffff8009c1960c:      	ldr	w10, [x8, x10]
+ffffff8009c19610:      	mov	w8, #0x1        // =1
+ffffff8009c19614:      	str	x9, [x0, #0x8]
+ffffff8009c19618:      	str	w10, [x0, #0x4]
+ffffff8009c1961c:      	b	0xffffff8009c195f0 <_raw_spin_trylock+0x64>
+ffffff8009c19620:      	bl	0xffffff8009c1305c <preempt_schedule>
+ffffff8009c19624:      	b	0xffffff8009c195ec <_raw_spin_trylock+0x60>
+ffffff8009c19628:      	<unknown>
+
+===================================================================
+### _raw_spin_unlock
+===================================================================
+ffffff8009c198ec <_raw_spin_unlock>:
+ffffff8009c198ec:      	eor	x16, x30, x17
+ffffff8009c198f0:      	stp	x29, x16, [sp, #-0x10]!
+ffffff8009c198f4:      	mov	x29, sp
+ffffff8009c198f8:      	mov	w9, #-0x1       // =-1
+ffffff8009c198fc:      	mov	x10, #-0x1      // =-1
+ffffff8009c19900:      	mov	w8, wzr
+ffffff8009c19904:      	str	w9, [x0, #0x4]
+ffffff8009c19908:      	str	x10, [x0, #0x8]
+ffffff8009c1990c:      	stlrb	w8, [x0]
+ffffff8009c19910:      	mrs	x8, SP_EL0
+ffffff8009c19914:      	ldr	w9, [x8, #0x48]
+ffffff8009c19918:      	subs	w9, w9, #0x1
+ffffff8009c1991c:      	str	w9, [x8, #0x48]
+ffffff8009c19920:      	b.eq	0xffffff8009c19930 <_raw_spin_unlock+0x44>
+ffffff8009c19924:      	ldp	x29, x16, [sp], #0x10
+ffffff8009c19928:      	eor	x30, x16, x17
+ffffff8009c1992c:      	ret
+ffffff8009c19930:      	ldr	x8, [x8]
+ffffff8009c19934:      	tbz	w8, #0x1, 0xffffff8009c19924 <_raw_spin_unlock+0x38>
+ffffff8009c19938:      	bl	0xffffff8009c1305c <preempt_schedule>
+ffffff8009c1993c:      	ldp	x29, x16, [sp], #0x10
+ffffff8009c19940:      	eor	x30, x16, x17
+ffffff8009c19944:      	ret
+ffffff8009c19948:      	<unknown>
+
+===================================================================
+### rb_erase_cached
+===================================================================
+ffffff8009c06e94 <rb_erase_cached>:
+ffffff8009c06e94:      	ldp	x9, x8, [x0, #0x8]
+ffffff8009c06e98:      	adds	x10, x1, #0x8
+ffffff8009c06e9c:      	b.eq	0xffffff8009c06eac <rb_erase_cached+0x18>
+ffffff8009c06ea0:      	ldr	x11, [x10]
+ffffff8009c06ea4:      	cmp	x11, x0
+ffffff8009c06ea8:      	b.eq	0xffffff8009c06ef8 <rb_erase_cached+0x64>
+ffffff8009c06eac:      	cbz	x8, 0xffffff8009c06ffc <rb_erase_cached+0x168>
+ffffff8009c06eb0:      	cbz	x9, 0xffffff8009c06f0c <rb_erase_cached+0x78>
+ffffff8009c06eb4:      	ldr	x10, [x9, #0x10]
+ffffff8009c06eb8:      	cbz	x10, 0xffffff8009c06f30 <rb_erase_cached+0x9c>
+ffffff8009c06ebc:      	mov	x12, x9
+ffffff8009c06ec0:      	mov	x11, x10
+ffffff8009c06ec4:      	ldr	x10, [x10, #0x10]
+ffffff8009c06ec8:      	mov	x8, x12
+ffffff8009c06ecc:      	mov	x12, x11
+ffffff8009c06ed0:      	cbnz	x10, 0xffffff8009c06ec0 <rb_erase_cached+0x2c>
+ffffff8009c06ed4:      	ldr	x10, [x11, #0x8]
+ffffff8009c06ed8:      	str	x10, [x8, #0x10]
+ffffff8009c06edc:      	str	x9, [x11, #0x8]
+ffffff8009c06ee0:      	ldr	x12, [x9]
+ffffff8009c06ee4:      	and	x12, x12, #0x1
+ffffff8009c06ee8:      	orr	x12, x12, x11
+ffffff8009c06eec:      	str	x12, [x9]
+ffffff8009c06ef0:      	mov	x9, x11
+ffffff8009c06ef4:      	b	0xffffff8009c06f38 <rb_erase_cached+0xa4>
+ffffff8009c06ef8:      	ldr	x12, [x0]
+ffffff8009c06efc:      	cmp	x12, x0
+ffffff8009c06f00:      	b.ne	0xffffff8009c06f98 <rb_erase_cached+0x104>
+ffffff8009c06f04:      	mov	x11, xzr
+ffffff8009c06f08:      	b	0xffffff8009c06ff4 <rb_erase_cached+0x160>
+ffffff8009c06f0c:      	ldr	x10, [x0]
+ffffff8009c06f10:      	ands	x9, x10, #0xfffffffffffffffc
+ffffff8009c06f14:      	str	x10, [x8]
+ffffff8009c06f18:      	b.eq	0xffffff8009c06fbc <rb_erase_cached+0x128>
+ffffff8009c06f1c:      	ldr	x10, [x9, #0x10]
+ffffff8009c06f20:      	cmp	x10, x0
+ffffff8009c06f24:      	b.eq	0xffffff8009c06fc4 <rb_erase_cached+0x130>
+ffffff8009c06f28:      	str	x8, [x9, #0x8]
+ffffff8009c06f2c:      	ret
+ffffff8009c06f30:      	ldr	x10, [x9, #0x8]
+ffffff8009c06f34:      	mov	x8, x9
+ffffff8009c06f38:      	ldr	x11, [x0, #0x10]
+ffffff8009c06f3c:      	str	x11, [x9, #0x10]
+ffffff8009c06f40:      	ldr	x12, [x11]
+ffffff8009c06f44:      	and	x12, x12, #0x1
+ffffff8009c06f48:      	orr	x12, x12, x9
+ffffff8009c06f4c:      	str	x12, [x11]
+ffffff8009c06f50:      	ldr	x11, [x0]
+ffffff8009c06f54:      	ands	x12, x11, #0xfffffffffffffffc
+ffffff8009c06f58:      	b.eq	0xffffff8009c06f80 <rb_erase_cached+0xec>
+ffffff8009c06f5c:      	ldr	x13, [x12, #0x10]
+ffffff8009c06f60:      	cmp	x13, x0
+ffffff8009c06f64:      	b.eq	0xffffff8009c06fb0 <rb_erase_cached+0x11c>
+ffffff8009c06f68:      	str	x9, [x12, #0x8]
+ffffff8009c06f6c:      	cbz	x10, 0xffffff8009c06f88 <rb_erase_cached+0xf4>
+ffffff8009c06f70:      	orr	x8, x8, #0x1
+ffffff8009c06f74:      	str	x11, [x9]
+ffffff8009c06f78:      	str	x8, [x10]
+ffffff8009c06f7c:      	ret
+ffffff8009c06f80:      	str	x9, [x1]
+ffffff8009c06f84:      	cbnz	x10, 0xffffff8009c06f70 <rb_erase_cached+0xdc>
+ffffff8009c06f88:      	ldr	x10, [x9]
+ffffff8009c06f8c:      	str	x11, [x9]
+ffffff8009c06f90:      	tbnz	w10, #0x0, 0xffffff8009c07034 <rb_erase_cached+0x1a0>
+ffffff8009c06f94:      	b	0xffffff8009c0718c <rb_erase_cached+0x2f8>
+ffffff8009c06f98:      	cbz	x9, 0xffffff8009c06fcc <rb_erase_cached+0x138>
+ffffff8009c06f9c:      	mov	x12, x9
+ffffff8009c06fa0:      	mov	x11, x12
+ffffff8009c06fa4:      	ldr	x12, [x12, #0x10]
+ffffff8009c06fa8:      	cbnz	x12, 0xffffff8009c06fa0 <rb_erase_cached+0x10c>
+ffffff8009c06fac:      	b	0xffffff8009c06ff4 <rb_erase_cached+0x160>
+ffffff8009c06fb0:      	str	x9, [x12, #0x10]
+ffffff8009c06fb4:      	cbnz	x10, 0xffffff8009c06f70 <rb_erase_cached+0xdc>
+ffffff8009c06fb8:      	b	0xffffff8009c06f88 <rb_erase_cached+0xf4>
+ffffff8009c06fbc:      	str	x8, [x1]
+ffffff8009c06fc0:      	ret
+ffffff8009c06fc4:      	str	x8, [x9, #0x10]
+ffffff8009c06fc8:      	ret
+ffffff8009c06fcc:      	mov	x13, x0
+ffffff8009c06fd0:      	ands	x11, x12, #0xfffffffffffffffc
+ffffff8009c06fd4:      	b.eq	0xffffff8009c06ff4 <rb_erase_cached+0x160>
+ffffff8009c06fd8:      	ldr	x12, [x11, #0x8]
+ffffff8009c06fdc:      	cmp	x13, x12
+ffffff8009c06fe0:      	b.ne	0xffffff8009c06ff4 <rb_erase_cached+0x160>
+ffffff8009c06fe4:      	ldr	x12, [x11]
+ffffff8009c06fe8:      	mov	x13, x11
+ffffff8009c06fec:      	ands	x11, x12, #0xfffffffffffffffc
+ffffff8009c06ff0:      	b.ne	0xffffff8009c06fd8 <rb_erase_cached+0x144>
+ffffff8009c06ff4:      	str	x11, [x10]
+ffffff8009c06ff8:      	cbnz	x8, 0xffffff8009c06eb0 <rb_erase_cached+0x1c>
+ffffff8009c06ffc:      	ldr	x10, [x0]
+ffffff8009c07000:      	ands	x8, x10, #0xfffffffffffffffc
+ffffff8009c07004:      	b.eq	0xffffff8009c07024 <rb_erase_cached+0x190>
+ffffff8009c07008:      	ldr	x11, [x8, #0x10]
+ffffff8009c0700c:      	cmp	x11, x0
+ffffff8009c07010:      	b.eq	0xffffff8009c07190 <rb_erase_cached+0x2fc>
+ffffff8009c07014:      	str	x9, [x8, #0x8]
+ffffff8009c07018:      	cbz	x9, 0xffffff8009c0702c <rb_erase_cached+0x198>
+ffffff8009c0701c:      	str	x10, [x9]
+ffffff8009c07020:      	ret
+ffffff8009c07024:      	str	x9, [x1]
+ffffff8009c07028:      	cbnz	x9, 0xffffff8009c0701c <rb_erase_cached+0x188>
+ffffff8009c0702c:      	tbz	w10, #0x0, 0xffffff8009c0718c <rb_erase_cached+0x2f8>
+ffffff8009c07030:      	cbz	x8, 0xffffff8009c0718c <rb_erase_cached+0x2f8>
+ffffff8009c07034:      	mov	x11, xzr
+ffffff8009c07038:      	ldr	x10, [x8, #0x8]
+ffffff8009c0703c:      	cmp	x11, x10
+ffffff8009c07040:      	b.eq	0xffffff8009c07090 <rb_erase_cached+0x1fc>
+ffffff8009c07044:      	ldrb	w9, [x10]
+ffffff8009c07048:      	tbnz	w9, #0x0, 0xffffff8009c070e0 <rb_erase_cached+0x24c>
+ffffff8009c0704c:      	ldr	x9, [x10, #0x10]
+ffffff8009c07050:      	orr	x11, x8, #0x1
+ffffff8009c07054:      	str	x9, [x8, #0x8]
+ffffff8009c07058:      	str	x8, [x10, #0x10]
+ffffff8009c0705c:      	str	x11, [x9]
+ffffff8009c07060:      	ldr	x12, [x8]
+ffffff8009c07064:      	ands	x11, x12, #0xfffffffffffffffc
+ffffff8009c07068:      	str	x12, [x10]
+ffffff8009c0706c:      	str	x10, [x8]
+ffffff8009c07070:      	b.eq	0xffffff8009c07100 <rb_erase_cached+0x26c>
+ffffff8009c07074:      	ldr	x12, [x11, #0x10]
+ffffff8009c07078:      	cmp	x12, x8
+ffffff8009c0707c:      	b.eq	0xffffff8009c07110 <rb_erase_cached+0x27c>
+ffffff8009c07080:      	str	x10, [x11, #0x8]
+ffffff8009c07084:      	ldr	x11, [x9, #0x8]
+ffffff8009c07088:      	cbnz	x11, 0xffffff8009c0711c <rb_erase_cached+0x288>
+ffffff8009c0708c:      	b	0xffffff8009c07124 <rb_erase_cached+0x290>
+ffffff8009c07090:      	ldr	x10, [x8, #0x10]
+ffffff8009c07094:      	ldrb	w9, [x10]
+ffffff8009c07098:      	tbnz	w9, #0x0, 0xffffff8009c070f0 <rb_erase_cached+0x25c>
+ffffff8009c0709c:      	ldr	x9, [x10, #0x8]
+ffffff8009c070a0:      	orr	x11, x8, #0x1
+ffffff8009c070a4:      	str	x9, [x8, #0x10]
+ffffff8009c070a8:      	str	x8, [x10, #0x8]
+ffffff8009c070ac:      	str	x11, [x9]
+ffffff8009c070b0:      	ldr	x12, [x8]
+ffffff8009c070b4:      	ands	x11, x12, #0xfffffffffffffffc
+ffffff8009c070b8:      	str	x12, [x10]
+ffffff8009c070bc:      	str	x10, [x8]
+ffffff8009c070c0:      	b.eq	0xffffff8009c07138 <rb_erase_cached+0x2a4>
+ffffff8009c070c4:      	ldr	x12, [x11, #0x10]
+ffffff8009c070c8:      	cmp	x12, x8
+ffffff8009c070cc:      	b.eq	0xffffff8009c07148 <rb_erase_cached+0x2b4>
+ffffff8009c070d0:      	str	x10, [x11, #0x8]
+ffffff8009c070d4:      	ldr	x11, [x9, #0x10]
+ffffff8009c070d8:      	cbnz	x11, 0xffffff8009c07154 <rb_erase_cached+0x2c0>
+ffffff8009c070dc:      	b	0xffffff8009c0715c <rb_erase_cached+0x2c8>
+ffffff8009c070e0:      	mov	x9, x10
+ffffff8009c070e4:      	ldr	x11, [x9, #0x8]
+ffffff8009c070e8:      	cbnz	x11, 0xffffff8009c0711c <rb_erase_cached+0x288>
+ffffff8009c070ec:      	b	0xffffff8009c07124 <rb_erase_cached+0x290>
+ffffff8009c070f0:      	mov	x9, x10
+ffffff8009c070f4:      	ldr	x11, [x9, #0x10]
+ffffff8009c070f8:      	cbnz	x11, 0xffffff8009c07154 <rb_erase_cached+0x2c0>
+ffffff8009c070fc:      	b	0xffffff8009c0715c <rb_erase_cached+0x2c8>
+ffffff8009c07100:      	str	x10, [x1]
+ffffff8009c07104:      	ldr	x11, [x9, #0x8]
+ffffff8009c07108:      	cbnz	x11, 0xffffff8009c0711c <rb_erase_cached+0x288>
+ffffff8009c0710c:      	b	0xffffff8009c07124 <rb_erase_cached+0x290>
+ffffff8009c07110:      	str	x10, [x11, #0x10]
+ffffff8009c07114:      	ldr	x11, [x9, #0x8]
+ffffff8009c07118:      	cbz	x11, 0xffffff8009c07124 <rb_erase_cached+0x290>
+ffffff8009c0711c:      	ldrb	w10, [x11]
+ffffff8009c07120:      	tbz	w10, #0x0, 0xffffff8009c071a8 <rb_erase_cached+0x314>
+ffffff8009c07124:      	ldr	x10, [x9, #0x10]
+ffffff8009c07128:      	cbz	x10, 0xffffff8009c0716c <rb_erase_cached+0x2d8>
+ffffff8009c0712c:      	ldrb	w11, [x10]
+ffffff8009c07130:      	tbnz	w11, #0x0, 0xffffff8009c0716c <rb_erase_cached+0x2d8>
+ffffff8009c07134:      	b	0xffffff8009c071b0 <rb_erase_cached+0x31c>
+ffffff8009c07138:      	str	x10, [x1]
+ffffff8009c0713c:      	ldr	x11, [x9, #0x10]
+ffffff8009c07140:      	cbnz	x11, 0xffffff8009c07154 <rb_erase_cached+0x2c0>
+ffffff8009c07144:      	b	0xffffff8009c0715c <rb_erase_cached+0x2c8>
+ffffff8009c07148:      	str	x10, [x11, #0x10]
+ffffff8009c0714c:      	ldr	x11, [x9, #0x10]
+ffffff8009c07150:      	cbz	x11, 0xffffff8009c0715c <rb_erase_cached+0x2c8>
+ffffff8009c07154:      	ldrb	w10, [x11]
+ffffff8009c07158:      	tbz	w10, #0x0, 0xffffff8009c071d4 <rb_erase_cached+0x340>
+ffffff8009c0715c:      	ldr	x10, [x9, #0x8]
+ffffff8009c07160:      	cbz	x10, 0xffffff8009c0716c <rb_erase_cached+0x2d8>
+ffffff8009c07164:      	ldrb	w11, [x10]
+ffffff8009c07168:      	tbz	w11, #0x0, 0xffffff8009c071dc <rb_erase_cached+0x348>
+ffffff8009c0716c:      	str	x8, [x9]
+ffffff8009c07170:      	ldr	x9, [x8]
+ffffff8009c07174:      	tbz	w9, #0x0, 0xffffff8009c0719c <rb_erase_cached+0x308>
+ffffff8009c07178:      	ands	x9, x9, #0xfffffffffffffffc
+ffffff8009c0717c:      	b.eq	0xffffff8009c0718c <rb_erase_cached+0x2f8>
+ffffff8009c07180:      	mov	x11, x8
+ffffff8009c07184:      	mov	x8, x9
+ffffff8009c07188:      	b	0xffffff8009c07038 <rb_erase_cached+0x1a4>
+ffffff8009c0718c:      	ret
+ffffff8009c07190:      	str	x9, [x8, #0x10]
+ffffff8009c07194:      	cbnz	x9, 0xffffff8009c0701c <rb_erase_cached+0x188>
+ffffff8009c07198:      	b	0xffffff8009c0702c <rb_erase_cached+0x198>
+ffffff8009c0719c:      	orr	x9, x9, #0x1
+ffffff8009c071a0:      	str	x9, [x8]
+ffffff8009c071a4:      	ret
+ffffff8009c071a8:      	mov	x10, x9
+ffffff8009c071ac:      	b	0xffffff8009c07204 <rb_erase_cached+0x370>
+ffffff8009c071b0:      	ldr	x12, [x10, #0x8]
+ffffff8009c071b4:      	str	x12, [x9, #0x10]
+ffffff8009c071b8:      	str	x9, [x10, #0x8]
+ffffff8009c071bc:      	str	x10, [x8, #0x8]
+ffffff8009c071c0:      	cbz	x12, 0xffffff8009c07200 <rb_erase_cached+0x36c>
+ffffff8009c071c4:      	orr	x13, x9, #0x1
+ffffff8009c071c8:      	mov	x11, x9
+ffffff8009c071cc:      	str	x13, [x12]
+ffffff8009c071d0:      	b	0xffffff8009c07204 <rb_erase_cached+0x370>
+ffffff8009c071d4:      	mov	x10, x9
+ffffff8009c071d8:      	b	0xffffff8009c07268 <rb_erase_cached+0x3d4>
+ffffff8009c071dc:      	ldr	x12, [x10, #0x10]
+ffffff8009c071e0:      	str	x12, [x9, #0x8]
+ffffff8009c071e4:      	str	x9, [x10, #0x10]
+ffffff8009c071e8:      	str	x10, [x8, #0x10]
+ffffff8009c071ec:      	cbz	x12, 0xffffff8009c07264 <rb_erase_cached+0x3d0>
+ffffff8009c071f0:      	orr	x13, x9, #0x1
+ffffff8009c071f4:      	mov	x11, x9
+ffffff8009c071f8:      	str	x13, [x12]
+ffffff8009c071fc:      	b	0xffffff8009c07268 <rb_erase_cached+0x3d4>
+ffffff8009c07200:      	mov	x11, x9
+ffffff8009c07204:      	ldr	x12, [x10, #0x10]
+ffffff8009c07208:      	orr	x9, x10, #0x1
+ffffff8009c0720c:      	str	x12, [x8, #0x8]
+ffffff8009c07210:      	str	x8, [x10, #0x10]
+ffffff8009c07214:      	str	x9, [x11]
+ffffff8009c07218:      	cbz	x12, 0xffffff8009c0722c <rb_erase_cached+0x398>
+ffffff8009c0721c:      	ldr	x11, [x12]
+ffffff8009c07220:      	and	x11, x11, #0x1
+ffffff8009c07224:      	orr	x11, x11, x8
+ffffff8009c07228:      	str	x11, [x12]
+ffffff8009c0722c:      	ldr	x12, [x8]
+ffffff8009c07230:      	ands	x11, x12, #0xfffffffffffffffc
+ffffff8009c07234:      	str	x12, [x10]
+ffffff8009c07238:      	str	x9, [x8]
+ffffff8009c0723c:      	b.eq	0xffffff8009c07254 <rb_erase_cached+0x3c0>
+ffffff8009c07240:      	ldr	x9, [x11, #0x10]
+ffffff8009c07244:      	cmp	x9, x8
+ffffff8009c07248:      	b.eq	0xffffff8009c0725c <rb_erase_cached+0x3c8>
+ffffff8009c0724c:      	str	x10, [x11, #0x8]
+ffffff8009c07250:      	ret
+ffffff8009c07254:      	str	x10, [x1]
+ffffff8009c07258:      	ret
+ffffff8009c0725c:      	str	x10, [x11, #0x10]
+ffffff8009c07260:      	ret
+ffffff8009c07264:      	mov	x11, x9
+ffffff8009c07268:      	ldr	x12, [x10, #0x8]
+ffffff8009c0726c:      	orr	x9, x10, #0x1
+ffffff8009c07270:      	str	x12, [x8, #0x10]
+ffffff8009c07274:      	str	x8, [x10, #0x8]
+ffffff8009c07278:      	str	x9, [x11]
+ffffff8009c0727c:      	cbnz	x12, 0xffffff8009c0721c <rb_erase_cached+0x388>
+ffffff8009c07280:      	b	0xffffff8009c0722c <rb_erase_cached+0x398>
+ffffff8009c07284:      	nop
+ffffff8009c07288:      	<unknown>
+
+===================================================================
+### rb_erase
+===================================================================
+ffffff8009c069c4 <rb_erase>:
+ffffff8009c069c4:      	ldp	x9, x11, [x0, #0x8]
+ffffff8009c069c8:      	cbz	x11, 0xffffff8009c06a18 <rb_erase+0x54>
+ffffff8009c069cc:      	cbz	x9, 0xffffff8009c06a40 <rb_erase+0x7c>
+ffffff8009c069d0:      	ldr	x10, [x9, #0x10]
+ffffff8009c069d4:      	cbz	x10, 0xffffff8009c06a64 <rb_erase+0xa0>
+ffffff8009c069d8:      	mov	x11, x9
+ffffff8009c069dc:      	mov	x12, x10
+ffffff8009c069e0:      	ldr	x10, [x10, #0x10]
+ffffff8009c069e4:      	mov	x8, x11
+ffffff8009c069e8:      	mov	x11, x12
+ffffff8009c069ec:      	cbnz	x10, 0xffffff8009c069dc <rb_erase+0x18>
+ffffff8009c069f0:      	ldr	x10, [x12, #0x8]
+ffffff8009c069f4:      	str	x10, [x8, #0x10]
+ffffff8009c069f8:      	str	x9, [x12, #0x8]
+ffffff8009c069fc:      	ldr	x11, [x9]
+ffffff8009c06a00:      	and	x11, x11, #0x1
+ffffff8009c06a04:      	orr	x11, x11, x12
+ffffff8009c06a08:      	str	x11, [x9]
+ffffff8009c06a0c:      	mov	x9, x12
+ffffff8009c06a10:      	ldr	x11, [x0, #0x10]
+ffffff8009c06a14:      	b	0xffffff8009c06a6c <rb_erase+0xa8>
+ffffff8009c06a18:      	ldr	x10, [x0]
+ffffff8009c06a1c:      	ands	x8, x10, #0xfffffffffffffffc
+ffffff8009c06a20:      	b.eq	0xffffff8009c06ac8 <rb_erase+0x104>
+ffffff8009c06a24:      	ldr	x11, [x8, #0x10]
+ffffff8009c06a28:      	cmp	x11, x0
+ffffff8009c06a2c:      	b.eq	0xffffff8009c06c40 <rb_erase+0x27c>
+ffffff8009c06a30:      	str	x9, [x8, #0x8]
+ffffff8009c06a34:      	cbz	x9, 0xffffff8009c06ad0 <rb_erase+0x10c>
+ffffff8009c06a38:      	str	x10, [x9]
+ffffff8009c06a3c:      	ret
+ffffff8009c06a40:      	ldr	x9, [x0]
+ffffff8009c06a44:      	ands	x8, x9, #0xfffffffffffffffc
+ffffff8009c06a48:      	str	x9, [x11]
+ffffff8009c06a4c:      	b.eq	0xffffff8009c06c4c <rb_erase+0x288>
+ffffff8009c06a50:      	ldr	x9, [x8, #0x10]
+ffffff8009c06a54:      	cmp	x9, x0
+ffffff8009c06a58:      	b.eq	0xffffff8009c06c54 <rb_erase+0x290>
+ffffff8009c06a5c:      	str	x11, [x8, #0x8]
+ffffff8009c06a60:      	ret
+ffffff8009c06a64:      	ldr	x10, [x9, #0x8]
+ffffff8009c06a68:      	mov	x8, x9
+ffffff8009c06a6c:      	str	x11, [x9, #0x10]
+ffffff8009c06a70:      	ldr	x12, [x11]
+ffffff8009c06a74:      	and	x12, x12, #0x1
+ffffff8009c06a78:      	orr	x12, x12, x9
+ffffff8009c06a7c:      	str	x12, [x11]
+ffffff8009c06a80:      	ldr	x11, [x0]
+ffffff8009c06a84:      	ands	x12, x11, #0xfffffffffffffffc
+ffffff8009c06a88:      	b.eq	0xffffff8009c06ab0 <rb_erase+0xec>
+ffffff8009c06a8c:      	ldr	x13, [x12, #0x10]
+ffffff8009c06a90:      	cmp	x13, x0
+ffffff8009c06a94:      	b.eq	0xffffff8009c06c34 <rb_erase+0x270>
+ffffff8009c06a98:      	str	x9, [x12, #0x8]
+ffffff8009c06a9c:      	cbz	x10, 0xffffff8009c06ab8 <rb_erase+0xf4>
+ffffff8009c06aa0:      	orr	x8, x8, #0x1
+ffffff8009c06aa4:      	str	x11, [x9]
+ffffff8009c06aa8:      	str	x8, [x10]
+ffffff8009c06aac:      	ret
+ffffff8009c06ab0:      	str	x9, [x1]
+ffffff8009c06ab4:      	cbnz	x10, 0xffffff8009c06aa0 <rb_erase+0xdc>
+ffffff8009c06ab8:      	ldr	x10, [x9]
+ffffff8009c06abc:      	str	x11, [x9]
+ffffff8009c06ac0:      	tbnz	w10, #0x0, 0xffffff8009c06ad8 <rb_erase+0x114>
+ffffff8009c06ac4:      	b	0xffffff8009c06c30 <rb_erase+0x26c>
+ffffff8009c06ac8:      	str	x9, [x1]
+ffffff8009c06acc:      	cbnz	x9, 0xffffff8009c06a38 <rb_erase+0x74>
+ffffff8009c06ad0:      	tbz	w10, #0x0, 0xffffff8009c06c30 <rb_erase+0x26c>
+ffffff8009c06ad4:      	cbz	x8, 0xffffff8009c06c30 <rb_erase+0x26c>
+ffffff8009c06ad8:      	mov	x11, xzr
+ffffff8009c06adc:      	ldr	x10, [x8, #0x8]
+ffffff8009c06ae0:      	cmp	x11, x10
+ffffff8009c06ae4:      	b.eq	0xffffff8009c06b34 <rb_erase+0x170>
+ffffff8009c06ae8:      	ldrb	w9, [x10]
+ffffff8009c06aec:      	tbnz	w9, #0x0, 0xffffff8009c06b84 <rb_erase+0x1c0>
+ffffff8009c06af0:      	ldr	x9, [x10, #0x10]
+ffffff8009c06af4:      	orr	x11, x8, #0x1
+ffffff8009c06af8:      	str	x9, [x8, #0x8]
+ffffff8009c06afc:      	str	x8, [x10, #0x10]
+ffffff8009c06b00:      	str	x11, [x9]
+ffffff8009c06b04:      	ldr	x12, [x8]
+ffffff8009c06b08:      	ands	x11, x12, #0xfffffffffffffffc
+ffffff8009c06b0c:      	str	x12, [x10]
+ffffff8009c06b10:      	str	x10, [x8]
+ffffff8009c06b14:      	b.eq	0xffffff8009c06ba4 <rb_erase+0x1e0>
+ffffff8009c06b18:      	ldr	x12, [x11, #0x10]
+ffffff8009c06b1c:      	cmp	x12, x8
+ffffff8009c06b20:      	b.eq	0xffffff8009c06bb4 <rb_erase+0x1f0>
+ffffff8009c06b24:      	str	x10, [x11, #0x8]
+ffffff8009c06b28:      	ldr	x11, [x9, #0x8]
+ffffff8009c06b2c:      	cbnz	x11, 0xffffff8009c06bc0 <rb_erase+0x1fc>
+ffffff8009c06b30:      	b	0xffffff8009c06bc8 <rb_erase+0x204>
+ffffff8009c06b34:      	ldr	x10, [x8, #0x10]
+ffffff8009c06b38:      	ldrb	w9, [x10]
+ffffff8009c06b3c:      	tbnz	w9, #0x0, 0xffffff8009c06b94 <rb_erase+0x1d0>
+ffffff8009c06b40:      	ldr	x9, [x10, #0x8]
+ffffff8009c06b44:      	orr	x11, x8, #0x1
+ffffff8009c06b48:      	str	x9, [x8, #0x10]
+ffffff8009c06b4c:      	str	x8, [x10, #0x8]
+ffffff8009c06b50:      	str	x11, [x9]
+ffffff8009c06b54:      	ldr	x12, [x8]
+ffffff8009c06b58:      	ands	x11, x12, #0xfffffffffffffffc
+ffffff8009c06b5c:      	str	x12, [x10]
+ffffff8009c06b60:      	str	x10, [x8]
+ffffff8009c06b64:      	b.eq	0xffffff8009c06bdc <rb_erase+0x218>
+ffffff8009c06b68:      	ldr	x12, [x11, #0x10]
+ffffff8009c06b6c:      	cmp	x12, x8
+ffffff8009c06b70:      	b.eq	0xffffff8009c06bec <rb_erase+0x228>
+ffffff8009c06b74:      	str	x10, [x11, #0x8]
+ffffff8009c06b78:      	ldr	x11, [x9, #0x10]
+ffffff8009c06b7c:      	cbnz	x11, 0xffffff8009c06bf8 <rb_erase+0x234>
+ffffff8009c06b80:      	b	0xffffff8009c06c00 <rb_erase+0x23c>
+ffffff8009c06b84:      	mov	x9, x10
+ffffff8009c06b88:      	ldr	x11, [x9, #0x8]
+ffffff8009c06b8c:      	cbnz	x11, 0xffffff8009c06bc0 <rb_erase+0x1fc>
+ffffff8009c06b90:      	b	0xffffff8009c06bc8 <rb_erase+0x204>
+ffffff8009c06b94:      	mov	x9, x10
+ffffff8009c06b98:      	ldr	x11, [x9, #0x10]
+ffffff8009c06b9c:      	cbnz	x11, 0xffffff8009c06bf8 <rb_erase+0x234>
+ffffff8009c06ba0:      	b	0xffffff8009c06c00 <rb_erase+0x23c>
+ffffff8009c06ba4:      	str	x10, [x1]
+ffffff8009c06ba8:      	ldr	x11, [x9, #0x8]
+ffffff8009c06bac:      	cbnz	x11, 0xffffff8009c06bc0 <rb_erase+0x1fc>
+ffffff8009c06bb0:      	b	0xffffff8009c06bc8 <rb_erase+0x204>
+ffffff8009c06bb4:      	str	x10, [x11, #0x10]
+ffffff8009c06bb8:      	ldr	x11, [x9, #0x8]
+ffffff8009c06bbc:      	cbz	x11, 0xffffff8009c06bc8 <rb_erase+0x204>
+ffffff8009c06bc0:      	ldrb	w10, [x11]
+ffffff8009c06bc4:      	tbz	w10, #0x0, 0xffffff8009c06c68 <rb_erase+0x2a4>
+ffffff8009c06bc8:      	ldr	x10, [x9, #0x10]
+ffffff8009c06bcc:      	cbz	x10, 0xffffff8009c06c10 <rb_erase+0x24c>
+ffffff8009c06bd0:      	ldrb	w11, [x10]
+ffffff8009c06bd4:      	tbnz	w11, #0x0, 0xffffff8009c06c10 <rb_erase+0x24c>
+ffffff8009c06bd8:      	b	0xffffff8009c06c70 <rb_erase+0x2ac>
+ffffff8009c06bdc:      	str	x10, [x1]
+ffffff8009c06be0:      	ldr	x11, [x9, #0x10]
+ffffff8009c06be4:      	cbnz	x11, 0xffffff8009c06bf8 <rb_erase+0x234>
+ffffff8009c06be8:      	b	0xffffff8009c06c00 <rb_erase+0x23c>
+ffffff8009c06bec:      	str	x10, [x11, #0x10]
+ffffff8009c06bf0:      	ldr	x11, [x9, #0x10]
+ffffff8009c06bf4:      	cbz	x11, 0xffffff8009c06c00 <rb_erase+0x23c>
+ffffff8009c06bf8:      	ldrb	w10, [x11]
+ffffff8009c06bfc:      	tbz	w10, #0x0, 0xffffff8009c06c94 <rb_erase+0x2d0>
+ffffff8009c06c00:      	ldr	x10, [x9, #0x8]
+ffffff8009c06c04:      	cbz	x10, 0xffffff8009c06c10 <rb_erase+0x24c>
+ffffff8009c06c08:      	ldrb	w11, [x10]
+ffffff8009c06c0c:      	tbz	w11, #0x0, 0xffffff8009c06c9c <rb_erase+0x2d8>
+ffffff8009c06c10:      	str	x8, [x9]
+ffffff8009c06c14:      	ldr	x9, [x8]
+ffffff8009c06c18:      	tbz	w9, #0x0, 0xffffff8009c06c5c <rb_erase+0x298>
+ffffff8009c06c1c:      	ands	x9, x9, #0xfffffffffffffffc
+ffffff8009c06c20:      	b.eq	0xffffff8009c06c30 <rb_erase+0x26c>
+ffffff8009c06c24:      	mov	x11, x8
+ffffff8009c06c28:      	mov	x8, x9
+ffffff8009c06c2c:      	b	0xffffff8009c06adc <rb_erase+0x118>
+ffffff8009c06c30:      	ret
+ffffff8009c06c34:      	str	x9, [x12, #0x10]
+ffffff8009c06c38:      	cbnz	x10, 0xffffff8009c06aa0 <rb_erase+0xdc>
+ffffff8009c06c3c:      	b	0xffffff8009c06ab8 <rb_erase+0xf4>
+ffffff8009c06c40:      	str	x9, [x8, #0x10]
+ffffff8009c06c44:      	cbnz	x9, 0xffffff8009c06a38 <rb_erase+0x74>
+ffffff8009c06c48:      	b	0xffffff8009c06ad0 <rb_erase+0x10c>
+ffffff8009c06c4c:      	str	x11, [x1]
+ffffff8009c06c50:      	ret
+ffffff8009c06c54:      	str	x11, [x8, #0x10]
+ffffff8009c06c58:      	ret
+ffffff8009c06c5c:      	orr	x9, x9, #0x1
+ffffff8009c06c60:      	str	x9, [x8]
+ffffff8009c06c64:      	ret
+ffffff8009c06c68:      	mov	x10, x9
+ffffff8009c06c6c:      	b	0xffffff8009c06cc4 <rb_erase+0x300>
+ffffff8009c06c70:      	ldr	x12, [x10, #0x8]
+ffffff8009c06c74:      	str	x12, [x9, #0x10]
+ffffff8009c06c78:      	str	x9, [x10, #0x8]
+ffffff8009c06c7c:      	str	x10, [x8, #0x8]
+ffffff8009c06c80:      	cbz	x12, 0xffffff8009c06cc0 <rb_erase+0x2fc>
+ffffff8009c06c84:      	orr	x13, x9, #0x1
+ffffff8009c06c88:      	mov	x11, x9
+ffffff8009c06c8c:      	str	x13, [x12]
+ffffff8009c06c90:      	b	0xffffff8009c06cc4 <rb_erase+0x300>
+ffffff8009c06c94:      	mov	x10, x9
+ffffff8009c06c98:      	b	0xffffff8009c06d28 <rb_erase+0x364>
+ffffff8009c06c9c:      	ldr	x12, [x10, #0x10]
+ffffff8009c06ca0:      	str	x12, [x9, #0x8]
+ffffff8009c06ca4:      	str	x9, [x10, #0x10]
+ffffff8009c06ca8:      	str	x10, [x8, #0x10]
+ffffff8009c06cac:      	cbz	x12, 0xffffff8009c06d24 <rb_erase+0x360>
+ffffff8009c06cb0:      	orr	x13, x9, #0x1
+ffffff8009c06cb4:      	mov	x11, x9
+ffffff8009c06cb8:      	str	x13, [x12]
+ffffff8009c06cbc:      	b	0xffffff8009c06d28 <rb_erase+0x364>
+ffffff8009c06cc0:      	mov	x11, x9
+ffffff8009c06cc4:      	ldr	x12, [x10, #0x10]
+ffffff8009c06cc8:      	orr	x9, x10, #0x1
+ffffff8009c06ccc:      	str	x12, [x8, #0x8]
+ffffff8009c06cd0:      	str	x8, [x10, #0x10]
+ffffff8009c06cd4:      	str	x9, [x11]
+ffffff8009c06cd8:      	cbz	x12, 0xffffff8009c06cec <rb_erase+0x328>
+ffffff8009c06cdc:      	ldr	x11, [x12]
+ffffff8009c06ce0:      	and	x11, x11, #0x1
+ffffff8009c06ce4:      	orr	x11, x11, x8
+ffffff8009c06ce8:      	str	x11, [x12]
+ffffff8009c06cec:      	ldr	x12, [x8]
+ffffff8009c06cf0:      	ands	x11, x12, #0xfffffffffffffffc
+ffffff8009c06cf4:      	str	x12, [x10]
+ffffff8009c06cf8:      	str	x9, [x8]
+ffffff8009c06cfc:      	b.eq	0xffffff8009c06d14 <rb_erase+0x350>
+ffffff8009c06d00:      	ldr	x9, [x11, #0x10]
+ffffff8009c06d04:      	cmp	x9, x8
+ffffff8009c06d08:      	b.eq	0xffffff8009c06d1c <rb_erase+0x358>
+ffffff8009c06d0c:      	str	x10, [x11, #0x8]
+ffffff8009c06d10:      	ret
+ffffff8009c06d14:      	str	x10, [x1]
+ffffff8009c06d18:      	ret
+ffffff8009c06d1c:      	str	x10, [x11, #0x10]
+ffffff8009c06d20:      	ret
+ffffff8009c06d24:      	mov	x11, x9
+ffffff8009c06d28:      	ldr	x12, [x10, #0x8]
+ffffff8009c06d2c:      	orr	x9, x10, #0x1
+ffffff8009c06d30:      	str	x12, [x8, #0x10]
+ffffff8009c06d34:      	str	x8, [x10, #0x8]
+ffffff8009c06d38:      	str	x9, [x11]
+ffffff8009c06d3c:      	cbnz	x12, 0xffffff8009c06cdc <rb_erase+0x318>
+ffffff8009c06d40:      	b	0xffffff8009c06cec <rb_erase+0x328>
+ffffff8009c06d44:      	nop
+ffffff8009c06d48:      	<unknown>
+

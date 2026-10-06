@@ -114,6 +114,29 @@ below is measured on real hardware (SM-T878U, `T878USQS8DXE1`, kernel
 
 ---
 
+## Target artifacts (for external analysis)
+
+[`target-artifacts/`](target-artifacts/) carries everything needed to analyze
+this target **without** the device:
+
+- the target kernel as a **not-stripped ELF** (60 MB, hosted as a **release
+  asset** so it stays out of git history),
+- all 152,788 symbols as greppable text,
+- `/proc/config.gz` (raw + decompressed),
+- a **mechanical verification of every address-like constant in
+  `src/exploit/offset.h`** against the ELF's own symbol table,
+- disassembly of the 12 functions the chain depends on.
+
+Headline results: the ELF's embedded `linux_banner` matches the device
+**byte for byte** (so `T878USQS8DXE1` / `4.19.113-27114284` is confirmed), the
+ELF is **not stripped**, and **24 of 27** address-like `offset.h` constants match
+a symbol exactly with 0 unresolvable. See
+[`target-artifacts/README.md`](target-artifacts/README.md) for the full report,
+including one **naming trap**: `CONFIGFS_READ_FILE_OFF` actually points at
+`configfs_read_bin_file`, not `configfs_read_file`.
+
+---
+
 ## Supported profile
 
 This POC intentionally fails closed unless all profile checks match:
