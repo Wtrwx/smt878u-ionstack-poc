@@ -39,6 +39,18 @@
 > **(C)** `__rb_insert()` Case 3 还会附带写 `*(TARGET-0x10)`，并要求 `*(TARGET-0x10) == 0`。
 > **先读 §15。**
 
+> **✅ 第 16 轮定稿（2026-10-03 晚）：环 1 的形状定死为 `target-left`，本文档
+> §12.5 / §13.6 / §15.19 里所有 `ghostlock-right` / `target-right` 的建议全部作废。**
+> `__rb_erase_augmented()` 的 Case 1 有两种，只有 **Case 1 变体**（`!child`，
+> `rbtree_augmented.h:193-199`）能让写目标与写值同时自由：
+> `write_pc = fake_fops`、`write_right = data_addr(ASHMEM_MISC_FOPS)`、`write_left = 0`。
+> 走 Case 1 会让 `child->__rb_parent_color = pc` 把 **`fake_fops->owner`** 涂成非 0，
+> 于是 `fops_get()` → `try_module_get()` 的 `module->refcnt @ +0x318`
+> 落到 `abc_hub_driver.driver.acpi_match_table`（恒 0）⇒ **`open("/dev/ashmem")` = `-ENODEV`**。
+> 另外：**W 从 futex 返回到阻塞 `sendmsg` 之间不得有任何 syscall**（`pipe_write` 的帧
+> 精确覆盖 `waiter+0x00..0x58`），W 侧 `pr_*` 已改为由 R 打印。
+> **先读 §16，再读 `ROOT_CHAIN_THEORY.md`。**
+
 ---
 
 ## 0. TL;DR —— 本轮推翻了上一轮的两条结论
@@ -1064,6 +1076,12 @@ payload 里 `write_pc / write_right / write_left`
    去拿 `ashmem_misc.fops` 槽位的写，然后走既有的
    `try_cfi_stage()` / `configfs_write_once(binwrite_target, ...)`
    落 modprobe 路径。
+
+   > ⚠️ **本条已被 §16.2 推翻（2026-10-03 晚）。** `ghostlock-right` 的
+   > `child->__rb_parent_color = pc` 会把 `fake_fops->owner` 涂成
+   > `ASHMEM_MISC_FOPS - 0x08` ⇒ `fops_get()` → `try_module_get()` 必败
+   > （`module->refcnt @ +0x318` 落在 `abc_hub_driver.driver.acpi_match_table` = 0）
+   > ⇒ `open("/dev/ashmem")` = `-ENODEV`。**改用 `IONSTACK_FOPS_PI_RB_SHAPE=target-left`。**
 4. 观测手段的限制：`/dev/kmsg` 与 `dmesg` 在 `u:r:shell:s0`
    下都 `Permission denied`（本轮实测），所以
    `rtmutex.c:483` 的 `Maximum lock depth` printk **不能**当 oracle；
@@ -1214,6 +1232,12 @@ if (parent != tmp) {
 则 **`*(target) = <值>`**。
 （`fake_w0` 住在已泄露的回收页里，地址已知；`target` 用
 `IONSTACK_FOPS_PI_RB_SHAPE=ghostlock-right` 现有的 `data_addr(ASHMEM_MISC_FOPS) - 0x08` 那条线。）
+
+> ⚠️ **形状名已作废（见 §16.2）。** 构型本身（`__rb_parent_color = T - 0x10`、
+> `rb_right = 值`、`rb_left = 0`）是 `__rb_erase_augmented()` 的 **Case 1**，
+> 它附带 `*(child) = pc`；当 `pc` 被钉死成 `data_addr(ASHMEM_MISC_FOPS) - 0x08`
+> 时就会毁掉 `fake_fops->owner`。**改走 Case 1 变体（`rb_right = child`、`rb_left = 0`），
+> 即 `IONSTACK_FOPS_PI_RB_SHAPE=target-left`。**
 
 ### 13.7 回收原语（本轮选定）：`bind()` on `AF_UNIX` 抽象地址
 
@@ -2270,6 +2294,11 @@ IONSTACK_INSERT_VALUE_OFF=0x3080
 ⇒ `address = E-0x170`，`rt_waiter = E-0x198`，**`address = rt_waiter + 0x28`**（与 SP0 无关，
 两次 syscall 共用同一 `E`）。残余 waiter 实测 `T_W-0x320`。**几何没有错。**
 
+> **基准约定注**：本节用 `E = T-0x188`（syscall 入口 SP）；`ROOT_CHAIN_THEORY.md` /
+> `PAINT_ORACLE_ANALYSIS.md` 用 `SP0 = T-0x180`，于是 `E = SP0-0x08`，
+> 同一对地址写成 `E-0x198 / E-0x170` 或 `SP0-0x190 / SP0-0x168` 都正确，**不是笔误**。
+> 唯一要紧的量是差值 `0x28`，它在两种约定下都一样。
+
 #### (4) 可存活探针的原理（新增 `IONSTACK_PAINT_PRIO` / `IONSTACK_PAINT_FILL`）
 
 `rtmutex.c:1135`：
@@ -2540,5 +2569,222 @@ rt_mutex_waiter_equal(struct rt_mutex_waiter *left, struct rt_mutex_waiter *righ
 3. 策略切换：由「一次阻塞调用」改为 **反复涂（ROUNDS=300）+ consumer 竞态**，
    并用 memfd + `fallocate(PUNCH_HOLE)` **拉伸 `copy_from_user` 窗口**。
 4. 保留 `IONSTACK_PAINT_PRIO` / `PAINT_FILL` 判据。
+
+---
+
+### 15.19 更正 H：§15.16(5) 的结论**读反了**；三次 paint 崩溃是「涂写已落地」的证据
+
+> 完整分析见 **`docs/PAINT_ORACLE_ANALYSIS.md`**（本轮新建）。本节只列更正项与结论。
+
+#### (1) 探针取值算错了 1 ⇒ 三次崩溃不含信息
+
+门的条件（rtmutex.c:1134-1139）就是 **`waiter->prio == W->prio`**（`rt_mutex_waiter_equal()` 非 DL 时只比 `prio`）。
+
+| 量 | 值 | 依据 |
+|---|---|---|
+| `waiter->prio`（残余） | **120** | rtmutex.c:957 写入 `W->prio`；而 **M 先停靠在 `f_pi_chain` 上**把 W clamp 到 120 |
+| `W->prio`（fire 时刻） | **120** | `sched_setattr_tid()` 走 flip 分支（`IONSTACK_CONSUMER_REAL_NICE` 未设）⇒ `sched_nice = 0` ⇒ `normal_prio = 120`，再 `rt_effective_prio = min(120, W->pi_top_task(=M)->prio = 120) = 120` |
+
+**PoC 自己的代码已经写下了「clamped 120」**（`main.c:1531-1544`，`want = 120 - 100 = 20`），
+而 `main.c:631` 与 `run_paint.sh` 的探针却用 **121**（`paintprobe139` / `paintfill139` 用 **139**）。
+
+⇒ `PAINT_PRIO ∈ {121, 139} ≠ 120` ⇒ **门必然打开** ⇒ 链走 ⇒ `579 lock = fake_lock` ⇒ `585` ⇒ **必崩**。
+⇒ **三次崩溃与「涂写是否落地」无关，§15.16(5) 的推理作废。**
+
+#### (2) 读法反了：崩溃 = 落地，存活 = 未落地
+
+| 实际情形 | `waiter->prio` | `W->prio` | 门 | 现象 |
+|---|---|---|---|---|
+| 涂写**落地** | 121（涂的） | 120 | **开** | 链走 ⇒ `585` ⇒ **崩** |
+| 涂写**未落地** | **120（内核写的残余值）** | 120 | **关** | 1135 早退 ⇒ **存活** |
+
+§15.16(4) 的「未命中 ⇒ `prio` 是栈垃圾 ⇒ panic」**是错的** —— 残余 waiter 的 `prio` 是 rtmutex.c:957 写入的 **120**，不是栈垃圾。
+
+#### (3) 更硬：**「存活/崩溃」在原理上不可能当判据**
+
+残余 waiter 是**完全自洽**的（`prio` 120 == 120；`lock` = 合法 `&P->pi_mutex`，`P` 被 `pi_state_cache` 保住）
+⇒ **未涂写状态在本内核上不可能崩**；而涂写落地且 `prio == 120` 时也不崩。
+⇒ 必须改用**用户态可见的副作用**：把 `fake_lock` 指向用户可读页的内核线性映射别名，
+链走在 `585` 的 `raw_spin_trylock`（CAS `0 → 1`）会改 `*(u32 *)fake_lock`，**用户态直接读回**即为铁证，无需任何 dump。
+
+#### (4) 补上此前缺失的一环：W 的退出路径**绕过了 cleanup**
+
+`futex_wait_requeue_pi()`（futex.c:3296-3302）：
+
+```c
+3299	ret = handle_early_requeue_pi_wakeup(hb, &q, &key2, to);
+3301	if (ret)
+3302		goto out_put_keys;          /* ← 直接返回，3343/3346 都不执行 */
+```
+
+`-EDEADLK` 时 R 在 futex.c:2171-2187 走 `else if (ret) { this->pi_state = NULL; put_pi_state(); break; }`，
+**`requeue_futex()`（2189）没执行** ⇒ W 的 `futex_q.key` 仍是 `key1 ≠ key2`
+⇒ `handle_early_requeue_pi_wakeup()` 必然返回 `-ETIMEDOUT`（futex.c:3173-3188，**只动 `q`，不碰 `pi_blocked_on`**）
+⇒ `goto out_put_keys` ⇒ **`rt_mutex_wait_proxy_lock()` / `rt_mutex_cleanup_proxy_lock()` 全不执行**。
+
+而 `rt_mutex_cleanup_proxy_lock()` 是唯一能在 W 自己上下文里清 `pi_blocked_on` 的地方（1911-1914 调 `remove_waiter`，此时 `current == W`）。
+
+⇒ **`W->pi_blocked_on` 悬垂成立，且无自愈路径。§15.18(4) 第 1 条怀疑排除。**
+
+#### (5) 残余 waiter 的完整状态（反汇编实测）
+
+`remove_waiter @ 0xffffff8008148d74`：
+
+| 地址 | 指令 | 含义 |
+|---|---|---|
+| `0x8148da8` | `mrs x20, SP_EL0` | `x20 = current` = **R** |
+| `0x8148dac` | `add x21, x20, #0x8c8` | `&R->pi_lock` |
+| `0x8148dc8/0x8148dd0` | `bl rb_erase_cached` | 仅当 `!RB_EMPTY_NODE` |
+| `0x8148dd4` | `str x23, [x23]` | `RB_CLEAR_NODE(&waiter->tree_entry)` ⇒ `__rb_parent_color = &waiter`（**W 的栈地址**） |
+| **`0x8148ddc`** | **`str xzr, [x20, #0x8f8]`** | **`current->pi_blocked_on = NULL`（清的是 R）** |
+
+★ **由此得到写原语的硬约束**：`remove_waiter` 已把 `tree_entry` 设为 `RB_CLEAR_NODE`
+⇒ 之后 `rt_mutex_dequeue()`（rtmutex.c:294-301）的 `if (RB_EMPTY_NODE(...)) return;` **必然早退**
+⇒ **`rb_erase`（664）那条写原语是死的**，唯一活着的是 **`rt_mutex_enqueue()`（685）→ `rb_insert_color_cached()` → `__rb_insert()` Case 3**。
+⚠️ 且 685 要求 `lock->waiters` **非空**，否则 `parent == NULL` 时 `__rb_insert()` 立刻 `return`，**一个字节都不写** —— 这正是 `IONSTACK_FOPS_PI_RB_SHAPE=rbinsert` 的用途。
+
+#### (6) 落地之后为什么还崩：`rt_mutex_adjust_prio` 走的是 MIN_CHAINWALK
+
+`requeue` 初值 `true`（rtmutex.c:460），`detect_deadlock = false`（462，因 `orig_waiter = NULL`）
+⇒ 552-570 的两个分支都 `goto out_unlock_pi`，**不会**把 `requeue` 置 false
+⇒ **链走确实会走到 664/685/723-725** ✓（原计划成立）。
+
+**安全出口在 rtmutex.c:600**：`if (lock == orig_lock || rt_mutex_owner(lock) == top_task)`
+（`orig_lock = NULL`、`top_task = W`）⇒ **只要 `rt_mutex_owner(fake_lock) == W`，链走就在 600 安全退出。**
+
+当前 `IONSTACK_FOPS_LOCK_OWNER_MODE=fake-task` ⇒ `owner = fake_task ≠ W` ⇒ 继续走 698-716，
+⇒ `fake_task` 必须是自洽 `task_struct`（`usage@0x68`、`pi_lock@0x8c8`、`pi_top_task@0x8f0`、`pi_blocked_on@0x8f8`、`dl.deadline@0x430`）。
+
+#### (7) 本轮行动项（重排）
+
+1. **`IONSTACK_PAINT_PRIO=120`**（保持 `IONSTACK_CONSUMER_REAL_NICE` 未设）⇒ 预测存活，消掉假异常。
+   ⚠️ 这条**不能**证明涂写落地（落地 120 与未落地 120 同效）。
+2. **换判据**：`fake_lock` 指向用户可读页的内核线性映射别名，读 `*(u32 *)fake_lock` 的 `0 → 1`（§(3)）。
+3. **修 `PAINT_FILL` 语义**：填 0x80 后**末尾 8 字节强制回写合法 `lock`**（否则一旦落地必崩，永远无信息）。
+4. **新增 `IONSTACK_FOPS_LOCK_OWNER_MODE=owner-is-W`**：`*(u64 *)(fake_lock+0x20) = W_task` ⇒ 链走在 600 安全退出 ⇒ 永不崩溃的双向可判构型。
+5. **W 在「futex 返回 → paint」之间的 `pr_*` 全部挪到 paint 之后**（`main.c:764`、`main.c:672`）。`fops.c:396-404` 已记录 `write()` 二次覆盖会毁掉 paint（pselect 路线正是死在这里：`waiter->lock` 读回 `0x6e`）。
+6. 写原语只押 685（见 (5)）。
+7. `write` 路线已排除：`__arm64_sys_write 0x10` / `ksys_write 0x40` / `vfs_write 0x40` / `__vfs_write 0xa0` / `pipe_write 0xb0` / `n_tty_write 0xa0`，**到不了 `E-0x190`**。
+
+#### (8) 待统一的数字
+
+| 位置 | 现状 | 应改为 |
+|---|---|---|
+| §15.16(3) | `rt_waiter = E-0x198`、`address = E-0x170` | `E-0x190` / `E-0x168`（`E` 基准差 8B，差值同为 `0x28`） |
+| §3.5.2 | 行内「`0x90 = 16`」与文字「= 16」矛盾（`0x90 = 18`） | 算术笔误；以 `offset.h` 的 `shift=16` 与 §15.18(3) 为准 |
+| §15.16(4) | 探针目标 139 | 仅 `IONSTACK_CONSUMER_REAL_NICE=1` 时成立；默认下是 **120** |
+| §15.16(5) | 「全部崩溃 ⇒ 涂写未落地」 | **反的**（见 (2)） |
+| `main.c:631` | 「121 for a nice=1 CFS task」 | **120**（与同文件 1534 行 "clamped 120" 一致） |
+| `util.c:1054-1058` | 「nice 0 -> prio 120」 | 与 `IONSTACK_W_NICE=1` 冲突；实为「M 停靠后 clamp 到 120」 |
+
+#### (9) 工具坑（本轮踩到）
+
+- **`grep` 读 `objdump` 输出必须加 `-a`**，否则被当二进制**静默返回空**（本轮 `vfs_write`/`ksys_write`/`__arm64_sys_sendmsg` 的 `bl` 搜索全因此为空）。
+- `objdump --disassemble-symbols=` **不加前导下划线**。
+
+---
+
+## 16. 全链闭环（权威版：`docs/ROOT_CHAIN_THEORY.md`）
+
+> **本节只做指针，不重复内容。** 完整论证见同目录 **`ROOT_CHAIN_THEORY.md`**。
+
+### 16.1 一句话
+
+整条提权链只有 **5 环**，**环 2/3/4 的代码本仓库早就写好了**（`util.c` 的假 fops +
+configfs 读写、`pipe.c` 的 pipe_buffer 劫持、`root.c` 的 cred 改写），
+**唯一缺环是环 1 的那一笔写**：
+
+```c
+*(uint64_t *)data_addr(ASHMEM_MISC_FOPS) = fake_fops;
+```
+
+### 16.2 对本文件 §12.5 / §15.19 的两处**修正**
+
+| 位置 | 旧说法 | 修正 |
+|---|---|---|
+| §12.5 | 给出「插入侧 Case 3」与「`ghostlock-right`」两条候选 | **两条都不能用**。① 插入侧 Case 3 的前置是 `*(TARGET-0x10) == 0`，而设备二进制实测 `ashmem_misc.minor = 0xff ≠ 0` ⇒ 打不到 `ashmem_misc.fops`，只能做自页自检；② `ghostlock-right` 走 `rb_erase` 的 **Case 1**，`pc` 被钉死在 `ASHMEM_MISC_FOPS - 0x08`，而 `pc` 又是 `child->__rb_parent_color` 的写值 ⇒ **`fake_fops->owner` 被涂成非 0** ⇒ `fops_get()` → `try_module_get()` 的 `module->refcnt @ +0x318` 落在 `abc_hub_driver.driver.acpi_match_table`（静态零初始化）⇒ **必败** ⇒ `open("/dev/ashmem")` = `-ENODEV`。**正解是 `rb_erase` 的 Case 1 变体，形状名 `target-left`**（`rb_right = child`、`rb_left = 0`、`pc` 自由） |
+| §15.19(5) | 「`rb_erase`(664) 那条路是死的，唯一活着的是 685」 | 措辞不准：**死的只是「栈上残余 waiter 的 `tree_entry`」**；**我们自己页里 `fake_w0->pi_tree_entry` 的 `rb_erase`（723）完全活着**，而且前置最弱（只要 `*(TARGET+0x08) != node`），**它才是环 1 的正路** |
+| §15.16(3) | `rt_waiter = E-0x198`、`address = E-0x170` | `E-0x190` / `E-0x168`（`E` 基准约定差 8B，差值同为 `0x28`，结论不变） |
+| §15.16(5) | 「三种配置全部崩溃 ⇒ 涂写没有落地」 | **读反了**（已由 §15.19 更正）。崩溃 = 落地；存活 = 未落地 |
+
+### 16.3 二进制实测事实（新增）
+
+```
+ffffff800b38d188 l O .kernel2  ashmem_misc
+  +0x00 = ff 00 00 00 00 00 00 00        ⇒ minor = 0xff (MISC_DYNAMIC_MINOR = 255)
+  minor@0x00, name@0x08, fops@0x10, list@0x18
+⇒ ASHMEM_MISC_FOPS = ashmem_misc + 0x10 = 0xffffff800b38d198
+⇒ data_addr(ASHMEM_MISC_FOPS) = 0xffffffc00338d198   （与 util.c:2289 的 live-vetted 一致 ✓）
+```
+
+### 16.4 环 1 的写语义（`rtmutex.c:723`，形状 `target-left`）
+
+`rb_erase_cached(&fake_w0->pi_tree_entry, &fake_task->pi_waiters)`，走
+`__rb_erase_augmented()` 的 **Case 1 变体**（`rbtree_augmented.h:193-199`，`!child`）：
+
+```
+node  = &fake_w0->pi_tree_entry
+  node->__rb_parent_color (= write_pc)    = fake_fops          ← 写值 pc，同时决定 parent
+  node->rb_right          (= write_right) = data_addr(ASHMEM_MISC_FOPS)   ← child
+  node->rb_left           (= write_left)  = 0                  ← tmp == 0 ⇒ 跳过 Case 1，落到 !child
+```
+
+执行：
+
+```c
+tmp = node->rb_right;            /* = data_addr(ASHMEM_MISC_FOPS) ≠ 0 ⇒ 不进 176 的 Case 1 */
+if (!child) {                    /* child = node->rb_left == 0 ⇒ 进 */
+	pc = node->__rb_parent_color;                 /* = fake_fops */
+	parent = __rb_parent(pc);                     /* = fake_fops & ~3 = fake_fops */
+	tmp->__rb_parent_color = pc;                  /* *(child + 0x00) = fake_fops  ← 环 1 的那一笔写 */
+	__rb_change_child(node, tmp, parent, root);
+	...
+}
+```
+
+`__rb_change_child(node, tmp, parent, root)`（`rbtree_augmented.h:134-145`）比较的是
+`parent->rb_left == node`：
+
+- `parent + 0x10` = `fake_fops + FOPS_READ_OFF` = `read` 槽 = `text_addr(CONFIGFS_READ_FILE)` ≠ `node`
+- ⇒ **else** ⇒ `WRITE_ONCE(parent->rb_right, tmp)` ⇒ **`*(fake_fops + 0x08) = data_addr(ASHMEM_MISC_FOPS)`**
+  （只打掉 `llseek`，随后由 `repair_fake_fops_llseek()` 改成 `NOOP_LLSEEK`）
+
+**两笔写都留在我们页里，`fake_fops->owner` 一动不动**（`owner` 只会在 `pc` 被钉死时被打，
+而这里 `pc = fake_fops` 是我们的地址，`parent = fake_fops` 也在我们页里）。
+
+⇒ `fops_get()` 看到 `owner == 0` 直接返回 `fake_fops`，**连 `try_module_get()` 都不进**。
+
+> 为什么 `pc` 低位必须为 0（`parent = pc & ~3` 必须落在 `fake_fops` 上）：
+> `fake_fops` 是页对齐地址 + `FOPS_OFF = 0x1000`，天然满足。
+> 若 `pc = fake_fops | 1`（BLACK），`parent` 会变成 `fake_fops`，但
+> `child->__rb_parent_color = pc` 会把 token 链打断（红黑树的 `__rb_parent_color`
+> 低位是颜色位，`& ~3` 之后才取 parent）—— 这里 `child` 是 `ashmem_misc.fops` 槽，
+> 不参与任何树，所以颜色位无所谓，但保持 0 更安全。
+
+### 16.5 已用二进制证明的前提（不再是待验证项）
+
+1. `try_module_get()`（`0xffffff8008196f44`）反汇编：
+   `ldr w8,[x0]` 比较 `module->state @ +0x00`、`ldr w8,[x19,#0x318]` 要求
+   `module->refcnt @ +0x318` 非 0。
+2. `*(ASHMEM_MISC_FOPS + 0x310)` = `ashmem_misc + 0x320`
+   = `abc_hub_driver.driver.acpi_match_table`
+   （`objdump -t`：`abc_hub_driver` @ `0xffffff800b38d450`；`platform_driver.driver` @ `+0x28`，
+   `device_driver.acpi_match_table` @ `+0x30` ⇒ `+0x58`；`0x320 - 0x2c8 = 0x58` ✓）
+   ⇒ **静态零初始化，恒为 0**。
+   ⇒ **`ghostlock-right` 那条路必然让 `open("/dev/ashmem")` 返回 `-ENODEV`。**
+3. 环 1 之后的判据（用户态可见，不需要 dump、不需要崩溃）：
+   `open("/dev/ashmem")` + `configfs_read_once(fd, data_addr(ASHMEM_MISC_FOPS), &v, 8)`
+   要求 `v == fake_fops`（与 `fops.c:3349-3355` 同一测试，已实现为 `verify_paint_gate()`
+   的 `ring1-read` 分支）。
+
+### 16.6 时序硬约束（W 侧零 syscall）
+
+W 从 `FUTEX_WAIT_REQUEUE_PI` 返回后、进入阻塞 `sendmsg` 之前**不得有任何 syscall**。
+`llvm-objdump` 实测 `__arm64_sys_write 0x10 / ksys_write 0x40 / vfs_write 0x40 /
+__vfs_write 0xa0 / pipe_write 0xb0` ⇒ `pipe_write` 的 `sp = SP0-0x1e0`，其序言
+`stp x29,x16,[sp,#0x50]` … `stp x20,x19,[sp,#0xa0]` 恰好覆盖
+`waiter+0x00..waiter+0x58`（waiter = `SP0-0x190`），而 `sendmsg` 的 `address` 拷贝
+只重涂 `waiter+0x28..0x50` ⇒ 残余 `RB_CLEAR_NODE`（`rtmutex.c:664` 的早退依据）被毁。
+W 侧两条 `pr_*` 已改成「发布到全局 / atomic，由 R 打印」。
 
 

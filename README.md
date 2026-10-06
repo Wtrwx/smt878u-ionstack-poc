@@ -2,18 +2,22 @@
 
 > [!CAUTION]
 > **THIS PROJECT IS UNFINISHED — IT DOES NOT WORK YET.**
-> There is **no working root** on any device as of 2026-10-03. Do **not** expect
+> There is **no working root** on any device as of 2026-10-06. Do **not** expect
 > the quick-start below to succeed. Read [Current status](#current-status-unfinished)
 > before building or running anything.
 
 > [!WARNING]
-> **STATUS: WORK IN PROGRESS / BLOCKED**
+> **STATUS: WORK IN PROGRESS — ring 1 not landed**
 > - **Not achieved:** persistent or even one-shot `root` on SM-T878U.
-> - **Last verified failure:** all stack-reclaim attempts crash the device
->   (`CONFIG_PANIC_ON_OOPS=y`) before the write primitive fires.
-> - **Blocker:** kernel crash forensics is unavailable to `uid 2000 shell`
->   (`/proc/kmsg`, `/proc/last_kmsg`, `/sys/fs/pstore`, `dmesg` → all `EACCES`),
->   so each iteration costs a reboot and yields no usable stack trace.
+> - **Last verified failure:** the stack-reclaim payload never reaches the
+>   kernel's write path. Across ~470 instrumented runs the forged lock is
+>   **never** observed to be taken at `rtmutex.c:585`, so the store
+>   `*(ASHMEM_MISC_FOPS) = fake_fops` never executes.
+> - **Former blocker, now resolved:** crash forensics used to be unavailable to
+>   `uid 2000 shell` (`/proc/kmsg`, `/proc/last_kmsg`, `/sys/fs/pstore`, `dmesg`
+>   → all `EACCES`). A durable `write()`+`fsync()` log mirror
+>   (`IONSTACK_LOG_MIRROR`) now survives `CONFIG_PANIC_ON_OOPS=y`, so a panicked
+>   run still leaves a complete trail.
 > - See [`docs/RTMUTEX_WEAPONIZATION.md`](docs/RTMUTEX_WEAPONIZATION.md) §15.16–§15.18
 >   for the full evidence trail.
 
@@ -29,8 +33,9 @@ for deployment and verification.
 ## Current status (UNFINISHED)
 
 **No root has been obtained.** This section is the authoritative, up-to-date
-account of where the chain stands. Everything below is measured on real
-hardware (SM-T878U, `T878USQS8DXE1`, kernel `4.19.113-27114284`), not theory.
+account of where the chain stands (last revised **2026-10-06**). Everything
+below is measured on real hardware (SM-T878U, `T878USQS8DXE1`, kernel
+`4.19.113-27114284`), not theory.
 
 ### What is proven to work
 
@@ -41,36 +46,71 @@ hardware (SM-T878U, `T878USQS8DXE1`, kernel `4.19.113-27114284`), not theory.
 | Buggy rollback leaves dangling `pi_blocked_on` | matches upstream fix | upstream `3bfdc63936dd` changes `current->pi_blocked_on` → `waiter->task->pi_blocked_on` |
 | `struct rt_mutex_waiter` layout (4.19) | **verified from source** | `tree_entry@0x00` `pi_tree_entry@0x18` `task@0x30` `lock@0x38` `prio@0x40` `deadline@0x48` |
 | Stack geometry `paint == rt_waiter + 0x28` | **verified 4×** incl. objdump | `rt_waiter = do_futex_sp+0xC0`; `address = ___sys_sendmsg_sp+0xB8` |
+| Durable crash forensics | **working** | `IONSTACK_LOG_MIRROR` `write()`+`fsync()` trail survives a panic reboot |
+| Per-message frag-page identity tag | **working** | `reclaim-scan tag=1 sent=8201 range=1..8201 ok=8192 bad=0 dup=0 undecoded=0 absent=9` |
+| Queue scan: kernel wrote 0 bytes into 8192 queued frag pages | **verified** | 256 MB compared byte-for-byte against the payload, `hits=0` |
+| `rt_mutex_adjust_prio_chain` reaches the write path | **verified from disassembly** | `top_waiter == NULL` ⇒ `requeue` stays `true` ⇒ `664/682/685/716-725` structurally reachable |
 
 ### What is NOT working
 
-1. **Stack reclaim does not land.** Three instrumented runs
-   (`scratch/runs/paint*_20261001_19*.log`) all crashed the device.
-   A survivable oracle (`IONSTACK_PAINT_PRIO=139`) was added: if the forged
-   waiter lands, `rt_mutex_adjust_pi()` early-returns at `rtmutex.c:1135` and
-   the device **survives**. It crashed every time ⇒ the forged waiter never
-   reaches the residual `rt_mutex_waiter`.
+1. **The write path never executes.** Across ~470 instrumented runs, all 174
+   `page-dump` and 45 `ring1-page` observations report
+   `first_diff=8000 (pristine)`, `owner_cpu=00000000`, `case1_gate=0`, and
+   `lock_root`/`lock_leftmost` exactly equal to the payload value. The walk has
+   **never** been seen to take `fake_lock->wait_lock` at `rtmutex.c:585`, so
+   `664/682/685/716-725` — the only branch that can store into
+   `*(ASHMEM_MISC_FOPS)` — has never run.
+   Note that `_raw_spin_trylock()`/`_raw_spin_unlock()` route through
+   out-of-line helpers and this vendor tree has **no arm64 `queued_spin_unlock`
+   override**, so `wait_lock.val == 1` is the reliable `585` witness and
+   `owner_cpu != 0` is only a secondary one.
 2. **The published vehicle is unavailable here.** The only public successful
    exploit of this CVE (NebuSec, *IonStack part II*) reclaims the frame with
    `prctl(PR_SET_MM, PR_SET_MM_MAP, …)`. This kernel ships
    `# CONFIG_CHECKPOINT_RESTORE is not set`, so that syscall is compiled out.
    It also never uses `sendmsg` — our vehicle — which is very likely the root
    cause of (1).
-3. **No crash forensics.** Every crash is currently undiagnosable (see blocker
-   above). Until this is fixed, further payload shapes are blind attempts.
+3. **`ring1-read` has never run.** The only userspace read-back of ring 1
+   (`configfs_read_once(fd, data_addr(ASHMEM_MISC_FOPS), …)`) sits behind the
+   queue-scan gate and behind the harness `MARKER` default, which stops 8 s
+   earlier at `ring1-page`. Every run that reached the gate died between
+   `page-dump tag=pre-arm` and `page-dump tag=post-arm`.
 
 ### Immediate next steps (in priority order)
 
-1. Restore observability (ramoops / `/data/log` / alternate SELinux domain).
-2. Replace the `sendmsg` reclaim vehicle with `pselect6` (route already
-   present) or `process_vm_readv` (`CONFIG_CROSS_MEMORY_ATTACH=y`).
-3. Switch from one blocking call to repeated stamping racing the consumer,
-   plus memfd + `fallocate(FALLOC_FL_PUNCH_HOLE)` window stretching.
-4. Only then convert the write primitive into privilege escalation.
+1. Re-run the one configuration in which `664/682/685` can *complete inside our
+   own page* — `IONSTACK_FOPS_WAIT_LOCK_WORD=0` with
+   `IONSTACK_PAINT_WAITER_TASK_MODE=fake-task` — and read
+   `page-dump tag=post-arm` / `ring1-lock585` for `wait_lock=00000001`.
+2. Get `ring1-read` to execute: run with `IONSTACK_RECLAIM_SCAN_QUEUE` unset and
+   `MARKER='ring1-read|…'` so the harness does not stop at `ring1-page`.
+3. Identify the held page: run with `IONSTACK_RECLAIM_TAG=1` and compare
+   `pipe_tag` against `msg_tag` in `page-dump`. All frag pages are byte-identical
+   copies of the payload, so `first_diff` alone cannot tell them apart.
+4. Re-test the `IONSTACK_FOPS_WAIT_LOCK_WORD` question on a properly posed
+   basis — `wlw=0` vs `wlw=1` with `IONSTACK_RECLAIM_TAG` held constant. The
+   earlier correlation was confounded by the two variables moving together.
+5. Port the `res_in`/`res_out` `pselect6` paint surface from the K40 4.19 port.
+6. Only then convert the write primitive into privilege escalation.
 
 ### Unrelated open bug
 
 `fops.c:3157 reason=selinux_write ret=-1 errno=22 EINVAL` — still unresolved.
+
+---
+
+## Documentation
+
+| Document | What |
+|---|---|
+| [`docs/RTMUTEX_WEAPONIZATION.md`](docs/RTMUTEX_WEAPONIZATION.md) | Full evidence trail for the rtmutex chain (largest document) |
+| [`docs/ROOT_CHAIN_THEORY.md`](docs/ROOT_CHAIN_THEORY.md) | End-to-end ring 0→4 root chain design |
+| [`docs/PAINT_ORACLE_ANALYSIS.md`](docs/PAINT_ORACLE_ANALYSIS.md) | Why the stack-paint oracle reads the way it does |
+| [`docs/PSELECT_GEOMETRY_FINDINGS.md`](docs/PSELECT_GEOMETRY_FINDINGS.md) | `pselect6` as an alternative paint vehicle |
+| [`docs/RING1_RECLAIM_IDENTITY_2026-10-06.md`](docs/RING1_RECLAIM_IDENTITY_2026-10-06.md) | Per-message frag-page identity tag; queue-scan verification |
+| [`docs/RING1_585_NEVER_SUCCEEDED_2026-10-06.md`](docs/RING1_585_NEVER_SUCCEEDED_2026-10-06.md) | Proof that `rtmutex.c:585` never succeeded |
+| [`docs/RING1_ORACLE_FIX_2026-10-05.md`](docs/RING1_ORACLE_FIX_2026-10-05.md) | Oracle correction |
+| [`docs/RING1_ORACLE_WRONG_FRAGMENT_2026-10-06.md`](docs/RING1_ORACLE_WRONG_FRAGMENT_2026-10-06.md) | Why the held fragment was mis-identified |
 
 ---
 
@@ -197,8 +237,10 @@ rely on it surviving reboot.
 | `src/trigger/` | Chainwalk / diagnostic probe |
 | `tools/su_daemon.c` | Temporary `su` daemon client/server bits |
 | `tools/collect_reboot_artifacts.sh` | Post-reboot artifact collector |
+| `docs/` | Analysis notes and evidence trails (see [Documentation](#documentation)) |
 | `build/` | Build outputs (gitignored) |
 | `results/` | Run logs (gitignored) |
+| `scratch/` | Local harness + run logs (gitignored) |
 
 ## Provenance
 
